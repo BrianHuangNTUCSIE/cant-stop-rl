@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "Can't Stop: Reusable Game Engine and Research Agents"
+message: "If you use this software, please cite the repository and the accompanying project report."
+type: software
+authors:
+  - name: "CS 441 Can't Stop project"
+version: 0.1.0
+date-released: 2026-10-27
+license: MIT
+abstract: >-
+  A deterministic two-player Can't Stop game engine with baseline and learned
+  agents, evaluation utilities, and reproducible experiment tooling.

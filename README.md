@@ -56,6 +56,8 @@ not naive independent-game confidence intervals.
 
 ## Citation and reuse
 
-Before publication, add the final paper citation, license, and release DOI.
+The repository is released under the MIT License. A machine-readable citation
+stub is provided in [`CITATION.cff`](CITATION.cff); update it with the final
+paper citation and release DOI when the project is published.
 Changes to game rules, feature layouts, random-seed semantics, or evaluation
 protocol should be versioned and documented as compatibility changes.
