@@ -6,8 +6,8 @@ cd "$ROOT"
 SCRIPT="$ROOT/scripts/run_classical_ml_experiments.sh"
 
 RUN_ROOT="runs/classical_ml_seed541"
-LOG="runs/classical_ml_seed541.log"
-PID_FILE="runs/classical_ml_seed541.pid"
+LOG="results/logs/classical_ml_seed541.log"
+PID_FILE="results/logs/classical_ml_seed541.pid"
 PYTHON=".venv/bin/python"
 
 run_pipeline() {

@@ -18,15 +18,15 @@ fi
 
 if [ "$MODE" = "smoke" ]; then
     RUN_ROOT="results/champions_tournament_smoke"
-    LOG="runs/champions_tournament_smoke.log"
-    PID_FILE="runs/champions_tournament_smoke.pid"
+    LOG="results/logs/champions_tournament_smoke.log"
+    PID_FILE="results/logs/champions_tournament_smoke.pid"
     GAMES=100
     MC_ROLLOUTS=32
     BOOTSTRAP_SAMPLES=500
 else
     RUN_ROOT="results/champions_tournament"
-    LOG="runs/champions_tournament.log"
-    PID_FILE="runs/champions_tournament.pid"
+    LOG="results/logs/champions_tournament.log"
+    PID_FILE="results/logs/champions_tournament.pid"
     GAMES=5000
     MC_ROLLOUTS=64
     BOOTSTRAP_SAMPLES=5000

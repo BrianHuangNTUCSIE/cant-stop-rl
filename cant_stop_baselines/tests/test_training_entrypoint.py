@@ -38,6 +38,7 @@ class TestTrainingEntrypoint(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "ppo-smoke"
+            results = Path(directory) / "ppo-results"
             result = subprocess.run([
                 sys.executable, "scripts/train_ppo.py",
                 "--pairing-policy", "learned",
@@ -55,9 +56,11 @@ class TestTrainingEntrypoint(unittest.TestCase):
                 # Seed 12103 (episode 1) lets MC win its opening turn before
                 # the seat-1 learner acts, producing a valid empty episode.
                 "--seed", "12102", "--output-dir", str(output),
+                "--results-dir", str(results),
             ], cwd=root, capture_output=True, text=True, check=True)
             self.assertIn("completed=4", result.stdout)
             self.assertTrue((output / "final.pt").exists())
+            self.assertFalse((output / "training_metrics.csv").exists())
 
 
 if __name__ == "__main__":

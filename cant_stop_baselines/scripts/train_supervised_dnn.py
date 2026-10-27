@@ -81,6 +81,8 @@ def main() -> None:
     rows, x, margins, weights = load_data(args.dataset)
     splits = grouped_split(rows, args.seed)
     args.output_dir.mkdir(parents=True, exist_ok=True)
+    results_dir = Path("results") / args.output_dir.name
+    results_dir.mkdir(parents=True, exist_ok=True)
     started = time.perf_counter()
     candidates = [(64, 1e-3), (128, 1e-3), (128, 3e-4)]
     best = None
@@ -106,7 +108,9 @@ def main() -> None:
               "learning_rate": lr, "epochs": args.epochs, "validation_selection": validation,
               "split_states": {key: int(len(value)) for key, value in splits.items()},
               "checkpoint": str(checkpoint), "elapsed_seconds": time.perf_counter() - started}
-    (args.output_dir / "training_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    (results_dir / "training_report.json").write_text(
+        json.dumps(report, indent=2), encoding="utf-8"
+    )
     print(json.dumps(report, indent=2))
 
 

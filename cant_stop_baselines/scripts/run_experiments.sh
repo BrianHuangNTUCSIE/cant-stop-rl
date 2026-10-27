@@ -5,8 +5,8 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 cd "$ROOT"
 
 RUN_ROOT="runs/ddqn_robust_5seeds"
-LOG="runs/ddqn_robust_5seeds.log"
-PID_FILE="runs/ddqn_robust_5seeds.pid"
+LOG="results/logs/ddqn_robust_5seeds.log"
+PID_FILE="results/logs/ddqn_robust_5seeds.pid"
 
 mkdir -p runs
 

@@ -18,8 +18,8 @@ terminate_tree() {
 
 if [ "${1:-}" = "--stop" ]; then
     found=0
-    for pid_file in runs/ddqn_v2_depth_ablation.pid \
-            runs/ddqn_v2_depth_ablation_smoke.pid; do
+    for pid_file in results/logs/ddqn_v2_depth_ablation.pid \
+            results/logs/ddqn_v2_depth_ablation_smoke.pid; do
         if [ -f "$pid_file" ]; then
             pid=$(cat "$pid_file")
             if kill -0 "$pid" 2>/dev/null; then
@@ -45,12 +45,12 @@ esac
 
 if [ "$MODE" = "smoke" ]; then
     RUN_ROOT="runs/ddqn_v2_depth_ablation_smoke"
-    LOG="runs/ddqn_v2_depth_ablation_smoke.log"
-    PID_FILE="runs/ddqn_v2_depth_ablation_smoke.pid"
+    LOG="results/logs/ddqn_v2_depth_ablation_smoke.log"
+    PID_FILE="results/logs/ddqn_v2_depth_ablation_smoke.pid"
 else
     RUN_ROOT="runs/ddqn_v2_depth_ablation"
-    LOG="runs/ddqn_v2_depth_ablation.log"
-    PID_FILE="runs/ddqn_v2_depth_ablation.pid"
+    LOG="results/logs/ddqn_v2_depth_ablation.log"
+    PID_FILE="results/logs/ddqn_v2_depth_ablation.pid"
 fi
 
 run_architecture() {

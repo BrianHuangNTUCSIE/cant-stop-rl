@@ -104,7 +104,8 @@ def main() -> None:
         if not summary_path.exists():
             # Runs with interim evaluation disabled have no best checkpoint;
             # aggregate their final checkpoint instead.
-            summary_path = output_dir / "evaluation_summary.json"
+            summary_path = Path("results") / output_dir.name / "evaluation_summary.json"
+            summary_path.parent.mkdir(parents=True, exist_ok=True)
         summary = json.loads(summary_path.read_text(encoding="utf-8"))
         runs.append({
             "seed": seed,

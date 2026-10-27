@@ -336,7 +336,8 @@ def main() -> None:
             )
 
     report["elapsed_seconds"] = time.perf_counter() - started
-    report_path = args.output_dir / "training_report.json"
+    report_path = Path("results") / args.output_dir.name / "training_report.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(f"Report: {report_path}")
 

@@ -53,11 +53,11 @@ run_ddqn 449 & ddqn_b=$!
 wait "$ddqn_a" "$ddqn_b"
 
 .venv/bin/python3 scripts/train_ml_models.py \
-  --dataset runs/multi_policy_counterfactual_dataset_seed20261028.csv \
+  --dataset data/generated/multi_policy_counterfactual_dataset_seed20261028.csv \
   --models ridge --features domain --seed 642 \
   --output-dir runs/ridge_multi_policy_seed642
 .venv/bin/python3 scripts/train_ml_models.py \
-  --dataset runs/multi_policy_counterfactual_dataset_seed20261028.csv \
+  --dataset data/generated/multi_policy_counterfactual_dataset_seed20261028.csv \
   --models ridge --features domain --seed 643 \
   --output-dir runs/ridge_multi_policy_seed643
 

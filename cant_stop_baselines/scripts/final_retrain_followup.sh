@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
-LOG="runs/final_retrain_followup_20261027.log"
+LOG="results/logs/final_retrain_followup_20261027.log"
 
 for path in \
   runs/ppo_mc_focused_seed460/top_1.pt \

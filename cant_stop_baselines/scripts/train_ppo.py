@@ -125,6 +125,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--seed", type=int, default=450)
     parser.add_argument("--torch-threads", type=int, default=1)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--results-dir", type=Path, default=None,
+        help="Where to write training metadata and evaluation results "
+             "(default: results/<model-run-name>)",
+    )
     return parser
 
 
@@ -338,6 +343,8 @@ def main() -> None:
     validation_opponents = [value.strip() for value in args.validation_opponents.split(",") if value.strip()]
     output = args.output_dir
     output.mkdir(parents=True, exist_ok=True)
+    results = args.results_dir or Path("results") / output.name
+    results.mkdir(parents=True, exist_ok=True)
 
     requested_workers = args.num_workers or args.num_envs
     runtime_config = RuntimeConfig(
@@ -425,7 +432,7 @@ def main() -> None:
         "final_evaluation_games": args.eval_games,
         "evaluation_interval_episodes": args.eval_every,
     }
-    (output / "config.json").write_text(json.dumps(config, indent=2, default=list), encoding="utf-8")
+    (results / "config.json").write_text(json.dumps(config, indent=2, default=list), encoding="utf-8")
 
     # Built-in training agents are stateless; all randomness is supplied by
     # each environment's independent policy RNG. Reusing them avoids rebuilding
@@ -515,8 +522,8 @@ def main() -> None:
     counterfactual_labels = 0
     next_progress = args.progress_every
     next_evaluation = args.eval_every
-    validation_path = output / "validation.csv"
-    metrics_path = output / "training_metrics.csv"
+    validation_path = results / "validation.csv"
+    metrics_path = results / "training_metrics.csv"
     validation_checkpoints: list[dict] = []
     with (
         validation_path.open("w", newline="", encoding="utf-8") as validation_file,
@@ -844,7 +851,7 @@ def main() -> None:
                         output / entry["checkpoint"],
                         output / f"top_{rank}.pt",
                     )
-                (output / "top_checkpoints.json").write_text(
+                (results / "top_checkpoints.json").write_text(
                     json.dumps({
                         "selection_metric": "minimum_win_rate",
                         "checkpoints": top_checkpoints,
@@ -870,7 +877,7 @@ def main() -> None:
     policy = PPOAgent(model)
     reports = evaluate_policy(policy, validation_opponents, args.eval_games,
                               2_000_000 + args.seed, args.mc_rollouts, args.mc_future_roll_limit)
-    (output / "evaluation_summary.json").write_text(
+    (results / "evaluation_summary.json").write_text(
         json.dumps(reports, indent=2), encoding="utf-8"
     )
     print(f"completed={completed} updates={update_count} elapsed={time.monotonic() - started:.1f}s")

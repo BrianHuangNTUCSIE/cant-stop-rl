@@ -7,8 +7,8 @@ cd "$ROOT"
 PYTHON=".venv/bin/python"
 SCRIPT="$ROOT/scripts/run_ddqn_mc_curriculum.sh"
 RUN_DIR="runs/ddqn_mc_curriculum_seed441"
-LOG="runs/ddqn_mc_curriculum_seed441.log"
-PID_FILE="runs/ddqn_mc_curriculum_seed441.pid"
+LOG="results/logs/ddqn_mc_curriculum_seed441.log"
+PID_FILE="results/logs/ddqn_mc_curriculum_seed441.pid"
 
 terminate_tree() {
     target=$1

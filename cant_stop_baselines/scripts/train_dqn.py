@@ -945,7 +945,7 @@ def main() -> None:
         "validation_seed": args.seed + 10_000_000,
         "final_evaluation_seed": args.seed + 20_000_000,
     }
-    (output_dir / "config.json").write_text(
+    (evaluation_output_dir / "config.json").write_text(
         json.dumps(experiment, indent=2), encoding="utf-8"
     )
     print(f"Device: {device} (available: {', '.join(available_device_types())})")
@@ -1198,8 +1198,8 @@ def main() -> None:
         slots.append(new_slot(next_episode, worker_id))
         next_episode += 1
 
-    training_path = output_dir / "training_episodes.csv"
-    metrics_path = output_dir / "training_metrics.csv"
+    training_path = evaluation_output_dir / "training_episodes.csv"
+    metrics_path = evaluation_output_dir / "training_metrics.csv"
     with training_path.open("w", newline="", encoding="utf-8") as episode_handle, \
             metrics_path.open("w", newline="", encoding="utf-8") as metric_handle:
         episode_writer = csv.DictWriter(episode_handle, fieldnames=episode_fields)
@@ -1584,7 +1584,7 @@ def main() -> None:
                         "selection_score": score,
                         "mean_win_rate": mean_rate,
                     })
-                write_csv(output_dir / "validation.csv", evaluation_rows)
+                write_csv(evaluation_output_dir / "validation.csv", evaluation_rows)
                 rates_text = ", ".join(
                     f"{name}={report['agents'][0]['win_rate']:.1%}"
                     for name, report in reports.items()
@@ -1653,7 +1653,7 @@ def main() -> None:
         global_step=global_step, episodes=completed,
         metadata={**runtime, "early_stop_reason": early_stop_reason},
     )
-    (output_dir / "training_status.json").write_text(json.dumps({
+    (evaluation_output_dir / "training_status.json").write_text(json.dumps({
         "requested_episodes": args.episodes,
         "completed_episodes": completed,
         "early_stopped": early_stop_reason is not None,
