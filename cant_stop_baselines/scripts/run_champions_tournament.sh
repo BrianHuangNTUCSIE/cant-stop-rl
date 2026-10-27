@@ -17,14 +17,14 @@ elif [ "$MODE" != "full" ]; then
 fi
 
 if [ "$MODE" = "smoke" ]; then
-    RUN_ROOT="runs/champions_tournament_smoke"
+    RUN_ROOT="results/champions_tournament_smoke"
     LOG="runs/champions_tournament_smoke.log"
     PID_FILE="runs/champions_tournament_smoke.pid"
     GAMES=100
     MC_ROLLOUTS=32
     BOOTSTRAP_SAMPLES=500
 else
-    RUN_ROOT="runs/champions_tournament"
+    RUN_ROOT="results/champions_tournament"
     LOG="runs/champions_tournament.log"
     PID_FILE="runs/champions_tournament.pid"
     GAMES=5000

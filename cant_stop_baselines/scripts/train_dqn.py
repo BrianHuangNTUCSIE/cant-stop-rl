@@ -207,6 +207,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", type=Path, default=None,
                         help="Default: runs/<algorithm>_<features>_seed<seed>")
     parser.add_argument(
+        "--evaluation-output-dir", type=Path, default=None,
+        help="Where to write held-out summaries and game records "
+             "(default: results/<model-run-name>)",
+    )
+    parser.add_argument(
         "--hidden-sizes", type=parse_hidden_sizes, default=(256, 256, 256),
         help="Hidden layers (default: deep 256x256x256 network)",
     )
@@ -744,6 +749,12 @@ def main() -> None:
     output_dir = (args.output_dir if args.output_dir is not None else
                   Path("runs") / f"{args.algorithm}_{feature_name}_{architecture_name}_seed{args.seed}")
     output_dir.mkdir(parents=True, exist_ok=True)
+    evaluation_output_dir = (
+        args.evaluation_output_dir
+        if args.evaluation_output_dir is not None
+        else Path("results") / output_dir.name
+    )
+    evaluation_output_dir.mkdir(parents=True, exist_ok=True)
     device = select_device(args.device)
     if args.torch_threads is not None:
         torch.set_num_threads(args.torch_threads)
@@ -1670,9 +1681,10 @@ def main() -> None:
         for record in report.pop("game_records"):
             game_records.append({"opponent": opponent_name, **record})
     write_evaluation_bundle(
-        output_dir / "evaluation_summary.json", reports, args.checkpoint_metric
+        evaluation_output_dir / "evaluation_summary.json", reports,
+        args.checkpoint_metric
     )
-    write_csv(output_dir / "evaluation_games.csv", game_records)
+    write_csv(evaluation_output_dir / "evaluation_games.csv", game_records)
 
     # The online model may regress after its best validation checkpoint. Keep
     # the final-model report above for diagnostics, but also evaluate the model
@@ -1708,13 +1720,16 @@ def main() -> None:
             for record in best_report.pop("game_records"):
                 best_game_records.append({"opponent": opponent_name, **record})
         write_evaluation_bundle(
-            output_dir / "best_evaluation_summary.json", best_reports,
+            evaluation_output_dir / "best_evaluation_summary.json", best_reports,
             args.checkpoint_metric,
         )
-        write_csv(output_dir / "best_evaluation_games.csv", best_game_records)
+        write_csv(
+            evaluation_output_dir / "best_evaluation_games.csv", best_game_records
+        )
         best_rate = selection_score(best_reports, args.checkpoint_metric)
 
-    print(f"Saved checkpoint and metrics to {output_dir}")
+    print(f"Saved model artifacts to {output_dir}")
+    print(f"Saved evaluation results to {evaluation_output_dir}")
     print(
         "Final-checkpoint held-out selection score: "
         f"{selection_score(reports, args.checkpoint_metric):.1%}"

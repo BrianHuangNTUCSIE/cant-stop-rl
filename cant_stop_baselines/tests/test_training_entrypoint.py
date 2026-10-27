@@ -11,6 +11,7 @@ class TestTrainingEntrypoint(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "smoke"
+            evaluation_output = Path(directory) / "evaluation"
             result = subprocess.run([
                 sys.executable, "scripts/train_dqn.py",
                 "--backend", "python", "--algorithm", "double-dqn",
@@ -23,11 +24,13 @@ class TestTrainingEntrypoint(unittest.TestCase):
                 "--device", "cpu",
                 "--torch-threads", "1", "--seed", "441",
                 "--output-dir", str(output),
+                "--evaluation-output-dir", str(evaluation_output),
             ], cwd=root, capture_output=True, text=True, check=True)
             self.assertIn("Final-checkpoint", result.stdout)
             self.assertTrue((output / "final.pt").exists())
             self.assertTrue((output / "training_episodes.csv").exists())
-            self.assertTrue((output / "evaluation_games.csv").exists())
+            self.assertTrue((evaluation_output / "evaluation_games.csv").exists())
+            self.assertFalse((output / "evaluation_games.csv").exists())
             config = json.loads((output / "config.json").read_text())
             self.assertEqual(config["backend"], "python-reference")
 

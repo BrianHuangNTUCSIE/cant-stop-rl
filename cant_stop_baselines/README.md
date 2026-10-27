@@ -426,7 +426,7 @@ features (the first 58 and 60 values are the raw and enhanced encodings):
 python -m pip install -r requirements-ml.txt
 python scripts/generate_ml_dataset.py \
   --games 1000 --max-states 10000 --rollouts 16 --seed 541 \
-  --output runs/classical_ml/dataset.csv
+  --output data/generated/classical_ml_dataset.csv
 ```
 
 Rollout labelling is the expensive stage. First use a small smoke test such as
@@ -439,7 +439,7 @@ regression on raw, enhanced, and domain features:
 
 ```bash
 python scripts/train_ml_models.py \
-  --dataset runs/classical_ml/dataset.csv \
+  --dataset data/generated/classical_ml_dataset.csv \
   --models all --features all --seed 641 \
   --output-dir runs/classical_ml/models
 ```
@@ -462,7 +462,7 @@ python scripts/evaluate_ml.py \
     runs/classical_ml/models/ridge_domain.joblib \
   --opponents rule28-smart,mc --games 5000 --seed 40000641 \
   --mc-rollouts 32 --workers 4 \
-  --output-dir runs/classical_ml/evaluation
+  --output-dir results/classical_ml/evaluation
 ```
 
 Evaluation alternates seats and reports a confidence interval bootstrapped over
@@ -558,7 +558,7 @@ python scripts/evaluate_ml_head_to_head.py \
     random-forest=runs/classical_ml_seed541/models/random-forest_domain.joblib \
   --games 5000 --seed 50000641 --device cpu \
   --workers 4 \
-  --output-dir runs/model_head_to_head
+  --output-dir results/model_head_to_head
 ```
 
 Every unordered pair plays `--games` games with alternating seats; each
@@ -581,7 +581,7 @@ fixed-pairing Couto adaptation, and the project's smart Rule-of-28 baseline:
 python scripts/evaluate_ml_head_to_head.py \
   --agents glenn-aloi couto couto-ga-stop rule28-smart \
   --games 5000 --seed 50000641 --workers 4 \
-  --output-dir runs/strong_agent_tournament
+  --output-dir results/strong_agent_tournament
 ```
 
 For a one-command six-agent tournament containing the strongest saved DDQN,
@@ -640,7 +640,8 @@ meaning.
 - `docs/EXPERIMENT_STATUS.md`: source of truth for completed experiment results and next steps.
 - `docs/THIRD_PARTY_NOTICES.md`: license notices for the ported Sketch-SA(O) reference.
 - `data/example_results.csv`: sample results of 100 games (`rule28-smart` vs `rule28`; seed 123). These are demonstration results, not formal research claims.
-- `runs/`: all experiment outputs (gitignored; results live only on disk).
+- `runs/`: model checkpoints and model-training artifacts (gitignored).
+- `results/`: evaluation summaries and raw per-game records (gitignored).
 
 ## Gameplay rules implemented
 

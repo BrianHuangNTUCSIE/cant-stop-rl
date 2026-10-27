@@ -252,7 +252,7 @@ def build_parser() -> argparse.ArgumentParser:
               "(default: 1)"),
     )
     parser.add_argument("--output-dir", type=Path,
-                        default=Path("runs/classical_ml/evaluation"))
+                        default=Path("results/classical_ml/evaluation"))
     return parser
 
 

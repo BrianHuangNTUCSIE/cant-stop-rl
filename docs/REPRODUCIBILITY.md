@@ -45,7 +45,8 @@ Before running an existing experiment:
    and model checkpoint.
 5. Preserve the generated JSON metadata and raw game-level CSV records.
 
-Run directories and checkpoints are intentionally ignored by Git. Publish
+Model run directories and evaluation results are intentionally ignored by Git.
+Keep checkpoints under `runs/` and raw game records under `results/`. Publish
 selected outputs as release assets or in an archival repository together with
 their producing commit, configuration, and checksums.
 

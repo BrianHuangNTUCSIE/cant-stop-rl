@@ -25,7 +25,7 @@ def main() -> None:
     parser.add_argument("--bootstrap-samples", type=int, default=2_000)
     parser.add_argument("--progress-every", type=int, default=1)
     parser.add_argument("--output-dir", type=Path,
-                        default=Path("runs/mc_vs_mc_strong"))
+                        default=Path("results/mc_vs_mc_strong"))
     args = parser.parse_args()
     if min(args.games, args.max_turns, args.mc_rollouts,
            args.bootstrap_samples) < 1:

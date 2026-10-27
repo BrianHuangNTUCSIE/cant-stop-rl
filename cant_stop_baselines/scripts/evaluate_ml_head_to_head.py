@@ -178,7 +178,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Parallel matchup processes; 1 runs sequentially (default: 1)",
     )
     parser.add_argument("--output-dir", type=Path,
-                        default=Path("runs/classical_ml/head_to_head"))
+                        default=Path("results/classical_ml/head_to_head"))
     return parser
 
 

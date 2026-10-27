@@ -53,10 +53,9 @@ Optional ML and RL dependencies are documented in
 ## Reproducibility
 
 Experiments must save their configuration, code version, seeds, raw game-level
-CSV records, and machine/dependency metadata. CSV files are retained when they
-support plots or statistical analysis. Runtime logs, caches, virtual
-environments, checkpoints, and generated report intermediates are local
-artifacts and are ignored by Git.
+CSV records, and machine/dependency metadata. Model checkpoints belong under
+`runs/`; evaluation summaries and raw game records belong under `results/`.
+Both are local artifacts and are ignored by Git.
 
 Read `cant_stop_baselines/docs/EXPERIMENT_STATUS.md` before interpreting or
 extending the existing results. The current evaluator alternates seats and

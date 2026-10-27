@@ -112,7 +112,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-turns", type=int, default=2_000)
     parser.add_argument("--max-future-turns", type=int, default=500)
     parser.add_argument("--output", type=Path,
-                        default=Path("runs/classical_ml/dataset.csv"))
+                        default=Path("data/generated/classical_ml_dataset.csv"))
     parser.add_argument("--log-every", type=int, default=100)
     return parser
 
