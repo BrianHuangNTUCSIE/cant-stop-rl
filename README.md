@@ -16,8 +16,6 @@ used by the accompanying research project.
 - `final_report/` — paper source and generated figures/PDF.
 - `spec.pdf` — course specification; it is not part of the engine contract.
 
-The compatibility-first migration strategy and target architecture are in
-[`docs/REFACTOR_GUIDE.md`](docs/REFACTOR_GUIDE.md).
 The clean-checkout verification and experiment recording procedure is in
 [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md).
 

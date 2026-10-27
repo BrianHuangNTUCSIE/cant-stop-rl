@@ -69,7 +69,7 @@
 - **Tabletop Games framework (MIT; rules and generic search)** — https://github.com/GAIGResearch/TabletopGames ; https://tabletopgames.ai/wiki/games/implemented/
 - **Python engine reference (MIT; not an AI strategy)** — https://github.com/recommend-games/cant-stop
 
-**Do not automatically clone and copy code.** First verify availability, repository layout, commit SHA, license, dependencies and whether the code really contains the claimed strategy. Record findings in `docs/source_audit.md`.
+**Do not automatically clone and copy code.** First verify availability, repository layout, commit SHA, license, dependencies and whether the code really contains the claimed strategy. Record provenance with the experiment configuration and report notes.
 
 ## 3. Existing-engine audit — 必須先完成
 
@@ -81,7 +81,7 @@ Find and document:
 - Current baselines and their configuration; DDQN input encoding, action mask, model loading and evaluator.
 - Existing test harness and game logs; exact seed semantics and alternating first-player policy.
 
-Deliver `docs/engine_integration_audit.md` with actual file paths, discovered signatures and any incompatibilities. If engine has a single action-selection callback, implement a bridge rather than editing all agents.
+Document actual file paths, discovered signatures and incompatibilities in the relevant experiment notes. If engine has a single action-selection callback, implement a bridge rather than editing all agents.
 
 ### Suggested conceptual adapter (adapt names to actual repo)
 
@@ -269,8 +269,6 @@ configs/
   reproducible_agents.yaml
   search_budgets.yaml
 docs/
-  engine_integration_audit.md
-  source_audit.md
   reproduction_gaps.md
   algorithm_provenance.md
   unreproduced_references.md
@@ -304,7 +302,7 @@ Each agent is complete only when:
 
 ## 13. Agent execution plan — follow this order
 
-**Phase 0 — audit only:** Read the project and primary papers; generate `docs/engine_integration_audit.md`, `docs/source_audit.md`, and an implementation checklist. Check licenses before porting. If paper tables/formulas are ambiguous, stop and log exact missing details.
+**Phase 0 — audit only:** Read the project and primary papers. Check licenses before porting. If paper tables/formulas are ambiguous, stop and record the exact missing details in the experiment notes.
 
 **Phase 1 — deterministic heuristics:** Implement and test Glenn 2009 Constant and Glenn 2010 Linear; confirm pair-choice and stop logic from the actual papers; integrate registry and run smoke comparisons.
 

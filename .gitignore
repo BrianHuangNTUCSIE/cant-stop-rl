@@ -38,3 +38,6 @@ dist/
 # Local editor files
 .idea/
 .vscode/
+
+# For AI agents
+AGENTS.md
