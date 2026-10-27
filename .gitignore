@@ -1,0 +1,40 @@
+# Local environments and caches
+.venv/
+venv/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.DS_Store
+
+# Local nested-repository backup created during migration
+.git-legacy-backup/
+cant_stop_baselines/.git-legacy-backup/
+
+# Generated experiment outputs
+runs/
+cant_stop_baselines/runs/
+results/
+checkpoints/
+*.pt
+*.pth
+*.joblib
+*.pid
+*.log
+
+# Generated report/build products
+*.aux
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
+build/
+dist/
+*.egg-info/
+
+# Local editor files
+.idea/
+.vscode/

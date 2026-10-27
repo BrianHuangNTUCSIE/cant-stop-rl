@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "pair": {
+    "op": "argmax",
+    "over": "actions",
+    "score": {"op": "action_advance", "column": 7}
+  },
+  "stop": {
+    "op": "ge",
+    "left": {"op": "rule28_points"},
+    "right": 28
+  }
+}
