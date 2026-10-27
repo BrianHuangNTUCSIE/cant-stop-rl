@@ -38,6 +38,15 @@ python3 -m pip install -e .
 cant-stop --agent-a rule28-smart --agent-b random --games 100 --seed 42
 ```
 
+The same checks are available through the root developer commands:
+
+```bash
+make verify
+```
+
+Use `make install-ml` or `make install-rl` when running the corresponding
+optional experiment families.
+
 Optional ML and RL dependencies are documented in
 `cant_stop_baselines/requirements-ml.txt` and
 `cant_stop_baselines/requirements-rl.txt`, and are also available as the
