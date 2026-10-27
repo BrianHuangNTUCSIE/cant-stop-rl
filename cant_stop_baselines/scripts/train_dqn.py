@@ -24,11 +24,11 @@ from pathlib import Path
 
 import torch
 
-from cant_stop_core.agents import AGENT_NAMES, Agent, make_agent
-from cant_stop_core.backend import create_actor_backend
-from cant_stop_core.config import BACKENDS, RuntimeConfig
-from cant_stop_core.evaluation import wilson_interval
-from cant_stop_core.dqn import (
+from cant_stop.agents import AGENT_NAMES, Agent, make_agent
+from cant_stop.backend import create_actor_backend
+from cant_stop.config import BACKENDS, RuntimeConfig
+from cant_stop.evaluation import wilson_interval
+from cant_stop.dqn import (
     DQNAgent,
     DQNConfig,
     NStepAccumulator,
@@ -43,10 +43,10 @@ from cant_stop_core.dqn import (
     seed_torch,
     select_device,
 )
-from cant_stop_core.evaluation import evaluate
-from cant_stop_core.rl_env import StopContinueEnv
-from cant_stop_core.mc_distillation import RolloutConfig, label_state
-from cant_stop_core.transition import Transition, TransitionBatch
+from cant_stop.evaluation import evaluate
+from cant_stop.rl_env import StopContinueEnv
+from cant_stop.mc_distillation import RolloutConfig, label_state
+from cant_stop.transition import Transition, TransitionBatch
 from rollout.protocol import ActorState
 from learners.dqn_learner import DQNLearner
 
@@ -659,7 +659,7 @@ def main() -> None:
 
     external_opponents: dict[str, Agent] = {}
     if args.ridge_opponent is not None:
-        from cant_stop_core.classical_ml import ClassicalMLAgent
+        from cant_stop.classical_ml import ClassicalMLAgent
         external_opponents["ridge-domain"] = ClassicalMLAgent.from_file(
             args.ridge_opponent
         )

@@ -37,7 +37,7 @@ except ImportError as exc:  # pragma: no cover - optional dependency
         "Classical ML training requires requirements-ml.txt"
     ) from exc
 
-from cant_stop_core.classical_ml import FEATURE_SIZES, save_model_bundle
+from cant_stop.classical_ml import FEATURE_SIZES, save_model_bundle
 
 
 MODEL_NAMES = ("logistic", "decision-tree", "random-forest", "linear-svm", "ridge")

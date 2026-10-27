@@ -18,16 +18,16 @@ import torch
 from torch import nn
 from torch.distributions import Categorical
 
-from cant_stop_core.agents import make_agent
-from cant_stop_core.backend import create_actor_backend
-from cant_stop_core.config import BACKENDS, RuntimeConfig
-from cant_stop_core.evaluation import evaluate
-from cant_stop_core.ppo import (
+from cant_stop.agents import make_agent
+from cant_stop.backend import create_actor_backend
+from cant_stop.config import BACKENDS, RuntimeConfig
+from cant_stop.evaluation import evaluate
+from cant_stop.ppo import (
     PPOActorCritic, PPOAgent, initialize_from_ddqn, initialize_from_ppo,
     joint_action_masks, mask_policy_logits, save_checkpoint,
 )
-from cant_stop_core.rl_env import JointAction, StopContinueEnv
-from cant_stop_core.mc_distillation import RolloutConfig, label_state
+from cant_stop.rl_env import JointAction, StopContinueEnv
+from cant_stop.mc_distillation import RolloutConfig, label_state
 
 
 def parse_mix(value: str) -> dict[str, float]:

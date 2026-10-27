@@ -11,10 +11,10 @@ ROOT = str(Path(__file__).resolve().parents[1])
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from cant_stop_core.agents import make_agent
-from cant_stop_core.game import Game
-from cant_stop_core.model import State
-from cant_stop_core.rl_env import StopContinueAction
+from cant_stop.agents import make_agent
+from cant_stop.game import Game
+from cant_stop.model import State
+from cant_stop.rl_env import StopContinueAction
 from evaluate_ml import ModelSpec, load_saved_agent
 from generate_ml_dataset import label_state
 

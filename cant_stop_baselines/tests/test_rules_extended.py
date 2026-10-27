@@ -3,7 +3,7 @@ import random
 import unittest
 
 from cant_stop import COLUMNS, LENGTH, Game, Move, State, bust_probability, legal_moves
-from cant_stop_core.rules import _legal_move_columns_fast
+from cant_stop.rules import _legal_move_columns_fast
 
 
 def reference_moves(dice, permanent, owner, active):

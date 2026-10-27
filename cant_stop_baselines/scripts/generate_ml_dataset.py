@@ -18,10 +18,10 @@ import random
 import time
 from pathlib import Path
 
-from cant_stop_core.agents import Rule28Agent
-from cant_stop_core.game import Game
-from cant_stop_core.model import State
-from cant_stop_core.rl_env import StopContinueAction
+from cant_stop.agents import Rule28Agent
+from cant_stop.game import Game
+from cant_stop.model import State
+from cant_stop.rl_env import StopContinueAction
 
 
 FEATURE_COLUMNS = [f"x{index:02d}" for index in range(68)]

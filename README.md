@@ -6,7 +6,7 @@ used by the accompanying research project.
 
 ## Repository guide
 
-- `cant_stop_baselines/cant_stop_core/` — reusable rules, state model, engine,
+- `src/cant_stop/` — reusable rules, state model, engine,
   agents, RL environment, and evaluation API.
 - `cant_stop_baselines/scripts/` — training, evaluation, dataset, and analysis
   entry points.
@@ -23,12 +23,12 @@ The clean-checkout verification and experiment recording procedure is in
 
 ## Quick start
 
-The current source tree remains runnable directly:
+The source tree is installed as a normal `src/` package:
 
 ```bash
 cd cant_stop_baselines
 python3 -m unittest discover -s tests -t . -v
-python3 cant_stop.py --agent-a rule28-smart --agent-b random --games 100 --seed 42
+cant-stop --agent-a rule28-smart --agent-b random --games 100 --seed 42
 ```
 
 For an editable install from the repository root:

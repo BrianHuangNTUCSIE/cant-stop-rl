@@ -1,6 +1,6 @@
 import unittest
 
-from cant_stop_core.paired_analysis import paired_bootstrap, paired_units
+from cant_stop.paired_analysis import paired_bootstrap, paired_units
 
 
 class TestPairedAnalysis(unittest.TestCase):

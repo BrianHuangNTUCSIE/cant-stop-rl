@@ -16,9 +16,9 @@ import json
 import time
 from pathlib import Path
 
-from cant_stop_core.agents import AGENT_NAMES, RandomAgent, make_agent
-from cant_stop_core.dqn import DQNAgent
-from cant_stop_core.evaluation import evaluate
+from cant_stop.agents import AGENT_NAMES, RandomAgent, make_agent
+from cant_stop.dqn import DQNAgent
+from cant_stop.evaluation import evaluate
 
 
 OPPONENTS = AGENT_NAMES

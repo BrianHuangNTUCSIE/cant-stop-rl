@@ -16,7 +16,7 @@ Phase 0 is complete only when the following are explicit. Items marked **blocked
 ## Phase 1 — deterministic heuristics
 
 - [x] Decide and document names/classification: `glenn2009_constant` and the verified Table 6 `glenn2010_linear` variant.
-- [x] Implement as thin `Agent` adapters in `cant_stop_core/agents.py`; do not edit `Game`.
+- [x] Implement as thin `Agent` adapters in `cant_stop/agents.py`; do not edit `Game`.
 - [x] Separate pair selection from Stop/Continue policy; vmerckle evaluates pair/action combinations at the root.
 - [x] Implement complete paper scoring: symmetry, progress denominator, marker penalties, difficulty bonuses, threshold, top/blocked columns, winning bank, invalid-pair behavior, and deterministic tie-breaking.
 - [x] Add hand-calculated equation tests and winning/boundary coverage; existing engine tests cover legal pairings, bust, banking, and wins.

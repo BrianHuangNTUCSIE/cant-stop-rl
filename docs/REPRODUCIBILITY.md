@@ -10,7 +10,8 @@ python3 -m pip install --no-deps -e .
 ```
 
 Alternatively, `make install` runs the same core installation command and
-`make verify` performs installation, tests, and the smoke test together.
+`make verify` installs the optional test dependencies, runs the full suite, and
+executes the smoke test together.
 
 The core package has no runtime dependencies. Install the optional extras only
 for the corresponding experiments:

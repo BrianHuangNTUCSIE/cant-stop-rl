@@ -20,9 +20,9 @@ import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 
-from cant_stop_core.agents import AGENT_NAMES, make_agent
-from cant_stop_core.classical_ml import ClassicalMLAgent
-from cant_stop_core.evaluation import evaluate
+from cant_stop.agents import AGENT_NAMES, make_agent
+from cant_stop.classical_ml import ClassicalMLAgent
+from cant_stop.evaluation import evaluate
 
 
 OPPONENTS = AGENT_NAMES
@@ -86,10 +86,10 @@ def load_saved_agent(spec: ModelSpec, device: str):
     if algorithm is None and isinstance(payload.get("config"), dict):
         algorithm = payload["config"].get("algorithm")
     if algorithm == "supervised-dnn":
-        from cant_stop_core.supervised_dnn import load_checkpoint
+        from cant_stop.supervised_dnn import load_checkpoint
         return load_checkpoint(spec.path, device=device), "supervised-dnn"
     if algorithm == "ppo" or "model_state_dict" in payload:
-        from cant_stop_core.ppo import PPOAgent, load_checkpoint
+        from cant_stop.ppo import PPOAgent, load_checkpoint
         model, _ = load_checkpoint(spec.path, device=device)
         pairing_policy = None
         if spec.ppo_pairing_policy is not None:
@@ -102,7 +102,7 @@ def load_saved_agent(spec: ModelSpec, device: str):
     if algorithm in ("dqn", "double-dqn") or "online_state_dict" in payload:
         if spec.ppo_pairing_policy is not None:
             raise ValueError("PPO pairing overrides can only be used with PPO checkpoints")
-        from cant_stop_core.dqn import DQNAgent
+        from cant_stop.dqn import DQNAgent
         return DQNAgent.from_checkpoint(spec.path, device=device), str(algorithm or "dqn")
     raise ValueError(f"Unrecognized neural checkpoint format: {spec.path}")
 

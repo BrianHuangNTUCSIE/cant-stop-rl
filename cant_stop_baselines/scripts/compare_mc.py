@@ -11,8 +11,8 @@ _PROJECT_ROOT = str(Path(__file__).resolve().parents[1])
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
-from cant_stop_core.agents import make_agent
-from cant_stop_core.evaluation import evaluate
+from cant_stop.agents import make_agent
+from cant_stop.evaluation import evaluate
 from evaluate_ml import paired_bootstrap_interval
 
 

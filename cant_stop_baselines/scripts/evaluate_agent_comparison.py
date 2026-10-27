@@ -17,8 +17,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from cant_stop_core.agents import AGENT_NAMES, make_agent
-from cant_stop_core.evaluation import evaluate
+from cant_stop.agents import AGENT_NAMES, make_agent
+from cant_stop.evaluation import evaluate
 
 
 def build_parser() -> argparse.ArgumentParser:

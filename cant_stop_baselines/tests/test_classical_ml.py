@@ -2,9 +2,9 @@ import argparse
 import random
 import unittest
 
-from cant_stop_core.classical_ml import ClassicalMLAgent
-from cant_stop_core.game import Game
-from cant_stop_core.rl_env import StopContinueAction
+from cant_stop.classical_ml import ClassicalMLAgent
+from cant_stop.game import Game
+from cant_stop.rl_env import StopContinueAction
 from generate_ml_dataset import (branch_outcome, game_from_decision_state,
                                  label_state)
 from evaluate_ml import (

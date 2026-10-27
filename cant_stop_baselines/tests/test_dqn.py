@@ -13,7 +13,7 @@ except ImportError:
 class TestDQNComponents(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        from cant_stop_core import dqn
+        from cant_stop import dqn
         cls.dqn = dqn
 
     def test_auto_device_returns_available_backend(self):
@@ -55,7 +55,7 @@ class TestDQNComponents(unittest.TestCase):
         self.assertEqual(int(dones.sum().item()), 1)
 
     def test_versioned_transition_batch_inserts_into_replay(self):
-        from cant_stop_core.transition import Transition, TransitionBatch
+        from cant_stop.transition import Transition, TransitionBatch
 
         device = self.dqn.select_device("cpu")
         replay = self.dqn.ReplayBuffer(3, 2, random.Random(3))
@@ -255,7 +255,7 @@ class TestDQNComponents(unittest.TestCase):
             )
             agent = self.dqn.DQNAgent.from_checkpoint(path, device="cpu")
             self.assertTrue(agent.strategic_features)
-            from cant_stop_core.rl_env import StopContinueEnv
+            from cant_stop.rl_env import StopContinueEnv
             env = StopContinueEnv(
                 strategic_features=True, learn_pairing=True, seed=7,
             )

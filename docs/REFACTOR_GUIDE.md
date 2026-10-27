@@ -6,34 +6,33 @@ The repository is being converted from a course-workspace layout into a public
 research repository. The public contract is a reusable *Can't Stop* engine;
 the paper experiments are clients of that engine, not part of its rules.
 
-This guide deliberately uses a compatibility-first migration. Existing import
-paths and experiment commands remain available while the package boundary is
-stabilized. Large moves should happen only after tests and reproduction checks
-pass.
+This guide records the completed compatibility-first migration. The package
+boundary is now stable; experiment commands remain available, but the old
+source-layout compatibility files have been removed.
 
 ## Current boundary
 
-The current implementation lives under `cant_stop_baselines/`:
+The reusable implementation now lives under `src/`:
 
 | Layer | Responsibility | Allowed dependencies |
 |---|---|---|
-| `cant_stop_core/model.py`, `constants.py` | Immutable state, moves, board constants | Standard library |
-| `cant_stop_core/rules.py` | Pure legal-move and scoring functions | Core model/constants |
-| `cant_stop_core/game.py` | Seeded mutable state machine | Core rules/model |
-| `cant_stop_core/agents.py` | Policy adapters and heuristics | Core state/rules |
-| `cant_stop_core/rl_env.py` | Learner-facing environment | Core engine |
-| `cant_stop_core/evaluation.py` | Game execution and metrics | Core engine and agents |
-| `cant_stop_core/dqn.py`, `ppo.py` | Optional learning implementations | PyTorch |
-| `scripts/`, `learners/`, `rollout/` | Experiment orchestration | Core plus optional dependencies |
+| `src/cant_stop/model.py`, `constants.py` | Immutable state, moves, board constants | Standard library |
+| `src/cant_stop/rules.py` | Pure legal-move and scoring functions | Core model/constants |
+| `src/cant_stop/game.py` | Seeded mutable state machine | Core rules/model |
+| `src/cant_stop/agents.py` | Policy adapters and heuristics | Core state/rules |
+| `src/cant_stop/rl_env.py` | Learner-facing environment | Core engine |
+| `src/cant_stop/evaluation.py` | Game execution and metrics | Core engine and agents |
+| `src/cant_stop/dqn.py`, `ppo.py` | Optional learning implementations | PyTorch |
+| `src/learners/`, `src/rollout/` | Experiment orchestration support | Core plus optional dependencies |
 
 The engine must not import training scripts, report code, plotting libraries,
 or experiment configuration. Agents must not mutate agent-facing snapshots.
 
 ## Target public layout
 
-The package will eventually be moved to a conventional `src/cant_stop/`
-layout. Until then, `pyproject.toml` installs the existing package from
-`cant_stop_baselines/` and the old `cant_stop.py` facade remains supported.
+The package now uses the conventional `src/cant_stop/` layout. The old
+`cant_stop.py` compatibility facade has been removed; use the installed
+`cant-stop` command or import `cant_stop` directly.
 
 ```text
 src/cant_stop/
@@ -60,10 +59,10 @@ results/           # generated and normally ignored
   generated report intermediates.
 - Keep CSV/JSON experiment evidence available locally while excluding generated
   run directories from future commits.
-- Preserve the existing nested Git history as `.git-legacy-backup/` while the
-  root repository becomes the official repository.
+- Migrate the reusable package into `src/` and remove the nested repository
+  metadata after the migration is verified.
 
-### Phase 2: Engine contract
+### Phase 2: Engine contract (implemented)
 
 - Define versioned `Game`, `State`, `Move`, and transition protocols.
 - Document legal actions and phase transitions.
@@ -71,7 +70,7 @@ results/           # generated and normally ignored
 - Test marker limits, duplicate sums, completed columns, bust/bank behavior,
   terminal states, and seeded reproducibility.
 
-### Phase 3: Agent and environment contracts
+### Phase 3: Agent and environment contracts (implemented)
 
 - Use one policy interface for move selection and Stop/Continue decisions.
 - Keep dice pairing, stop policy, state encoding, reward, and opponent factory
@@ -79,7 +78,7 @@ results/           # generated and normally ignored
 - Ensure an agent can be registered without editing engine code.
 - Keep optional PyTorch and scikit-learn dependencies out of core imports.
 
-### Phase 4: Configuration-driven experiments
+### Phase 4: Configuration-driven experiments (in progress)
 
 - Replace shell-script-only settings with validated YAML or JSON configs.
 - Record rules version, feature schema, algorithm, hyperparameters, model path,

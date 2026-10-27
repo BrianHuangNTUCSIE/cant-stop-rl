@@ -18,15 +18,14 @@ rl = ["numpy>=2,<3", "torch>=2.6,<3"]
 dev = ["pytest>=8", "ruff>=0.8"]
 
 [project.scripts]
-cant-stop = "cant_stop_core.cli:main"
+cant-stop = "cant_stop.cli:main"
 
 [tool.setuptools]
-package-dir = {"" = "cant_stop_baselines"}
-py-modules = ["cant_stop"]
+package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
-where = ["cant_stop_baselines"]
-include = ["cant_stop_core*", "learners*", "rollout*"]
+where = ["src"]
+include = ["cant_stop*", "learners*", "rollout*"]
 
 [tool.pytest.ini_options]
 testpaths = ["cant_stop_baselines/tests"]

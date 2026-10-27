@@ -7,15 +7,15 @@
 
 | Responsibility | File | Actual API / finding |
 |---|---|---|
-| Immutable agent state | `cant_stop_core/model.py` | `State(permanent, owner, active, current_player, rolls_this_turn)`; `Move(columns)`; `State.features()` returns 58 raw, 60 enhanced, 68 domain, or 80 strategic values. |
-| Rules | `cant_stop_core/rules.py` | `legal_moves(dice, permanent, owner, active)`, `advance_active(...)`, `bust_probability(state)`, `rule28_points(state)`, `pair_score(...)`. Pure functions. |
-| Mutable engine | `cant_stop_core/game.py` | `Game.roll(rng, dice=None)`, `apply_move(move)`, `continue_turn()`, `stop()`, `snapshot()`. Phases: `roll`, `pair`, `decision`, `done`. No policy code. |
-| Agent contract | `cant_stop_core/agents.py` | `Agent.choose_move(state, moves, rng) -> Move` and `Agent.should_stop(state, rng) -> bool`. This is the adapter contract to preserve. |
-| Agent registry | `cant_stop_core/agents.py` | `AGENT_NAMES` and `make_agent(name, mc_rollouts=64, mc_future_roll_limit=40)`. CLI choices come from `AGENT_NAMES`. |
-| Evaluation | `cant_stop_core/evaluation.py` | `play_game(agents, seed, max_total_turns=2000)` and `evaluate(...)`. Alternates seats; game `i` uses `seed + i//2`, so seat-swapped games share dice seeds. Dice RNG and two seat-specific policy RNGs are separate. |
-| CLI | `cant_stop_core/cli.py`, `cant_stop.py` | `--agent-a`, `--agent-b`, `--games`, `--seed`, `--mc-rollouts`, `--max-turns`, JSON/CSV output. |
-| DQN | `cant_stop_core/dqn.py`, `scripts/train_dqn.py` | `DQNAgent.from_checkpoint(path, device=...)`; existing two-action Stop/Continue and learned-pairing modes. Do not rename or replace existing DDQN. |
-| RL environment | `cant_stop_core/rl_env.py` | Dependency-free Stop/Continue environment; joint pairing mode is already supported by the training path. |
+| Immutable agent state | `cant_stop/model.py` | `State(permanent, owner, active, current_player, rolls_this_turn)`; `Move(columns)`; `State.features()` returns 58 raw, 60 enhanced, 68 domain, or 80 strategic values. |
+| Rules | `cant_stop/rules.py` | `legal_moves(dice, permanent, owner, active)`, `advance_active(...)`, `bust_probability(state)`, `rule28_points(state)`, `pair_score(...)`. Pure functions. |
+| Mutable engine | `cant_stop/game.py` | `Game.roll(rng, dice=None)`, `apply_move(move)`, `continue_turn()`, `stop()`, `snapshot()`. Phases: `roll`, `pair`, `decision`, `done`. No policy code. |
+| Agent contract | `cant_stop/agents.py` | `Agent.choose_move(state, moves, rng) -> Move` and `Agent.should_stop(state, rng) -> bool`. This is the adapter contract to preserve. |
+| Agent registry | `cant_stop/agents.py` | `AGENT_NAMES` and `make_agent(name, mc_rollouts=64, mc_future_roll_limit=40)`. CLI choices come from `AGENT_NAMES`. |
+| Evaluation | `cant_stop/evaluation.py` | `play_game(agents, seed, max_total_turns=2000)` and `evaluate(...)`. Alternates seats; game `i` uses `seed + i//2`, so seat-swapped games share dice seeds. Dice RNG and two seat-specific policy RNGs are separate. |
+| CLI | `src/cant_stop/cli.py`, `cant-stop` | `--agent-a`, `--agent-b`, `--games`, `--seed`, `--mc-rollouts`, `--max-turns`, JSON/CSV output. |
+| DQN | `cant_stop/dqn.py`, `scripts/train_dqn.py` | `DQNAgent.from_checkpoint(path, device=...)`; existing two-action Stop/Continue and learned-pairing modes. Do not rename or replace existing DDQN. |
+| RL environment | `cant_stop/rl_env.py` | Dependency-free Stop/Continue environment; joint pairing mode is already supported by the training path. |
 | Tests | `cant_stop_baselines/tests/` | Rule, transition, evaluation, RL, DQN, classical ML, PPO, native parity, and migration tests. |
 
 ## Rules and state invariants observed

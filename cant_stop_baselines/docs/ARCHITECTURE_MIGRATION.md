@@ -4,9 +4,9 @@
 
 第一個 milestone 已建立可回退的基礎路徑：
 
-- `cant_stop_core/transition.py` 固定 schema version 1，並統一 terminal
+- `cant_stop/transition.py` 固定 schema version 1，並統一 terminal
   `next_state` 為固定長度 zero vector。
-- `cant_stop_core/backend.py` 與 `config.py` 定義 backend boundary 和可寫入
+- `cant_stop/backend.py` 與 `config.py` 定義 backend boundary 和可寫入
   config/checkpoint 的 runtime metadata。
 - `rollout/` 提供 persistent Python multiprocessing actors、batched dispatch、
   worker failure propagation 與明確 shutdown。
@@ -60,13 +60,13 @@ native or Python actor workers
 目前核心程式位於：
 
 ```text
-cant_stop_core/model.py       # Move, State, feature encoding
-cant_stop_core/rules.py       # legal moves, bust probability, scores
-cant_stop_core/game.py        # mutable game state machine
-cant_stop_core/agents.py      # heuristic and MC agents
-cant_stop_core/rl_env.py      # learner-facing environment
-cant_stop_core/evaluation.py  # game execution and evaluation
-cant_stop_core/dqn.py         # PyTorch model, replay, optimization
+cant_stop/model.py       # Move, State, feature encoding
+cant_stop/rules.py       # legal moves, bust probability, scores
+cant_stop/game.py        # mutable game state machine
+cant_stop/agents.py      # heuristic and MC agents
+cant_stop/rl_env.py      # learner-facing environment
+cant_stop/evaluation.py  # game execution and evaluation
+cant_stop/dqn.py         # PyTorch model, replay, optimization
 scripts/train_dqn.py          # training orchestration
 ```
 
@@ -116,7 +116,7 @@ scripts/train_dqn.py          # training orchestration
 建議新增以下責任分層：
 
 ```text
-cant_stop_core/
+cant_stop/
     model.py, rules.py, game.py, agents.py, evaluation.py  # Python reference
     backend.py                  # backend protocol/factory
     transition.py               # fixed transition schema

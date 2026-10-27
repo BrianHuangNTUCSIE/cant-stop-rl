@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from cant_stop_core.game import Game
-from cant_stop_core.rules import legal_moves
+from cant_stop.game import Game
+from cant_stop.rules import legal_moves
 
 
 class TestNativeRules(unittest.TestCase):

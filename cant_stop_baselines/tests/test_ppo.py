@@ -5,9 +5,9 @@ import random
 
 import torch
 
-from cant_stop_core.agents import CoutoAgent, Rule28Agent
-from cant_stop_core.game import Game
-from cant_stop_core.ppo import (
+from cant_stop.agents import CoutoAgent, Rule28Agent
+from cant_stop.game import Game
+from cant_stop.ppo import (
     PPOActorCritic, PPOAgent, initialize_from_ddqn, initialize_from_ppo,
     joint_action_masks, load_checkpoint, mask_policy_logits, save_checkpoint,
 )

@@ -8,13 +8,13 @@ From this folder:
 
 ```bash
 python3 -m unittest discover -s tests -t . -v
-python3 cant_stop.py --agent-a rule28-smart --agent-b random --games 1000 --seed 42
-python3 cant_stop.py --agent-a couto --agent-b glenn-aloi --games 5000 --seed 42 --csv games.csv
-python3 cant_stop.py --agent-a rule28-smart --agent-b rule28 --games 1000 --seed 42 --csv games.csv
-python3 cant_stop.py --agent-a mc --agent-b rule28-smart --games 100 --mc-rollouts 32 --seed 42
-python3 cant_stop.py --agent-a vmerckle_monte --agent-b random --games 100 --mc-rollouts 16 --seed 42
-python3 cant_stop.py --agent-a vmerckle_monte_uct --agent-b random --games 100 --mc-rollouts 16 --seed 42
-python3 cant_stop.py --agent-a rule28-smart --agent-b random --games 100 --json
+cant-stop --agent-a rule28-smart --agent-b random --games 1000 --seed 42
+cant-stop --agent-a couto --agent-b glenn-aloi --games 5000 --seed 42 --csv games.csv
+cant-stop --agent-a rule28-smart --agent-b rule28 --games 1000 --seed 42 --csv games.csv
+cant-stop --agent-a mc --agent-b rule28-smart --games 100 --mc-rollouts 32 --seed 42
+cant-stop --agent-a vmerckle_monte --agent-b random --games 100 --mc-rollouts 16 --seed 42
+cant-stop --agent-a vmerckle_monte_uct --agent-b random --games 100 --mc-rollouts 16 --seed 42
+cant-stop --agent-a rule28-smart --agent-b random --games 100 --json
 ```
 
 All output is deterministic for the same code, seed, and agent parameters. The optional CSV has one row per game.
@@ -27,7 +27,7 @@ Saved project-local Sketch JSON programs can be evaluated without enabling
 Python code execution:
 
 ```bash
-python3 cant_stop.py --sketch-program-a programs/example.json \
+cant-stop --sketch-program-a programs/example.json \
   --agent-b rule28-smart --games 100 --seed 42
 ```
 
@@ -311,7 +311,7 @@ clearly. Checkpoints store CPU weights and can be loaded on a different
 supported device:
 
 ```python
-from cant_stop_core.dqn import DQNAgent
+from cant_stop.dqn import DQNAgent
 
 agent = DQNAgent.from_checkpoint(
     "runs/ddqn_enhanced_128_seed441/best.pt", device="auto"
@@ -607,19 +607,19 @@ invoked from this folder (for example `python scripts/train_dqn.py ...` or
 path to the project root so relative `runs/...` output paths keep their previous
 meaning.
 
-- `cant_stop.py`: backwards-compatible import facade and evaluation CLI entrypoint.
-- `cant_stop_core/constants.py`: board dimensions and heuristic constants.
-- `cant_stop_core/model.py`: immutable `Move` and agent-facing `State` values/features.
-- `cant_stop_core/rules.py`: pure move generation, bust probability, and heuristic scoring.
-- `cant_stop_core/game.py`: policy-free mutable game state machine.
-- `cant_stop_core/agents.py`: random, Rule-of-28, Glenn–Aloi, Couto Sketch-SA(O), and one-turn Monte Carlo agents.
-- `cant_stop_core/evaluation.py`: seeded game execution and head-to-head metrics.
-- `cant_stop_core/rl_env.py`: dependency-free Stop/Continue RL environment.
-- `cant_stop_core/backend.py`, `config.py`, `transition.py`: versioned backend
+- `cant-stop`: backwards-compatible import facade and evaluation CLI entrypoint.
+- `cant_stop/constants.py`: board dimensions and heuristic constants.
+- `cant_stop/model.py`: immutable `Move` and agent-facing `State` values/features.
+- `cant_stop/rules.py`: pure move generation, bust probability, and heuristic scoring.
+- `cant_stop/game.py`: policy-free mutable game state machine.
+- `cant_stop/agents.py`: random, Rule-of-28, Glenn–Aloi, Couto Sketch-SA(O), and one-turn Monte Carlo agents.
+- `cant_stop/evaluation.py`: seeded game execution and head-to-head metrics.
+- `cant_stop/rl_env.py`: dependency-free Stop/Continue RL environment.
+- `cant_stop/backend.py`, `config.py`, `transition.py`: versioned backend
   boundary, runtime metadata, and fixed actor-to-learner transition schema.
-- `cant_stop_core/dqn.py`: PyTorch DQN/Double DQN, replay, device selection, and agent adapter.
-- `cant_stop_core/classical_ml.py`: persisted sklearn policy adapter.
-- `cant_stop_core/cli.py`: argument parsing and CSV/JSON output.
+- `cant_stop/dqn.py`: PyTorch DQN/Double DQN, replay, device selection, and agent adapter.
+- `cant_stop/classical_ml.py`: persisted sklearn policy adapter.
+- `cant_stop/cli.py`: argument parsing and CSV/JSON output.
 - `scripts/train_dqn.py`: reproducible training, checkpointing, and held-out evaluation CLI.
 - `scripts/benchmark_backends.py`: deterministic simulator/actor throughput benchmark.
 - `rollout/`: persistent multiprocessing actors and pickle-safe batch protocol.

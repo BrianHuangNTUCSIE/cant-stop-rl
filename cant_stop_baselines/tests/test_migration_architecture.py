@@ -1,8 +1,8 @@
 import unittest
 
-from cant_stop_core.config import RuntimeConfig
-from cant_stop_core.rl_env import StopContinueEnv
-from cant_stop_core.transition import (
+from cant_stop.config import RuntimeConfig
+from cant_stop.rl_env import StopContinueEnv
+from cant_stop.transition import (
     TRANSITION_SCHEMA_VERSION,
     Transition,
     TransitionBatch,

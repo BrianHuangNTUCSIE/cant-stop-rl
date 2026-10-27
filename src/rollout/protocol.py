@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from cant_stop_core.model import State
+from cant_stop.model import State
 
 
 @dataclass(frozen=True)

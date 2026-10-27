@@ -13,10 +13,10 @@ import json
 import random
 import time
 
-from cant_stop_core.agents import make_agent
-from cant_stop_core.game import Game
-from cant_stop_core.rl_env import StopContinueEnv
-from cant_stop_core.rules import legal_moves
+from cant_stop.agents import make_agent
+from cant_stop.game import Game
+from cant_stop.rl_env import StopContinueEnv
+from cant_stop.rules import legal_moves
 from rollout.actor_pool import ActorPool
 
 
@@ -165,7 +165,7 @@ def benchmark_learner(iterations: int, seed: int) -> list[dict]:
     """Benchmark optional Torch work without making it a baseline dependency."""
     try:
         import torch
-        from cant_stop_core.dqn import DQNConfig, QNetwork, ReplayBuffer, optimize_batch
+        from cant_stop.dqn import DQNConfig, QNetwork, ReplayBuffer, optimize_batch
     except ImportError:
         return [{"name": "torch", "available": False}]
 

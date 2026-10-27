@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import torch
 
-from cant_stop_core.dqn import (
+from cant_stop.dqn import (
     DQNConfig,
     PrioritizedReplayBuffer,
     QNetwork,

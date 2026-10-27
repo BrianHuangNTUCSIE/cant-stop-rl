@@ -12,10 +12,10 @@ _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from cant_stop_core.agents import make_agent
-from cant_stop_core.classical_ml import ClassicalMLAgent
-from cant_stop_core.dqn import NStepAccumulator, QNetwork, choose_actions, load_checkpoint
-from cant_stop_core.rl_env import StopContinueEnv
+from cant_stop.agents import make_agent
+from cant_stop.classical_ml import ClassicalMLAgent
+from cant_stop.dqn import NStepAccumulator, QNetwork, choose_actions, load_checkpoint
+from cant_stop.rl_env import StopContinueEnv
 from scripts.train_dqn import parse_opponent_mix
 
 

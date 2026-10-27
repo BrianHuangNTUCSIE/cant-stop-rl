@@ -20,8 +20,8 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 
-from cant_stop_core.evaluation import evaluate
-from cant_stop_core.agents import AGENT_NAMES
+from cant_stop.evaluation import evaluate
+from cant_stop.agents import AGENT_NAMES
 from evaluate_ml import paired_bootstrap_interval, write_csv
 
 
@@ -57,19 +57,19 @@ def parse_baseline_spec(name: str) -> ModelSpec:
 def load_agent(spec: ModelSpec, device: str, mc_rollouts: int = 64):
     if spec.kind == "dqn":
         # Keep PyTorch optional for classical-only tournaments.
-        from cant_stop_core.dqn import DQNAgent
+        from cant_stop.dqn import DQNAgent
         assert spec.path is not None
         return DQNAgent.from_checkpoint(spec.path, device=device)
     if spec.kind == "classical_ml":
-        from cant_stop_core.classical_ml import ClassicalMLAgent
+        from cant_stop.classical_ml import ClassicalMLAgent
         assert spec.path is not None
         return ClassicalMLAgent.from_file(spec.path)
     if spec.kind == "ppo":
-        from cant_stop_core.ppo import PPOAgent, load_checkpoint
+        from cant_stop.ppo import PPOAgent, load_checkpoint
         assert spec.path is not None
         model, _ = load_checkpoint(spec.path, device=device)
         return PPOAgent(model, device=device)
-    from cant_stop_core.agents import make_agent
+    from cant_stop.agents import make_agent
     return make_agent(spec.name, mc_rollouts=mc_rollouts)
 
 
