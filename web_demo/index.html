@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,20 +9,20 @@
 <body>
   <main>
     <header>
-      <div><p class="eyebrow">CS 441 ML PROJECT</p><h1>Can't Stop</h1><p class="subtitle">在瀏覽器本地執行的 RL 對手</p></div>
-      <button id="new-game" class="secondary">新遊戲</button>
+      <div><p class="eyebrow">CS 441 ML PROJECT</p><h1>Can't Stop</h1><p id="subtitle" class="subtitle">An RL opponent running locally in your browser</p></div>
+      <button id="new-game" class="secondary">New game</button>
     </header>
-    <section class="status"><span id="turn-label"></span><span id="model-label">載入模型中…</span><span id="message"></span></section>
+    <section class="status"><span id="turn-label"></span><span id="model-label">Loading models…</span><span id="message"></span></section>
     <section class="agent-panel">
-      <label>玩家 A（先手）<select id="agent-a"></select></label>
-      <label>玩家 B<select id="agent-b"></select></label>
-      <button id="apply-agents" class="secondary">套用對局設定</button>
+      <label id="player-a-label">Player A (first player)<select id="agent-a"></select></label>
+      <label id="player-b-label">Player B<select id="agent-b"></select></label>
+      <button id="apply-agents" class="secondary">Apply game settings</button>
     </section>
-    <section class="board-heading"><strong>棋盤</strong><span id="neutral-label">中立棋：0 / 3</span></section>
+    <section class="board-heading"><strong id="board-label">Board</strong><span id="neutral-label">Neutral markers: 0 / 3</span></section>
     <section id="board" class="board"></section>
     <section class="dice-panel"><div id="dice" class="dice"></div><div id="moves" class="moves"></div></section>
-    <section class="controls"><button id="roll">擲骰子</button><button id="stop" class="stop" disabled>停止並結算</button><button id="continue" class="continue" disabled>繼續</button></section>
-    <details><summary>模型與執行資訊</summary><pre id="debug"></pre></details>
+    <section class="controls"><button id="roll">Roll dice</button><button id="stop" class="stop" disabled>Stop and bank</button><button id="continue" class="continue" disabled>Continue</button></section>
+    <details><summary id="model-info">Model and runtime information</summary><pre id="debug"></pre></details>
   </main>
   <script type="module" src="js/app.js"></script>
 </body>

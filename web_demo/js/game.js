@@ -1,6 +1,7 @@
 export const COLUMNS=[2,3,4,5,6,7,8,9,10,11,12];
 export const LENGTHS={2:3,3:5,4:7,5:9,6:11,7:13,8:11,9:9,10:7,11:5,12:3};
 export const GA_WEIGHTS={2:7,3:0,4:2,5:0,6:4,7:3,8:4,9:0,10:2,11:0,12:7};
+import {t} from './i18n.js';
 
 function combinations(dice){
   // The three partitions of four dice into two pairs, matching rules.py.
@@ -45,8 +46,8 @@ export function bustProbability(game){
 
 export class Game {
   constructor(){this.lengths=LENGTHS;this.reset();}
-  reset(){this.permanent=[[0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0]];this.owner=Array(11).fill(-1);this.active={};this.player=0;this.rolls=0;this.phase='roll';this.dice=[];this.moves=[];this.winner=null;this.message='輪到你。';}
-  roll(){if(this.phase!=='roll'||this.winner!==null)throw new Error('roll() only allowed in the roll phase');this.dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));this.moves=legalMoves(this.dice,this);if(!this.moves.length){this.message='爆掉了！本回合未結算進度。';this.active={};this.rolls=0;this.phase='roll';this.player=1-this.player;return false;}this.phase='pair';return true;}
+  reset(){this.permanent=[[0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0]];this.owner=Array(11).fill(-1);this.active={};this.player=0;this.rolls=0;this.phase='roll';this.dice=[];this.moves=[];this.winner=null;this.message=t('yourTurn');}
+  roll(){if(this.phase!=='roll'||this.winner!==null)throw new Error('roll() only allowed in the roll phase');this.dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));this.moves=legalMoves(this.dice,this);if(!this.moves.length){this.message=t('bust');this.active={};this.rolls=0;this.phase='roll';this.player=1-this.player;return false;}this.phase='pair';return true;}
   applyMove(cols){
     if(this.phase!=='pair'||!this.moves.some(move=>move.join()==cols.join()))throw new Error('Expected a legal move after rolling');
     const nextActive={...this.active};
@@ -55,7 +56,7 @@ export class Game {
     this.active=nextActive;this.rolls++;this.moves=[];this.phase='decision';
   }
   continue(){if(this.phase!=='decision')throw new Error('continue() only allowed after a move');this.phase='roll';}
-  stop(){if(this.phase!=='decision')throw new Error('stop() only allowed after a move');for(const [c,pos] of Object.entries(this.active)){this.permanent[this.player][c-2]=pos;if(pos===LENGTHS[c])this.owner[c-2]=this.player;}if(this.owner.filter(x=>x===this.player).length>=3){this.winner=this.player;this.phase='done';this.active={};this.moves=[];this.message=`玩家 ${this.player+1} 獲勝！`;return;}this.active={};this.rolls=0;this.player=1-this.player;this.phase='roll';this.message=this.player===0?'輪到你。':'AI 思考中…';}
+  stop(){if(this.phase!=='decision')throw new Error('stop() only allowed after a move');for(const [c,pos] of Object.entries(this.active)){this.permanent[this.player][c-2]=pos;if(pos===LENGTHS[c])this.owner[c-2]=this.player;}if(this.owner.filter(x=>x===this.player).length>=3){this.winner=this.player;this.phase='done';this.active={};this.moves=[];this.message=t('winner',{player:this.player+1});return;}this.active={};this.rolls=0;this.player=1-this.player;this.phase='roll';this.message=this.player===0?t('yourTurn'):t('aiThinking');}
   snapshot(){
     // Match Python's immutable agent-facing State: callers must not be able to
     // mutate the live game through a diagnostic/features snapshot.
