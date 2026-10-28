@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {BrowserDQN} from '../js/model.js';
+import {gaPairScore, sortedMoves} from '../js/policy.js';
+
+test('GA duplicate pair charges one new-marker penalty', () => {
+  assert.equal(gaPairScore({}, [7, 7]), 0);
+  assert.equal(gaPairScore({7: 2}, [7, 7]), 6);
+});
+
+test('eight-action PPO selects the legal sorted pairing logits', () => {
+  const model=new BrowserDQN({action_size:8, layers:[{weights:Array.from({length:8},(_,i)=>[i]), bias:Array(8).fill(0)}]});
+  const moves=[[8,9],[2,12],[4,5]];
+  const ordered=sortedMoves(moves);
+  assert.deepEqual(model.pairAction([1], moves), ordered[2]);
+});
