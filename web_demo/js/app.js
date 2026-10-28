@@ -77,6 +77,7 @@ function pairScore(g,m,kind='ga'){
 }
 function bestMoves(moves,scores){const best=Math.max(...scores);return moves.filter((_,i)=>scores[i]===best)}
 async function choosePair(g,moves,name){
+  const generation=runGeneration;
   if(name==='ppo'){
     const learned=chooseLearnedPair(g,moves);
     if(learned)return learned;
@@ -94,14 +95,20 @@ async function choosePair(g,moves,name){
       const quota=Math.floor(total/actions.length);
       for(let i=0;i<actions.length;i++)for(let j=0;j<quota;j++){
         if((i*quota+j)%4===0)await new Promise(resolve=>setTimeout(resolve,0));
-        wins[i]+=await randomSearchRollout(actions[i].post,actions[i].action,g.player);
+        if(generation!==runGeneration)return null;
+        const result=await randomSearchRollout(actions[i].post,actions[i].action,g.player);
+        if(generation!==runGeneration)return null;
+        wins[i]+=result;
       }
     }else{
       for(let n=0;n<total;n++){
         let i=plays.findIndex(x=>x===0);
         if(i<0)i=plays.reduce((best,x,k)=>wins[k]/x+Math.sqrt(Math.log(n)/x)>wins[best]/plays[best]+Math.sqrt(Math.log(n)/plays[best])?k:best,0);
-         if(n%4===0)await new Promise(resolve=>setTimeout(resolve,0));
-         wins[i]+=await randomSearchRollout(actions[i].post,actions[i].action,g.player);plays[i]++;
+        if(n%4===0)await new Promise(resolve=>setTimeout(resolve,0));
+        if(generation!==runGeneration)return null;
+        const result=await randomSearchRollout(actions[i].post,actions[i].action,g.player);
+        if(generation!==runGeneration)return null;
+        wins[i]+=result;plays[i]++;
       }
     }
     const candidates=actions.map((a,i)=>({a,i})).filter(x=>plays[x.i]||name==='vmerckle_monte');
@@ -191,9 +198,16 @@ async function mcStop(g,player,name){
     // Python's FullGameMonteCarloAgent uses GA pairing and Smart Rule 28 in
     // the remainder of each rollout.  vmerckle's separate rollout below is
     // intentionally random, so do not reuse it here.
+    const generation=runGeneration;
     let stop=0,cont=0;for(let i=0;i<64;i++){
       if(i%2===0)await new Promise(resolve=>setTimeout(resolve,0));
-      stop+=await fullGameRollout(g,1,player);cont+=await fullGameRollout(g,0,player);
+      if(generation!==runGeneration)return false;
+      const stopResult=await fullGameRollout(g,1,player);
+      if(generation!==runGeneration)return false;
+      stop+=stopResult;
+      const continueResult=await fullGameRollout(g,0,player);
+      if(generation!==runGeneration)return false;
+      cont+=continueResult;
     }
     return stop>=cont;
   }
@@ -242,7 +256,7 @@ async function fullGameRollout(g,action,root){
   }else s.phase='roll';
   let turns=0;
   while(s.winner===null&&turns<2000){
-    if(turns%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return 0;}
+    if(turns%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return null;}
     if(s.phase==='roll'){
       const dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));
       const moves=legalMoves(dice,s);
@@ -286,7 +300,7 @@ async function randomSearchRollout(g,action,root){
   } else s.phase='roll';
   let turns=0;
   while(turns<2000&&s.winner===null){
-    if(turns%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return 0;}
+    if(turns%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return null;}
     if(s.phase==='roll'){
       const dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));
       const moves=legalMoves(dice,s);if(!moves.length){s.active={};s.rolls=0;s.player=1-s.player;turns++;continue;}

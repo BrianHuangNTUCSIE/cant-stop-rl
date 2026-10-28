@@ -36,3 +36,10 @@ test('domain feature construction passes the acting player to Rule 28', async ()
   const source=await readFile(new URL('../js/app.js',import.meta.url),'utf8');
   assert.match(source,/rule28Points\(\{\.\.\.g,active:g\.active\},player\)/);
 });
+
+test('canceled rollout searches stop before recording results', async () => {
+  const source=await readFile(new URL('../js/app.js',import.meta.url),'utf8');
+  assert.match(source,/const result=await randomSearchRollout[\s\S]*?if\(generation!==runGeneration\)return null;/);
+  assert.match(source,/const stopResult=await fullGameRollout[\s\S]*?if\(generation!==runGeneration\)return false;/);
+  assert.match(source,/const continueResult=await fullGameRollout[\s\S]*?if\(generation!==runGeneration\)return false;/);
+});
