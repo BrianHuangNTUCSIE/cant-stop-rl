@@ -16,7 +16,7 @@ const AGENTS = [
   ['vmerckle_monte_uct','vmerckle root UCB1'], ['dqn','Trained DDQN'], ['ppo','Trained PPO']
 ];
 const $=id=>document.getElementById(id); const game=new Game();
-let model=null, ppo=null, agents=['human','rule28-smart'];
+let model=null, ppo=null, dqnLoading=true, ppoLoading=true, agents=['human','rule28-smart'];
 const label=name=>t(`agent.${name}`);
 function localizeUI(){
   $('subtitle').textContent=t('subtitle'); $('new-game').textContent=t('newGame');
@@ -25,11 +25,20 @@ function localizeUI(){
   $('board-label').textContent=t('board'); $('roll').textContent=t('roll'); $('stop').textContent=t('stop');
   $('continue').textContent=t('continue'); $('model-info').textContent=t('modelInfo');
 }
-function setupSelectors(){for(const id of ['agent-a','agent-b']){$(id).innerHTML=AGENTS.map(([value])=>`<option value="${value}">${label(value)}</option>`).join('');$(id).value=agents[id==='agent-a'?0:1];}}
+function setupSelectors(){for(const id of ['agent-a','agent-b']){$(id).innerHTML=AGENTS.map(([value])=>`<option value="${value}">${label(value)}</option>`).join('');$(id).value=agents[id==='agent-a'?0:1];}updateModelOptions();}
+function updateModelOptions(){
+  for(const select of [$('agent-a'),$('agent-b')]){
+    const option=select.querySelector('option[value="ppo"]');
+    if(option){option.disabled=!ppo;option.textContent=ppo?label('ppo'):t('ppoUnavailable');}
+    if(!ppo&&select.value==='ppo'){select.value='rule28-smart';}
+  }
+}
+function modelState(value, loading){return value?t('loaded'):loading?t('loading'):t('unavailable');}
+function modelStatus(){return t('modelsStatus',{dqn:modelState(model,dqnLoading),ppo:modelState(ppo,ppoLoading)});}
 function isAI(player){return agents[player]!=='human';}
 function render(){
   $('turn-label').textContent=game.phase==='done'?t('gameOver'):t('turn',{player:label(agents[game.player])});
-  $('message').textContent=game.message; $('roll').disabled=game.phase!=='roll'||game.winner!==null||isAI(game.player);
+  $('message').textContent=game.message; $('model-label').textContent=modelStatus(); $('roll').disabled=game.phase!=='roll'||game.winner!==null||isAI(game.player);
   $('stop').disabled=game.phase!=='decision'||isAI(game.player); $('continue').disabled=game.phase!=='decision'||isAI(game.player);
   $('neutral-label').textContent=t('neutral',{count:Object.keys(game.active).length});
   $('dice').innerHTML=game.dice.map(n=>`<span class="die">${n}</span>`).join('');
@@ -47,7 +56,7 @@ function render(){
     }
     return `<div class="column"><h2>${c}</h2><div class="track">${html}</div><small>A ${a}/${height} · B ${b}/${height}</small></div>`;
   }).join('');
-  $('debug').textContent=JSON.stringify({players:agents.map(label),phase:game.phase,neutralMarkers:Object.keys(game.active).length,active:game.active,models:{dqn:!!model,ppo:!!ppo}},null,2);
+  $('debug').textContent=JSON.stringify({players:agents.map(label),phase:game.phase,neutralMarkers:Object.keys(game.active).length,active:game.active,models:{dqn:!!model,ppo:!!ppo},modelFiles:{dqn:'models/dqn.json',ppo:ppo?'models/ppo.json':'not published'}},null,2);
 }
 const GA={2:7,3:0,4:2,5:0,6:4,7:3,8:4,9:0,10:2,11:0,12:7};
 const CLASSIC={2:1,3:2,4:3,5:4,6:5,7:6,8:5,9:4,10:3,11:2,12:1};
@@ -329,4 +338,7 @@ function aiTurn(){if(game.winner!==null||!isAI(game.player))return;const name=ag
 function start(){game.reset();render();if(isAI(0))setTimeout(aiTurn,300);}
 $('apply-agents').onclick=()=>{agents=[$('agent-a').value,$('agent-b').value];start()};$('new-game').onclick=start;
 $('roll').onclick=()=>{if(game.roll())render();else{render();setTimeout(aiTurn,300)}};$('stop').onclick=()=>{game.stop();render();setTimeout(aiTurn,300)};$('continue').onclick=()=>{game.continue();render();setTimeout(aiTurn,300)};
-localizeUI(); setupSelectors();BrowserDQN.load('models/dqn.json').then(m=>{model=m;$('model-label').textContent=m?t('dqnLoaded'):t('dqnMissing');render()});BrowserDQN.load('models/ppo.json').then(m=>{ppo=m;render()});render();
+localizeUI(); setupSelectors();
+BrowserDQN.load('models/dqn.json').then(m=>{model=m;dqnLoading=false;render()});
+BrowserDQN.load('models/ppo.json').then(m=>{ppo=m;ppoLoading=false;updateModelOptions();render()});
+render();

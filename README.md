@@ -173,6 +173,21 @@ python3 -m pip install -e .
 
 Optional ML/RL dependencies and reproducible training commands are documented in [`cant_stop_baselines/README.md`](cant_stop_baselines/README.md).
 
+## Browser demo
+
+The dependency-free web demo is in [`web_demo/`](web_demo/). Start it from the
+repository root with:
+
+```bash
+cd web_demo
+python3 -m http.server 8000
+```
+
+Open <http://localhost:8000>. It uses the same board rules and the browser
+versions of the available agents; the Monte Carlo and root-UCB entries are
+explicitly lightweight browser adaptations, while official experiment results
+must still use the Python simulator.
+
 ## Repository guide
 
 | Path | Purpose |
@@ -187,7 +202,7 @@ Optional ML/RL dependencies and reproducible training commands are documented in
 
 Every formal run records configuration, seeds, checkpoints, evaluation summaries, and raw game-level results under local `runs/` and `results/` directories. Before interpreting a result, read the experiment status document: it distinguishes promoted evidence, screening runs, negative results, and incomplete experiments.
 
-Known limitations include two-player games only, fixed dice pairing in the promoted Stop/Continue study, no graphical interface, and no claim of full-game MCTS. The simulator-generated games and held-out evaluation protocol are described in the experiment documentation.
+Known limitations include two-player games only, fixed dice pairing in the promoted Stop/Continue study, a minimal browser interface, and no claim of full-game MCTS. The simulator-generated games and held-out evaluation protocol are described in the experiment documentation.
 
 ## References and citations
 

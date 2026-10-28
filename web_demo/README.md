@@ -10,7 +10,9 @@ python3 -m http.server 8000
 
 ## 安裝訓練好的 DQN
 
-目前 demo 沒有放入 binary `.pt` 檔。請在原專案已安裝 PyTorch 的環境執行：
+目前 demo 只發布可直接由瀏覽器載入的 JSON 權重，不放入 binary `.pt` 檔。當前 `models/dqn.json` 是 DDQN 的 domain-feature 匯出檔；來源、seed、feature 版本與 checksum 見 [`models/README.md`](models/README.md)。
+
+請在原專案已安裝 PyTorch 的環境重新匯出時執行：
 
 ```bash
 ../.venv/bin/python tools/export_weights.py \
@@ -18,7 +20,15 @@ python3 -m http.server 8000
   models/dqn.json
 ```
 
-（若從原專案的 `final` 目錄執行，請自行調整 checkpoint 路徑。）產生 `models/dqn.json` 後，網頁會自動使用 DDQN；沒有模型時會顯示並使用 heuristic fallback。PPO checkpoint 也可使用同一 exporter，輸出成 `models/ppo.json`。
+（若從原專案的 `final` 目錄執行，請自行調整 checkpoint 路徑。）產生 `models/dqn.json` 後，網頁會自動使用 DDQN；沒有模型時會明確顯示並使用 heuristic fallback。PPO checkpoint 也可使用同一 exporter，輸出成 `models/ppo.json`；在該檔案不存在時，PPO 選項會停用，不會假裝使用訓練好的 PPO。
+
+## GitHub Pages
+
+push 到 `main` 且變更 `web_demo/` 時，`.github/workflows/deploy-pages.yml` 會將 `web_demo/` 直接發布到 GitHub Pages；也可手動執行 workflow。Repository 的 **Settings → Pages → Build and deployment → Source** 必須設定為 **GitHub Actions**。部署不需要 npm、PyTorch 或 Python server。
+
+線上 demo：<https://brianhuangntucsie.github.io/cant-stop-rl/>（若 Pages 尚未啟用，請先完成上述 repository 設定）。
+
+瀏覽器 demo 僅供互動展示。其 JavaScript 隨機數與較小的 search rollout budget 不等同於 Python 正式評估，不能取代報告中的結果。
 
 ### Agent fidelity
 
