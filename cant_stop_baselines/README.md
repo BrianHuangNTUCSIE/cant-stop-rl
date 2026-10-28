@@ -754,7 +754,7 @@ Report includes win rates, approximate Wilson 95% intervals, seat-specific wins,
 
 - Martin Keller, “Can't Stop? Try The Rule of 28” (1986), https://www.solitairelaboratory.com/abstract/dicedominoes.html
 - James Glenn and Christian Aloi, *A Generalized Heuristic for Can't Stop*, FLAIRS 2009, https://cdn.aaai.org/ocs/123/123-2430-1-PB.pdf (Table 1 for GA constant move weights).
-- Leandro C. Medeiros, David S. Aleixo, and Levi H. S. Levis, *What Can We Learn Even From the Weakest? Learning Sketches for Programmatic Strategies*, AAAI 2022, https://doi.org/10.1609/aaai.v36i7.20744; MIT-licensed reference implementation: https://github.com/leandrocouto/sketch-learning. See `docs/THIRD_PARTY_NOTICES.md`.
+- Leandro C. Medeiros, David S. Aleixo, and Levi H. S. Lelis, *What Can We Learn Even From the Weakest? Learning Sketches for Programmatic Strategies*, AAAI 2022, https://doi.org/10.1609/aaai.v36i7.20744; MIT-licensed reference implementation: https://github.com/leandrocouto/sketch-learning. See `docs/THIRD_PARTY_NOTICES.md`.
 - J. Cameron Carter, *Using Machine Learning to Optimize the Board Game Can't Stop* (2026), user-provided thesis, for Rule-of-28 scoring and baseline ideas.
 
 ## Not implemented
