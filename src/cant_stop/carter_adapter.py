@@ -82,16 +82,13 @@ class CarterKerasAgent:
                     rng: random.Random) -> Move:
         if not moves:
             raise CarterAdapterError("Cannot choose a move from an empty list")
-        # Carter's public policy uses a heuristic pair selector, not a learned
-        # pairing action: prefer an existing temporary column, then proximity
-        # to 7, preserving legal-move order for ties.
+        # Match Carter's released selector: return the first legal pairing
+        # containing an active column; otherwise minimize distance to seven.
         active = state.active_dict()
-        existing = [move for move in moves if any(c in active for c in move.columns)]
-        candidates = existing or list(moves)
-        return min(candidates, key=lambda move: (
-            sum(abs(column - 7) for column in move.columns),
-            move.columns,
-        ))
+        for move in moves:
+            if any(column in active for column in move.columns):
+                return move
+        return min(moves, key=lambda move: sum(abs(column - 7) for column in move.columns))
 
     def should_stop(self, state: State, rng: random.Random) -> bool:
         values = self.model.predict([carter_features(state)], verbose=0)
