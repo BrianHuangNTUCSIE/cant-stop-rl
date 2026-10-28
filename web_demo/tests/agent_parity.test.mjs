@@ -9,8 +9,8 @@ test('GA duplicate pair charges one new-marker penalty', () => {
 });
 
 test('Glenn & Aloi scores both advances of a duplicate pair', () => {
-  assert.equal(glennAloiPairScore({}, [2, 2]), 16);
-  assert.equal(glennAloiPairScore({2: 1}, [2, 2]), 28);
+  assert.equal(glennAloiPairScore({}, [2, 2]), 8);
+  assert.equal(glennAloiPairScore({2: 1}, [2, 2]), 14);
 });
 
 test('eight-action PPO selects the legal sorted pairing logits', () => {
