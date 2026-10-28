@@ -1,22 +1,98 @@
 {
-  "runner": "scripts/evaluate_agent_comparison.py",
-  "agents": [
-    "glenn-aloi",
-    "glenn2009_constant",
-    "glenn2010_linear",
-    "couto"
-  ],
-  "opponent": "rule28-smart",
-  "games_per_matchup": 3000,
-  "base_seed": 20261027,
-  "replicates": 1,
-  "seed_stride": 1000000,
-  "seed_formula": "seed = base_seed + matchup_index + replicate_index * seed_stride",
-  "mc_rollouts": 64,
-  "mc_future_roll_limit": 40,
-  "max_total_turns": 2000,
-  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]",
-  "platform": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
-  "raw_records": false,
-  "inference_note": "Evaluator alternates seats and reuses each pair seed for the two seat assignments; use paired bootstrap or between-seed variability."
+  "manifest_version": 2,
+  "batch_label": "post_merge_20261103",
+  "batch_label_note": "Historical archive label; it is not the evaluation seed for every artifact in this directory.",
+  "batches": [
+    {
+      "id": "paper_vs_random",
+      "runner": "scripts/evaluate_ml_head_to_head.py",
+      "command": "python3 scripts/evaluate_agent_comparison.py --agents glenn-aloi glenn2009_constant glenn2010_linear couto --opponent random --games 3000 --seed 20261027 --output-dir docs/experiments/post_merge_20261103/random_vs_paper",
+      "agents": ["glenn-aloi", "glenn2009_constant", "glenn2010_linear", "couto"],
+      "opponents": ["random"],
+      "games_per_matchup": 3000,
+      "evaluation_seeds": [20261027, 20261028, 20261029, 20261030],
+      "seed_formula": "base_seed + matchup_index; the four JSON files record 20261027 through 20261030",
+      "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]",
+      "platform": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+      "raw_records": false,
+      "raw_record_paths": [],
+      "summary_paths": [
+        "random_vs_paper/00_glenn-aloi_vs_random.json",
+        "random_vs_paper/01_glenn2009_constant_vs_random.json",
+        "random_vs_paper/02_glenn2010_linear_vs_random.json",
+        "random_vs_paper/03_couto_vs_random.json"
+      ],
+      "paired_analysis_paths": [],
+      "adaptation_notes": "Paper-policy behavioral ports/reimplementations under the current simulator; no original simulator parity is claimed.",
+      "inference_notes": "Seats alternate and each seat-swapped pair shares a dice seed; use paired bootstrap or between-seed variation, not independent-game intervals."
+    },
+    {
+      "id": "paper_vs_rule28",
+      "runner": "scripts/evaluate_agent_comparison.py",
+      "command": "python3 scripts/evaluate_agent_comparison.py --agents glenn-aloi glenn2009_constant glenn2010_linear couto --opponent rule28-smart --games 3000 --seed 20261027 --output-dir docs/experiments/post_merge_20261103/rule28_vs_paper",
+      "agents": ["glenn-aloi", "glenn2009_constant", "glenn2010_linear", "couto"],
+      "opponents": ["rule28-smart"],
+      "games_per_matchup": 3000,
+      "evaluation_seeds": [20261027, 20261028, 20261029, 20261030],
+      "seed_formula": "base_seed + matchup_index; the four JSON files record 20261027 through 20261030",
+      "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]",
+      "platform": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+      "raw_records": false,
+      "raw_record_paths": [],
+      "summary_paths": [
+        "rule28_vs_paper/00_glenn-aloi_vs_rule28-smart.json",
+        "rule28_vs_paper/01_glenn2009_constant_vs_rule28-smart.json",
+        "rule28_vs_paper/02_glenn2010_linear_vs_rule28-smart.json",
+        "rule28_vs_paper/03_couto_vs_rule28-smart.json"
+      ],
+      "paired_analysis_paths": [],
+      "adaptation_notes": "Paper-policy behavioral ports/reimplementations under the current simulator; no original simulator parity is claimed.",
+      "inference_notes": "Seats alternate and each seat-swapped pair shares a dice seed; use paired bootstrap or between-seed variation, not independent-game intervals."
+    },
+    {
+      "id": "carter_adaptation",
+      "runner": "scripts/evaluate_carter_adaptation.py",
+      "command": "python3 scripts/evaluate_carter_adaptation.py --checkpoint PATH_TO/dqn_multi_opp.keras --output docs/experiments/post_merge_20261103/random_vs_paper/04_carter_vs_random.json",
+      "agents": ["carter-public-adapted"],
+      "opponents": ["random", "rule28-smart", "mc-strong"],
+      "games_per_matchup": 3000,
+      "evaluation_seeds": [20261027],
+      "seed_formula": "The three Carter result files each explicitly record evaluation_seed 20261027.",
+      "python": "3.9.23 (main, Jun  3 2025, 18:47:52) [Clang 17.0.0 (clang-1700.6.4.2)]",
+      "platform": "macOS-26.7.1-arm64-arm-64bit",
+      "raw_records": true,
+      "raw_records_format": "Embedded game_records arrays in each Carter JSON; no separate CSV is expected.",
+      "raw_record_paths": [
+        "random_vs_paper/04_carter_vs_random.json",
+        "random_vs_paper/05_carter_vs_rule28-smart.json",
+        "random_vs_paper/06_carter_vs_mc-strong.json"
+      ],
+      "summary_paths": [
+        "random_vs_paper/04_carter_vs_random.json",
+        "random_vs_paper/05_carter_vs_rule28-smart.json",
+        "random_vs_paper/06_carter_vs_mc-strong.json"
+      ],
+      "paired_analysis_paths": [],
+      "adaptation_notes": "Carter checkpoint/feature/simulator adaptation: static Prob_Table, columns_started, CarterNumpyAgent, Carter-compatible 51-feature inference, and current simulator rules. No retraining and no faithful reproduction of Carter's original environment.",
+      "inference_notes": "The low adapted win rates must not be interpreted as evidence that Carter's original-environment agent is weak."
+    },
+    {
+      "id": "post_merge_head_to_head",
+      "runner": "scripts/evaluate_ml_head_to_head.py",
+      "command": "python3 scripts/evaluate_ml_head_to_head.py --agents ridge642 ddqn448 ppo460 rule28-smart mc-strong glenn-aloi glenn2009_constant glenn2010_linear couto --games 3000 --seed 20261103 --workers 4 --output-dir docs/experiments/post_merge_20261103",
+      "agents": ["ridge642", "ddqn448", "ppo460", "rule28-smart", "mc-strong", "glenn-aloi", "glenn2009_constant", "glenn2010_linear", "couto"],
+      "opponents": ["ridge642", "ddqn448", "ppo460", "rule28-smart", "mc-strong", "glenn-aloi", "glenn2009_constant", "glenn2010_linear", "couto"],
+      "games_per_matchup": 3000,
+      "evaluation_seeds": [20261103],
+      "seed_formula": "The summary and every raw CSV record seed 20261103.",
+      "python": "See head_to_head_summary.json metadata; model-specific Carter records use the separate Python metadata above.",
+      "platform": "See head_to_head_summary.json metadata; this is a historical archive.",
+      "raw_records": true,
+      "raw_record_paths": ["*_vs_*_games.csv"],
+      "summary_paths": ["head_to_head_summary.json", "win_rate_matrix.csv"],
+      "paired_analysis_paths": [],
+      "adaptation_notes": "This is the post-merge direct matrix. Carter is not part of this matrix; its adapted matchups are listed in the Carter batch.",
+      "inference_notes": "The paired-bootstrap unit is shared_dice_seed_two_seat_games; seat-swapped games are paired rather than independent."
+    }
+  ]
 }

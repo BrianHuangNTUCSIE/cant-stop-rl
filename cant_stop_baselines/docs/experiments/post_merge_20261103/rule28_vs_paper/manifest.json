@@ -1,22 +1,21 @@
 {
+  "manifest_version": 2,
   "runner": "scripts/evaluate_agent_comparison.py",
-  "agents": [
-    "glenn-aloi",
-    "glenn2009_constant",
-    "glenn2010_linear",
-    "couto"
-  ],
-  "opponent": "rule28-smart",
+  "command": "python3 scripts/evaluate_agent_comparison.py --agents glenn-aloi glenn2009_constant glenn2010_linear couto --opponent rule28-smart --games 3000 --seed 20261027 --output-dir docs/experiments/post_merge_20261103/rule28_vs_paper",
+  "agents": ["glenn-aloi", "glenn2009_constant", "glenn2010_linear", "couto"],
+  "opponents": ["rule28-smart"],
   "games_per_matchup": 3000,
-  "base_seed": 20261027,
-  "replicates": 1,
-  "seed_stride": 1000000,
-  "seed_formula": "seed = base_seed + matchup_index + replicate_index * seed_stride",
+  "evaluation_seeds": [20261027, 20261028, 20261029, 20261030],
+  "seed_formula": "base_seed + matchup_index; the four JSON files explicitly record 20261027 through 20261030",
   "mc_rollouts": 64,
   "mc_future_roll_limit": 40,
   "max_total_turns": 2000,
   "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]",
   "platform": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
   "raw_records": false,
-  "inference_note": "Evaluator alternates seats and reuses each pair seed for the two seat assignments; use paired bootstrap or between-seed variability."
+  "raw_record_paths": [],
+  "summary_paths": ["00_glenn-aloi_vs_rule28-smart.json", "01_glenn2009_constant_vs_rule28-smart.json", "02_glenn2010_linear_vs_rule28-smart.json", "03_couto_vs_rule28-smart.json"],
+  "paired_analysis_paths": [],
+  "adaptation_notes": "Paper-policy behavioral ports/reimplementations under the current simulator; no original simulator parity is claimed.",
+  "inference_notes": "Evaluator alternates seats and reuses each pair seed for the two seat assignments; use paired bootstrap or between-seed variability."
 }

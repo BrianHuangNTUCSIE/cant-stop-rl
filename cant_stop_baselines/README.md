@@ -692,8 +692,11 @@ games per matchup, alternating seats, a 2,000-turn limit, and the current
 simulator rules; those descriptive point estimates and artifacts are linked in
 the overview and `docs/EXPERIMENT_STATUS.md`.
 
-The public Carter checkpoint is a separate feature/simulator adaptation. In a
-3,000-game calibration against `random`, it won 749 games (25.0%). This low
+The Glenn–Aloi full heuristic and `glenn2009_constant` are policy variants from
+the same 2009 work. They can be compared as policies, but are not independent
+prior works. The public Carter checkpoint is a separate
+checkpoint/feature/simulator adaptation. In a 3,000-game calibration against
+`random`, it won 644 games (21.47%). This low
 rate is evidence that the translation is not behaviorally equivalent to
 Carter's original environment, and must not be interpreted as the original
 agent's performance. See `docs/EXPERIMENT_STATUS.md` and

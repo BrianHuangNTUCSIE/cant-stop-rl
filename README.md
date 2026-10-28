@@ -29,6 +29,12 @@ formal held-out results from descriptive sweeps and negative diagnostics.
 
 The post-merge direct comparison used **3,000 games per matchup**, alternating seats and 64 Monte Carlo rollouts where applicable. It used PPO seed 460, DDQN seed 448, and Ridge seed 642; “win rate” means the row agent's win rate against the column opponent. Raw records are archived under [`docs/experiments/post_merge_20261103`](cant_stop_baselines/docs/experiments/post_merge_20261103).
 
+That directory name is an archive label, not a universal evaluation date: the
+paper-agent JSON batches use seeds 20261027–20261030, Carter's adapted
+checkpoint uses 20261027, and the root head-to-head CSV/summary batch uses
+20261103. See the root [`manifest.json`](cant_stop_baselines/docs/experiments/post_merge_20261103/manifest.json)
+for runners, commands, raw-record paths, and summary paths.
+
 | Our agent | vs Rule-of-28-smart | vs `mc-strong` | vs Glenn–Aloi | vs Glenn 2009 | vs Glenn 2010 | vs Couto |
 |---|---:|---:|---:|---:|---:|---:|
 | **PPO** | **64.8%** | 53.4% | **68.1%** | **69.2%** | **66.4%** | 67.6% |
@@ -48,6 +54,11 @@ For the reverse comparison, the prior agents' own win rates were much lower:
 | vmerckle root-only UCB1 [6] | 4.5% | 3.7% | 77.4% |
 
 The `mc-strong` implementation therefore beats all four prior heuristic agents in this direct comparison, while our PPO, DDQN, and Ridge policies remain competitive against it. These values replace the pre-merge matrix; the prior implementation used different paper-policy behavior.
+
+The Glenn–Aloi full heuristic and `glenn2009_constant` are two policy variants
+from the same Glenn & Aloi 2009 work. They can be compared as policies, but
+must not be described as independent prior works; `glenn2010_linear` is the
+separate 2010 work.
 
 \* Carter is the public `dqn_multi_opp.keras` checkpoint from [J. Cameron
 Carter's repository](https://github.com/JCameronCarter/HonorsThesis), evaluated

@@ -906,6 +906,13 @@ possible; the new run is the reproducible reference.
 
 ### Carter public checkpoint adaptation
 
+The directory label `post_merge_20261103` is an archive label, not a claim
+that every result inside it used seed 20261103. The paper-vs-Random and
+paper-vs-Rule28 JSON files record seeds 20261027--20261030; the Carter
+adaptation files record 20261027; and the root head-to-head CSV/summary batch
+records 20261103. The complete batch index is in
+`docs/experiments/post_merge_20261103/manifest.json`.
+
 The public Carter repository publishes `Code/dqn_multi_opp.keras` at
 `JCameronCarter/HonorsThesis`. This checkpoint was loaded as the reported
 `51 -> 64 -> 64 -> 2` network, with Carter's heuristic dice-pair selector and
@@ -931,7 +938,7 @@ also records the local file's SHA-256.
 
 These results are a **checkpoint and feature/simulator adaptation**, not a
 reproduction of Carter's original game environment or training evaluation.
-The 24.97% result against Random is evidence that the feature and rule
+The 21.47% result against Random is evidence that the feature and rule
 translation is not behaviorally equivalent; it must not be used to claim that
 Carter's original agent performs this poorly under its own environment. The
 saved result is `docs/experiments/post_merge_20261103/random_vs_paper/04_carter_vs_random.json`.
