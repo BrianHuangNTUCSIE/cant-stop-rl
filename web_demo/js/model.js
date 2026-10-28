@@ -28,6 +28,22 @@ export class BrowserDQN {
   }
 }
 
+// Browser export of the domain-feature StandardScaler + Ridge continuation
+// margin model. Python stops when the predicted continuation margin is <= 0.
+export class BrowserRidge {
+  constructor(payload) { this.payload=payload; }
+  static async load(url='models/ridge.json') {
+    try { const r=await fetch(url); if(!r.ok) throw Error('missing model'); return new BrowserRidge(await r.json()); }
+    catch (_) { return null; }
+  }
+  action(features) {
+    const {mean,scale,weights,bias}=this.payload;
+    let value=bias;
+    for(let i=0;i<features.length;i++) value+=weights[i]*((features[i]-mean[i])/(scale[i]||1));
+    return value<=0?'stop':'continue';
+  }
+}
+
 export function heuristicAction(state) {
   const active=Object.entries(state.active);
   if (active.some(([column,position])=>position===state.lengths[column])) return 'stop';

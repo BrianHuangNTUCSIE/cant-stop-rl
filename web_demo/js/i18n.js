@@ -24,11 +24,12 @@ const messages = {
     dqnMissing: 'DDQN: unavailable (heuristic fallback)',
     ppoLoaded: 'PPO: loaded weights',
     ppoMissing: 'PPO: unavailable',
-    modelsStatus: 'Models — DDQN: {dqn}; PPO: {ppo}',
+    modelsStatus: 'Models — DDQN: {dqn}; Ridge: {ridge}; PPO: {ppo}',
     loading: 'loading',
     loaded: 'loaded',
     unavailable: 'unavailable',
     ppoUnavailable: 'Trained PPO (not published)',
+    ridgeUnavailable: 'Ridge (not published)',
     yourTurn: 'Your turn.',
     aiThinking: 'AI thinking…',
     bust: 'Bust! Unbanked progress is lost.',
@@ -49,6 +50,7 @@ const messages = {
     'agent.vmerckle_monte': 'vmerckle Monte Carlo',
     'agent.vmerckle_monte_uct': 'vmerckle root UCB1',
     'agent.dqn': 'Trained DDQN',
+    'agent.ridge': 'Ridge',
     'agent.ppo': 'Trained PPO'
   },
   zh: {
@@ -62,8 +64,8 @@ const messages = {
     record: '勝場：{wins} · 敗場：{losses}',
     dqnLoaded: 'DDQN：已載入權重', dqnMissing: 'DDQN：不可用（heuristic fallback）',
     ppoLoaded: 'PPO：已載入權重', ppoMissing: 'PPO：不可用',
-    modelsStatus: '模型 — DDQN：{dqn}；PPO：{ppo}',
-    loading: '載入中', loaded: '已載入', unavailable: '不可用', ppoUnavailable: '訓練好的 PPO（尚未發布）',
+    modelsStatus: '模型 — DDQN：{dqn}；Ridge：{ridge}；PPO：{ppo}',
+    loading: '載入中', loaded: '已載入', unavailable: '不可用', ppoUnavailable: '訓練好的 PPO（尚未發布）', ridgeUnavailable: 'Ridge（尚未發布）',
     yourTurn: '輪到你。', aiThinking: 'AI 思考中…', bust: '爆掉了！本回合未結算進度。',
     winner: '玩家 {player} 獲勝！',
     'agent.human': '玩家操作', 'agent.random': 'Random', 'agent.rule28': 'Rule of 28',
@@ -73,7 +75,7 @@ const messages = {
     'agent.rule28-ga-pure': 'Rule of 28 + GA pairing', 'agent.mc': 'Monte Carlo',
     'agent.mc-full-game': 'Full-game Monte Carlo', 'agent.mc-strong': 'MC strong',
     'agent.vmerckle_monte': 'vmerckle Monte Carlo', 'agent.vmerckle_monte_uct': 'vmerckle root UCB1',
-    'agent.dqn': 'Trained DDQN', 'agent.ppo': 'Trained PPO'
+    'agent.dqn': 'Trained DDQN', 'agent.ridge': 'Ridge', 'agent.ppo': 'Trained PPO'
   }
 };
 

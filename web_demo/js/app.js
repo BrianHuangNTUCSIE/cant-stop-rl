@@ -1,5 +1,5 @@
 import {Game, chooseGA, legalMoves, COLUMNS, LENGTHS, bustProbability} from './game.js';
-import {BrowserDQN, heuristicAction} from './model.js';
+import {BrowserDQN, BrowserRidge, heuristicAction} from './model.js';
 import {gaPairScore, glennAloiPairScore, sortedMoves} from './policy.js';
 import {PendingActions} from './pending.js';
 import {setLocale, t} from './i18n.js';
@@ -15,10 +15,10 @@ const AGENTS = [
   ['rule28-ga-pure','Rule of 28 + GA pairing'], ['mc','Monte Carlo'],
   ['mc-full-game','Full-game Monte Carlo'], ['mc-strong','MC strong'],
   ['vmerckle_monte','vmerckle Monte Carlo'],
-  ['vmerckle_monte_uct','vmerckle root UCB1'], ['dqn','Trained DDQN'], ['ppo','Trained PPO']
+  ['vmerckle_monte_uct','vmerckle root UCB1'], ['dqn','Trained DDQN'], ['ridge','Ridge'], ['ppo','Trained PPO']
 ];
 const $=id=>document.getElementById(id); const game=new Game();
-let model=null, ppo=null, dqnLoading=true, ppoLoading=true, agents=['human','rule28-smart'];
+let model=null, ridge=null, ppo=null, dqnLoading=true, ridgeLoading=true, ppoLoading=true, agents=['human','rule28-smart'];
 const SCORE_KEY='cant-stop-browser-demo-score-v1';
 let scores=loadScores(), resultRecorded=false;
 const label=name=>t(`agent.${name}`);
@@ -59,10 +59,13 @@ function updateModelOptions(){
     const option=select.querySelector('option[value="ppo"]');
     if(option){option.disabled=!ppo;option.textContent=ppo?label('ppo'):t('ppoUnavailable');}
     if(!ppo&&select.value==='ppo'){select.value='rule28-smart';}
+    const ridgeOption=select.querySelector('option[value="ridge"]');
+    if(ridgeOption){ridgeOption.disabled=!ridge;ridgeOption.textContent=ridge?label('ridge'):t('ridgeUnavailable');}
+    if(!ridge&&select.value==='ridge'){select.value='rule28-smart';}
   }
 }
 function modelState(value, loading){return value?t('loaded'):loading?t('loading'):t('unavailable');}
-function modelStatus(){return t('modelsStatus',{dqn:!model&&!dqnLoading?t('dqnMissing'):modelState(model,dqnLoading),ppo:modelState(ppo,ppoLoading)});}
+function modelStatus(){return t('modelsStatus',{dqn:!model&&!dqnLoading?t('dqnMissing'):modelState(model,dqnLoading),ridge:modelState(ridge,ridgeLoading),ppo:modelState(ppo,ppoLoading)});}
 function isAI(player){return agents[player]!=='human';}
 function render(){
   recordFinishedGame();
@@ -385,7 +388,7 @@ async function stopDecision(g,name,player){
 function featuresForDQN(g,player,strategic=false,domain=false,moves=null){const s=g.snapshot(),me=s.permanent[player],opp=s.permanent[1-player],lengths=[3,5,7,9,11,13,11,9,7,5,3],f=[];for(let i=0;i<11;i++)f.push(me[i]/lengths[i]);for(let i=0;i<11;i++)f.push(opp[i]/lengths[i]);for(const c of COLUMNS)f.push((s.active[c]||0)/LENGTHS[c]);for(const c of COLUMNS)f.push(s.active[c]?1:0);for(const o of s.owner)f.push(o===player?1:o===1-player?-1:0);const completed=s.owner.filter(o=>o===player).length,oppCompleted=s.owner.filter(o=>o===1-player).length;f.push(completed/3,oppCompleted/3,Math.min(s.rolls/20,1));const bust=bustProbability(g),risk=Object.entries(s.active).reduce((x,[c,p])=>x+(p-me[c-2])/LENGTHS[c],0),reached=Object.entries(s.active).filter(([c,p])=>p===LENGTHS[c]).length;f.push(bust,risk);if(domain||strategic){const mp=me.reduce((x,v,i)=>x+v/lengths[i],0)/11,op=opp.reduce((x,v,i)=>x+v/lengths[i],0)/11;const rule=rule28Points({...g,active:g.active},player);f.push(Object.keys(s.active).length/3,reached/3,Math.min(completed+reached,3)/3,completed+reached>=3?1:0,mp-op,risk*(1-bust),Math.min(rule/40,1),oppCompleted>=2?1:0);if(strategic){for(let i=0;i<11;i++){const c=COLUMNS[i];f.push(Math.max(0,(s.active[c]??me[i])-me[i])/lengths[i])}const near=opp.reduce((x,v,i)=>x+(s.owner[i]===-1&&lengths[i]-v<=1?1:0),0);f.push(near/3)}}return f;}
 function modelFeatures(g,player,policy,moves=null){const base=policy.payload.observation_size-(policy.payload.action_size===8?18:0);const strategic=base===80;const domain=base===68||strategic;const f=featuresForDQN(g,player,strategic,domain);if(moves){for(const move of sortedMoves(moves).slice(0,6))f.push(move[0]/12,(move[1]??0)/12,1);while(f.length<base+18)f.push(0);}if(f.length!==base+(moves?18:0))return null;return f;}
 function chooseLearnedPair(g,moves){if(!ppo||ppo.payload.action_size!==8)return null;const f=modelFeatures(g,g.player,ppo,moves);return f?ppo.pairAction(f,moves):null;}
-async function decide(name,g,player){if(name==='dqn'&&model){const f=modelFeatures(g,player,model);return f?model.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ppo'&&ppo){const f=modelFeatures(g,player,ppo);return f?ppo.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='dqn'||name==='ppo')return heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});return await stopDecision(g,name,player)?'stop':'continue';}
+async function decide(name,g,player){if(name==='dqn'&&model){const f=modelFeatures(g,player,model);return f?model.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ppo'&&ppo){const f=modelFeatures(g,player,ppo);return f?ppo.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ridge'&&ridge){const f=modelFeatures(g,player,ridge);return f?ridge.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='dqn'||name==='ppo'||name==='ridge')return heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});return await stopDecision(g,name,player)?'stop':'continue';}
 let runGeneration=0;const aiTimers=new Set();
 function scheduleAI(delay,generation=runGeneration){const timer=setTimeout(()=>{aiTimers.delete(timer);if(generation===runGeneration)aiTurn(generation);},delay);aiTimers.add(timer);}
 function invalidateAI(){runGeneration++;for(const timer of aiTimers)clearTimeout(timer);aiTimers.clear();pendingVmerckle.clear();return runGeneration;}
@@ -396,5 +399,6 @@ $('clear-stats').onclick=()=>{scores=[0,0];saveScores();renderScores();};
 $('roll').onclick=()=>{invalidateAI();if(game.roll())render();else{render();scheduleAI(300)}};$('stop').onclick=()=>{invalidateAI();game.stop();render();scheduleAI(300)};$('continue').onclick=()=>{invalidateAI();game.continue();render();scheduleAI(300)};
 localizeUI(); setupSelectors();
 BrowserDQN.load('models/dqn.json').then(m=>{model=m;dqnLoading=false;render()});
+BrowserRidge.load('models/ridge.json').then(m=>{ridge=m;ridgeLoading=false;updateModelOptions();render()});
 BrowserDQN.load('models/ppo.json').then(m=>{ppo=m;ppoLoading=false;updateModelOptions();render()});
 render();
