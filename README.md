@@ -6,19 +6,11 @@ This project studies that question in *Can't Stop*, a board game whose central d
 
 The project is important beyond one board game: it is a controlled testbed for sequential decision-making under uncertainty, where short-term reward, catastrophic failure, opponent behavior, and non-transitive policies interact.
 
-## Headline result: our agents beat established strategies
+## Headline result: our agents versus prior work
 
-Our models are not merely classifiers that imitate labels: they play complete games and are evaluated against traditional and published strategies. Across the evaluation suite, the trained agents consistently beat the classical Rule-of-28 baselines and the random policy; they also defeated several independently implemented or published opponents. On a common held-out evaluation of **3,000 games per matchup**, PPO led DDQN and Ridge against the primary opponents. The final two-seed retraining check showed that PPO and Ridge remained competitive while DDQN was more seed-sensitive.
+Our models are not merely classifiers that imitate labels: they play complete games against **traditional baselines and agents from previous work**. In a common direct comparison of **3,000 games per matchup**, our PPO, DDQN, and Ridge agents beat the published Glenn–Aloi, Glenn 2009, Glenn 2010, and Couto strategies in several matchups. The stronger `mc-strong` opponent also exposes a useful research result: it beats all four prior heuristic agents, while our learned agents remain competitive against it.
 
-```mermaid
-xychart-beta
-    title "Mean win rate on new training seeds"
-    x-axis [PPO, DDQN, Ridge]
-    y-axis "Win rate (%)" 0 --> 70
-    bar [64.25, 59.50, 63.25]
-```
-
-These are means across two additional training seeds, evaluated on fresh games—not training accuracy. The full experiment record, caveats, and raw-artifact locations are documented in [`EXPERIMENT_STATUS.md`](cant_stop_baselines/docs/EXPERIMENT_STATUS.md).
+The final two-seed retraining check showed that PPO and Ridge remained competitive while DDQN was more seed-sensitive. These are fresh complete-game evaluations—not training accuracy. The full experiment record, caveats, and raw-artifact locations are documented in [`EXPERIMENT_STATUS.md`](cant_stop_baselines/docs/EXPERIMENT_STATUS.md).
 
 ## Why this problem matters
 
@@ -29,39 +21,46 @@ These are means across two additional training seeds, evaluated on fresh games�
 - **A meaningful baseline gap:** simple rules can be strong, so an ML model must demonstrate improvement in complete games—not merely fit labels.
 - **A clean scientific setting:** the simulator gives us exact rules, deterministic seeds, controlled opponents, and repeatable ablations.
 
-## Evidence from the final comparison
+## Evidence: our agents versus published agents
 
-The promoted PPO-451 policy was evaluated against four external opponents using 3,000 games per matchup. The table reports each model's win rate; the minimum column is the score against its two primary opponents (`rule28-smart` and `mc`). These are complete-game results, not offline action accuracy.
+The following direct comparison used **3,000 games per matchup**, alternating seats and 64 Monte Carlo rollouts where applicable. These rows are our trained models; “win rate” means the row agent's win rate against the column opponent.
 
-| Model | Rule28-smart | MC | Glenn–Aloi | Couto-GA-stop | Minimum |
-|---|---:|---:|---:|---:|---:|
-| **PPO-451** | **64.1%** | **55.3%** | 80.9% | **65.8%** | **55.3%** |
-| DDQN | 60.6% | 52.6% | 79.2% | 63.2% | 52.6% |
-| Ridge | 59.1% | 52.1% | **81.7%** | 63.7% | 52.1% |
-| Random Forest | 34.2% | 28.4% | 69.4% | 38.7% | 28.4% |
+| Our agent | vs Rule-of-28-smart | vs `mc-strong` | vs Glenn–Aloi | vs Glenn 2009 | vs Glenn 2010 | vs Couto |
+|---|---:|---:|---:|---:|---:|---:|
+| **PPO** | **63.5%** | 53.7% | **81.3%** | **67.2%** | 67.1% | **64.6%** |
+| **DDQN** | 61.2% | 50.5% | 79.0% | 66.2% | 61.3% | 60.2% |
+| **Ridge** | 62.9% | **54.4%** | **81.8%** | 66.0% | **68.9%** | 64.1% |
 
-The `mc-strong` implementation was also used as a tougher Monte Carlo comparison. In a separate 3,000-game direct comparison, our models achieved **63.5% / 53.7% / 62.9%** against `rule28-smart` / `mc-strong` for PPO / DDQN / Ridge respectively; against `mc-strong`, Ridge reached **54.4%**, PPO **53.7%**, and DDQN **50.5%**. These results show both the strength of our agents and the fact that policy quality is opponent-dependent.
+For the reverse comparison, the prior agents' own win rates were much lower:
+
+| Prior agent | vs `rule28-smart` | vs `mc-strong` |
+|---|---:|---:|
+| Glenn–Aloi [2] | 22.7% | 20.2% |
+| Glenn 2009 Constant [2] | 41.0% | 36.9% |
+| Glenn 2010 Linear [2] | 41.2% | 36.2% |
+| Couto / Sketch-SA(O) [3] | 45.7% | 41.1% |
+
+The `mc-strong` implementation therefore beats all four prior heuristic agents in this direct comparison, while our PPO, DDQN, and Ridge policies remain competitive against it.
+
+These results show the main contribution clearly: our agents improve on the traditional baseline and defeat several previous agents, while no single policy dominates every opponent. The ranking is opponent-dependent, which is why we report a matrix rather than one cherry-picked score.
 
 ```mermaid
 xychart-beta
-    title "Our models against the stronger MC opponent"
-    x-axis [PPO, DDQN, Ridge]
-    y-axis "Win rate vs mc-strong (%)" 0 --> 60
-    bar [53.7, 50.5, 54.4]
+    title "Our agents versus prior agents: Rule-of-28-smart"
+    x-axis [PPO, DDQN, Ridge, GA, G09, G10, Couto]
+    y-axis "Win rate (%)" 0 --> 90
+    bar [63.5, 61.2, 62.9, 22.7, 41.0, 41.2, 45.7]
 ```
 
 ```mermaid
 xychart-beta
-    title "Primary held-out opponents"
-    x-axis [Rule28-smart, MC]
-    y-axis "Win rate (%)" 0 --> 70
-    bar [64.1, 55.3]
-    bar [60.6, 52.6]
-    bar [59.1, 52.1]
-    bar [34.2, 28.4]
+    title "Our agents versus prior agents: mc-strong"
+    x-axis [PPO, DDQN, Ridge, GA, G09, G10, Couto]
+    y-axis "Win rate (%)" 0 --> 90
+    bar [53.7, 50.5, 54.4, 20.2, 36.9, 36.2, 41.1]
 ```
 
-The result is not a claim that one model wins every matchup or generalizes to every possible opponent. Policy rankings are opponent-dependent, and the evaluation protocol uses paired seat-swapped games. We therefore report paired comparisons and between-seed variability rather than treating all games as independent samples.
+These direct-comparison point estimates do not establish statistical significance because that run did not save bootstrap intervals. Formal common-seed evaluations with paired bootstrap inference are reported in the final report. Policy rankings are opponent-dependent, and the evaluation protocol uses paired seat-swapped games; we do not treat all games as independent samples.
 
 ## What we built
 
