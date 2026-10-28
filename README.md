@@ -60,7 +60,7 @@ xychart-beta
     bar [53.7, 50.5, 54.4, 20.2, 36.9, 36.2, 41.1]
 ```
 
-These direct-comparison point estimates do not establish statistical significance because that run did not save bootstrap intervals. Formal common-seed evaluations with paired bootstrap inference are reported in the final report. Policy rankings are opponent-dependent, and the evaluation protocol uses paired seat-swapped games; we do not treat all games as independent samples.
+These direct-comparison point estimates do not establish statistical significance because that run did not save bootstrap intervals. Formal common-seed evaluations with paired bootstrap inference are recorded in the experiment status document. Policy rankings are opponent-dependent, and the evaluation protocol uses paired seat-swapped games; we do not treat all games as independent samples.
 
 ## What we built
 
@@ -122,14 +122,13 @@ Optional ML/RL dependencies and reproducible training commands are documented in
 | [`cant_stop_baselines/scripts/`](cant_stop_baselines/scripts/) | Training, dataset, evaluation, and analysis entry points |
 | [`cant_stop_baselines/tests/`](cant_stop_baselines/tests/) | Rule, transition, reproducibility, agent, and training tests |
 | [`cant_stop_baselines/docs/EXPERIMENT_STATUS.md`](cant_stop_baselines/docs/EXPERIMENT_STATUS.md) | Source of truth for results and research decisions |
-| [`final_report/report.pdf`](final_report/report.pdf) | Paper-style project report |
 | [`spec.pdf`](spec.pdf) | Course specification; not the engine contract |
 
 ## Reproducibility and limitations
 
 Every formal run records configuration, seeds, checkpoints, evaluation summaries, and raw game-level results under local `runs/` and `results/` directories. Before interpreting a result, read the experiment status document: it distinguishes promoted evidence, screening runs, negative results, and incomplete experiments.
 
-Known limitations include two-player games only, fixed dice pairing in the promoted Stop/Continue study, no graphical interface, and no claim of full-game MCTS. The simulator-generated games and held-out evaluation protocol are described in the final report.
+Known limitations include two-player games only, fixed dice pairing in the promoted Stop/Continue study, no graphical interface, and no claim of full-game MCTS. The simulator-generated games and held-out evaluation protocol are described in the experiment documentation.
 
 ## References and citations
 
@@ -137,7 +136,7 @@ Known limitations include two-player games only, fixed dice pairing in the promo
 - **[2]** James Glenn and Christian Aloi, [*A Generalized Heuristic for Can't Stop*](https://cdn.aaai.org/ocs/123/123-2430-1-PB.pdf), FLAIRS 2009. Source of the GA pairing weights and published heuristic comparison.
 - **[3]** Leandro C. Medeiros, David S. Aleixo, and Levi H. S. Levis, [*What Can We Learn Even From the Weakest? Learning Sketches for Programmatic Strategies*](https://doi.org/10.1609/aaai.v36i7.20744), AAAI 2022. Source of the Couto/Sketch-SA(O) comparison agent.
 - **[4]** J. Cameron Carter, *Using Machine Learning to Optimize the Board Game Can't Stop* (2026), user-provided thesis. Used as an additional implementation and feature reference; the adapter is explicitly labeled in this repository.
-- **[5]** This project, [final report](final_report/report.pdf) and [experiment record](cant_stop_baselines/docs/EXPERIMENT_STATUS.md). Ridge, DDQN, PPO, and `mc-strong` are project implementations; their reported win rates come from this repository's seeded complete-game evaluations.
+- **[5]** This project, [experiment record](cant_stop_baselines/docs/EXPERIMENT_STATUS.md). Ridge, DDQN, PPO, and `mc-strong` are project implementations; their reported win rates come from this repository's seeded complete-game evaluations.
 
 ## License
 
