@@ -2,6 +2,22 @@
 
 Updated 2026-10-27.
 
+## Prior-work comparison status
+
+The source/revision and fidelity audit for the paper and public-code agents is
+now maintained in `docs/PRIOR_WORK_AUDIT.md`. In particular, Glenn (2010) is
+cited separately from Glenn & Aloi (2009), `vmerckle_monte_uct` is explicitly
+identified as a root-only UCB1 bandit rather than full-tree MCTS, and Carter is
+reported only as a checkpoint/feature adaptation. The comparison runner now
+records rollout budget, allocation semantics, tree status, and elapsed runtime
+alongside each result.
+
+No Lanctot et al. (2013) Star1SS/Star2SS agent is registered: the available
+paper does not specify enough Can't Stop-specific evaluator and tuned search
+details to support a faithful reproduction. Adding an unverified adaptation
+would make the comparison less credible, so this remains an explicit exclusion
+rather than an inaccurately named MCTS baseline.
+
 ## Experiment infrastructure readiness
 
 The in-process Python reference training path is ready for new controlled

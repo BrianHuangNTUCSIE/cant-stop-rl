@@ -21,6 +21,35 @@ from cant_stop.agents import AGENT_NAMES, make_agent
 from cant_stop.evaluation import evaluate
 
 
+def search_budget(agent_name: str, rollouts: int) -> dict:
+    """Describe the actual budget rather than calling every search MCTS."""
+    if agent_name == "vmerckle_monte":
+        return {
+            "rollouts": rollouts,
+            "allocation": "floor(rollouts / root_actions) per root action",
+            "tree": "none",
+        }
+    if agent_name == "vmerckle_monte_uct":
+        return {
+            "rollouts": rollouts,
+            "allocation": "one initial sample per root action, then UCB1",
+            "tree": "root-only bandit",
+        }
+    if agent_name in {"mc", "mc-strong"}:
+        return {
+            "rollouts": rollouts,
+            "allocation": "remainder-of-turn samples",
+            "tree": "none",
+        }
+    if agent_name == "mc-full-game":
+        return {
+            "rollouts": rollouts,
+            "allocation": "paired stop/continue full-game samples",
+            "tree": "none",
+        }
+    return {"rollouts": 0, "allocation": "deterministic or stochastic heuristic", "tree": "none"}
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -107,6 +136,8 @@ def main() -> None:
                 "agent_b": args.opponent,
                 "evaluation_seed": evaluation_seed,
                 "elapsed_seconds": elapsed_seconds,
+                "search_budget": search_budget(name, args.mc_rollouts),
+                "opponent_search_budget": search_budget(args.opponent, args.mc_rollouts),
             }
             suffix = f"_r{replicate_index:02d}" if args.replicates > 1 else ""
             path = args.output_dir / f"{matchup_index:02d}{suffix}_{name}_vs_{args.opponent}.json"
