@@ -8,9 +8,9 @@ python3 -m http.server 8000
 
 然後開啟 <http://localhost:8000>。使用 HTTP server 是因為瀏覽器通常不允許 `file://` 載入 ES modules 與 JSON。
 
-## 安裝訓練好的 DQN
+## 已發布的訓練模型
 
-目前 demo 只發布可直接由瀏覽器載入的 JSON 權重，不放入 binary `.pt` 檔。當前 `models/dqn.json` 是 DDQN 的 domain-feature 匯出檔；來源、seed、feature 版本與 checksum 見 [`models/README.md`](models/README.md)。
+目前 demo 發布可直接由瀏覽器載入的 JSON 權重，不放入 binary `.pt` 檔。`models/dqn.json` 是 DDQN、`models/ppo.json` 是 PPO 的 domain-feature 匯出檔；來源、seed、feature 版本與 checksum 見 [`models/README.md`](models/README.md)。
 
 請在原專案已安裝 PyTorch 的環境重新匯出時執行：
 
@@ -20,7 +20,7 @@ python3 -m http.server 8000
   models/dqn.json
 ```
 
-（若從原專案的 `final` 目錄執行，請自行調整 checkpoint 路徑。）產生 `models/dqn.json` 後，網頁會自動使用 DDQN；沒有模型時會明確顯示並使用 heuristic fallback。PPO checkpoint 也可使用同一 exporter，輸出成 `models/ppo.json`；在該檔案不存在時，PPO 選項會停用，不會假裝使用訓練好的 PPO。
+（若從原專案的 `final` 目錄執行，請自行調整 checkpoint 路徑。）產生 JSON 後，網頁會自動載入對應模型；沒有模型時會明確顯示並使用 heuristic fallback。PPO 的發布檔已包含在 repository 中。
 
 ## GitHub Pages
 
