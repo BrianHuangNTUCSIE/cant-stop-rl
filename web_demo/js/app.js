@@ -229,7 +229,7 @@ async function mcStop(g,player,name){
       const moves=legalMoves(dice,sim); if(!moves.length)return 0;
       const selected=chooseGA(sim,moves);
       active={...active}; for(const c of selected)active[c]=(active[c]??me[c-2])+1;
-  const points=rule28Points({...g,active},player);
+      const points=rule28Points({...g,active},player);
       if(Object.entries(active).some(([c,p])=>p===LENGTHS[c]) ||
          (Object.keys(active).length>=3&&points>=28))return bankValue(active);
     }
