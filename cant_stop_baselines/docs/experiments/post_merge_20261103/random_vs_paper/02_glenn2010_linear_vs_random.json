@@ -1,0 +1,71 @@
+{
+  "games": 3000,
+  "seed": 20261029,
+  "draws": 0,
+  "agents": [
+    {
+      "id": "A",
+      "wins": 2926,
+      "win_rate": 0.9753333333333334,
+      "win_rate_wilson95": [
+        0.9691454589040336,
+        0.9803054489077567
+      ],
+      "seat0_wins": 1467,
+      "seat1_wins": 1459,
+      "total_turns": 26964,
+      "avg_turns_per_game": 8.988,
+      "total_rolls": 100603,
+      "avg_rolls_per_game": 33.534333333333336,
+      "total_busts": 6558,
+      "busts_per_turn": 0.2432131731197152,
+      "total_stops": 20406
+    },
+    {
+      "id": "B",
+      "wins": 74,
+      "win_rate": 0.024666666666666667,
+      "win_rate_wilson95": [
+        0.01969455109224335,
+        0.030854541095966533
+      ],
+      "seat0_wins": 41,
+      "seat1_wins": 33,
+      "total_turns": 25538,
+      "avg_turns_per_game": 8.512666666666666,
+      "total_rolls": 73447,
+      "avg_rolls_per_game": 24.482333333333333,
+      "total_busts": 4791,
+      "busts_per_turn": 0.18760278800219282,
+      "total_stops": 20747
+    }
+  ],
+  "metadata": {
+    "runner": "scripts/evaluate_agent_comparison.py",
+    "agents": [
+      "glenn-aloi",
+      "glenn2009_constant",
+      "glenn2010_linear",
+      "couto"
+    ],
+    "opponent": "random",
+    "games_per_matchup": 3000,
+    "base_seed": 20261027,
+    "replicates": 1,
+    "seed_stride": 1000000,
+    "seed_formula": "seed = base_seed + matchup_index + replicate_index * seed_stride",
+    "mc_rollouts": 64,
+    "mc_future_roll_limit": 40,
+    "max_total_turns": 2000,
+    "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]",
+    "platform": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+    "raw_records": false,
+    "inference_note": "Evaluator alternates seats and reuses each pair seed for the two seat assignments; use paired bootstrap or between-seed variability.",
+    "matchup_index": 2,
+    "replicate_index": 0,
+    "agent_a": "glenn2010_linear",
+    "agent_b": "random",
+    "evaluation_seed": 20261029,
+    "elapsed_seconds": 1.0686235829489306
+  }
+}

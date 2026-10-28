@@ -1,0 +1,57 @@
+{
+  "games": 3000,
+  "seed": 20261027,
+  "draws": 0,
+  "agents": [
+    {
+      "id": "A",
+      "wins": 749,
+      "win_rate": 0.24966666666666668,
+      "win_rate_wilson95": [
+        0.23450541820704285,
+        0.2654681920547704
+      ],
+      "seat0_wins": 384,
+      "seat1_wins": 365,
+      "total_turns": 55475,
+      "avg_turns_per_game": 18.491666666666667,
+      "total_rolls": 86900,
+      "avg_rolls_per_game": 28.966666666666665,
+      "total_busts": 3571,
+      "busts_per_turn": 0.06437133844073907,
+      "total_stops": 51904
+    },
+    {
+      "id": "B",
+      "wins": 2251,
+      "win_rate": 0.7503333333333333,
+      "win_rate_wilson95": [
+        0.7345318079452295,
+        0.7654945817929572
+      ],
+      "seat0_wins": 1135,
+      "seat1_wins": 1116,
+      "total_turns": 56226,
+      "avg_turns_per_game": 18.742,
+      "total_rolls": 158665,
+      "avg_rolls_per_game": 52.888333333333335,
+      "total_busts": 12219,
+      "busts_per_turn": 0.21731938960623198,
+      "total_stops": 44007
+    }
+  ],
+  "metadata": {
+    "runner": "Carter public checkpoint PyTorch-equivalent evaluator",
+    "agent_a": "carter-public-adapted",
+    "agent_b": "random",
+    "games_per_matchup": 3000,
+    "evaluation_seed": 20261027,
+    "max_total_turns": 2000,
+    "pairing_policy": "Carter heuristic selector",
+    "checkpoint_source": "https://github.com/JCameronCarter/HonorsThesis/blob/main/Code/dqn_multi_opp.keras",
+    "checkpoint_architecture": "51 -> 64 -> 64 -> 2",
+    "inference": "Keras model.weights.h5 loaded into equivalent PyTorch network; no retraining",
+    "adaptation": "current simulator rules and carter_features adapter",
+    "elapsed_seconds": 3.133004903793335
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "runner": "scripts/evaluate_agent_comparison.py",
+  "agents": [
+    "glenn-aloi",
+    "glenn2009_constant",
+    "glenn2010_linear",
+    "couto"
+  ],
+  "opponent": "rule28-smart",
+  "games_per_matchup": 3000,
+  "base_seed": 20261027,
+  "replicates": 1,
+  "seed_stride": 1000000,
+  "seed_formula": "seed = base_seed + matchup_index + replicate_index * seed_stride",
+  "mc_rollouts": 64,
+  "mc_future_roll_limit": 40,
+  "max_total_turns": 2000,
+  "python": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 17.0.0 (clang-1700.6.4.2)]",
+  "platform": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+  "raw_records": false,
+  "inference_note": "Evaluator alternates seats and reuses each pair seed for the two seat assignments; use paired bootstrap or between-seed variability."
+}

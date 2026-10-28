@@ -23,24 +23,35 @@ The final two-seed retraining check showed that PPO and Ridge remained competiti
 
 ## Evidence: our agents versus published agents
 
-The following direct comparison used **3,000 games per matchup**, alternating seats and 64 Monte Carlo rollouts where applicable. These rows are our trained models; “win rate” means the row agent's win rate against the column opponent.
+The post-merge direct comparison used **3,000 games per matchup**, alternating seats and 64 Monte Carlo rollouts where applicable. It used PPO seed 460, DDQN seed 448, and Ridge seed 642; “win rate” means the row agent's win rate against the column opponent. Raw records are archived under [`docs/experiments/post_merge_20261103`](cant_stop_baselines/docs/experiments/post_merge_20261103).
 
-| Our agent | vs Rule-of-28-smart | vs `mc-strong` | vs Glenn–Aloi | vs Glenn 2009 | vs Glenn 2010 | vs Couto |
-|---|---:|---:|---:|---:|---:|---:|
-| **PPO** | **63.5%** | 53.7% | **81.3%** | **67.2%** | 67.1% | **64.6%** |
-| **DDQN** | 61.2% | 50.5% | 79.0% | 66.2% | 61.3% | 60.2% |
-| **Ridge** | 62.9% | **54.4%** | **81.8%** | 66.0% | **68.9%** | 64.1% |
+| Our agent | vs Rule-of-28-smart | vs `mc-strong` | vs Glenn–Aloi | vs Glenn 2009 | vs Glenn 2010 | vs Couto | vs Carter* |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **PPO** | **64.8%** | 53.4% | **68.1%** | **69.2%** | **66.4%** | 67.6% | **98.9%** |
+| **DDQN** | 61.0% | 51.3% | 64.1% | 64.8% | 60.3% | 66.1% | **98.5%** |
+| **Ridge** | 63.4% | **54.0%** | 66.9% | 68.0% | 65.7% | **68.3%** | **98.2%** |
 
 For the reverse comparison, the prior agents' own win rates were much lower:
 
-| Prior agent | vs `rule28-smart` | vs `mc-strong` |
-|---|---:|---:|
-| Glenn–Aloi [2] | 22.7% | 20.2% |
-| Glenn 2009 Constant [2] | 41.0% | 36.9% |
-| Glenn 2010 Linear [2] | 41.2% | 36.2% |
-| Couto / Sketch-SA(O) [3] | 45.7% | 41.1% |
+| Prior agent | vs `rule28-smart` | vs `mc-strong` | vs Random |
+|---|---:|---:|---:|
+| Glenn–Aloi [2] | 43.0% | 39.4% | 95.6% |
+| Glenn 2009 Constant [2] | 41.5% | 37.1% | 95.3% |
+| Glenn 2010 Linear [2] | 43.4% | 37.7% | 97.5% |
+| Couto / Sketch-SA(O) [3] | 43.1% | 37.1% | 95.3% |
+| Carter adapted checkpoint [4] | 1.7% | 1.7% | 25.0% |
 
-The `mc-strong` implementation therefore beats all four prior heuristic agents in this direct comparison, while our PPO, DDQN, and Ridge policies remain competitive against it.
+The `mc-strong` implementation therefore beats all four prior heuristic agents in this direct comparison, while our PPO, DDQN, and Ridge policies remain competitive against it. These values replace the pre-merge matrix; the prior implementation used different paper-policy behavior.
+
+\* Carter is the public `dqn_multi_opp.keras` checkpoint from [J. Cameron
+Carter's repository](https://github.com/JCameronCarter/HonorsThesis), evaluated
+as a checkpoint and feature/simulator adaptation. The values in this column
+are the corresponding complement of Carter's win rate: PPO 34/3,000, DDQN
+44/3,000, and Ridge 53/3,000. The checkpoint was evaluated with an equivalent
+PyTorch inference network using Carter's `51 -> 64 -> 64 -> 2` architecture,
+Stop/Continue action convention, and heuristic dice-pair selector; it was not
+retrained. These results should not be interpreted as Carter's original-
+environment performance.
 
 These results show the main contribution clearly: our agents improve on the traditional baseline and defeat several previous agents, while no single policy dominates every opponent. The ranking is opponent-dependent, which is why we report a matrix rather than one cherry-picked score.
 
@@ -49,7 +60,7 @@ xychart-beta
     title "Our agents versus prior agents: Rule-of-28-smart"
     x-axis [PPO, DDQN, Ridge, GA, G09, G10, Couto]
     y-axis "Win rate (%)" 0 --> 90
-    bar [63.5, 61.2, 62.9, 22.7, 41.0, 41.2, 45.7]
+    bar [64.8, 61.0, 63.4, 43.0, 41.5, 43.4, 43.1]
 ```
 
 ```mermaid
@@ -57,10 +68,10 @@ xychart-beta
     title "Our agents versus prior agents: mc-strong"
     x-axis [PPO, DDQN, Ridge, GA, G09, G10, Couto]
     y-axis "Win rate (%)" 0 --> 90
-    bar [53.7, 50.5, 54.4, 20.2, 36.9, 36.2, 41.1]
+    bar [53.4, 51.3, 54.0, 39.4, 37.1, 37.7, 37.1]
 ```
 
-These direct-comparison point estimates do not establish statistical significance because that run did not save bootstrap intervals. Formal common-seed evaluations with paired bootstrap inference are recorded in the experiment status document. Policy rankings are opponent-dependent, and the evaluation protocol uses paired seat-swapped games; we do not treat all games as independent samples.
+The archived post-merge run also includes paired-bootstrap intervals; the table shows point estimates for readability, not claims that every difference is significant. Policy rankings are opponent-dependent, and the evaluation protocol uses paired seat-swapped games; we do not treat all games as independent samples.
 
 ## What we built
 
@@ -76,7 +87,7 @@ flowchart LR
 ```
 
 - **Rules engine:** immutable agent-facing state, legal move generation, bust handling, banked progress, column closure, and terminal outcomes.
-- **Agents:** random, Rule-of-28 variants, one-turn Monte Carlo, Glenn–Aloi, Couto, Ridge, DDQN, and PPO.
+- **Agents:** random, Rule-of-28 variants, one-turn Monte Carlo, Glenn–Aloi, Couto, Carter's adapted public checkpoint, Ridge, DDQN, and PPO.
 - **RL formulation:** the current controlled setup learns Stop/Continue decisions while keeping Glenn–Aloi dice pairing fixed, isolating the strategic decision under study.
 - **Features:** raw board state plus domain features such as exact next-roll bust probability, at-risk progress, completion threats, and opponent lead.
 - **Evaluation:** alternating seats, deterministic independent RNG streams, fresh seeds, raw per-game records, and paired bootstrap intervals.
@@ -134,7 +145,7 @@ Known limitations include two-player games only, fixed dice pairing in the promo
 
 - **[1]** Martin Keller, [“Can't Stop? Try The Rule of 28”](https://www.solitairelaboratory.com/abstract/dicedominoes.html). Source of the traditional Rule-of-28 baseline.
 - **[2]** James Glenn and Christian Aloi, [*A Generalized Heuristic for Can't Stop*](https://cdn.aaai.org/ocs/123/123-2430-1-PB.pdf), FLAIRS 2009. Source of the GA pairing weights and published heuristic comparison.
-- **[3]** Leandro C. Medeiros, David S. Aleixo, and Levi H. S. Levis, [*What Can We Learn Even From the Weakest? Learning Sketches for Programmatic Strategies*](https://doi.org/10.1609/aaai.v36i7.20744), AAAI 2022. Source of the Couto/Sketch-SA(O) comparison agent.
+- **[3]** Leandro C. Medeiros, David S. Aleixo, and Levi H. S. Lelis, [*What Can We Learn Even From the Weakest? Learning Sketches for Programmatic Strategies*](https://doi.org/10.1609/aaai.v36i7.20744), AAAI 2022. Source of the Couto/Sketch-SA(O) comparison agent.
 - **[4]** J. Cameron Carter, *Using Machine Learning to Optimize the Board Game Can't Stop* (2026), user-provided thesis. Used as an additional implementation and feature reference; the adapter is explicitly labeled in this repository.
 - **[5]** This project, [experiment record](cant_stop_baselines/docs/EXPERIMENT_STATUS.md). Ridge, DDQN, PPO, and `mc-strong` are project implementations; their reported win rates come from this repository's seeded complete-game evaluations.
 

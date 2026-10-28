@@ -783,3 +783,118 @@ The final confirmation run retrained each retained model with two additional see
 | Ridge (642/643) | 63.25% | 55.55% | 74.9% | 55.55% |
 
 The two PPO seeds were consistent. DDQN showed larger seed sensitivity, with seed 448 clearly stronger than 449. Ridge was stable across its two new seeds and remained close to PPO in direct matchups. The previously canonical Ridge checkpoint remains the strongest single Ridge artifact against MC (57.4% in the final retraining evaluation), but it is not used to claim a multi-seed average. No further model training is planned; these results are for final robustness analysis and reporting.
+
+### Direct comparison with selected rule, Monte Carlo, and paper agents
+
+On 2026-10-27, the retained DDQN, PPO, and Ridge checkpoints were evaluated
+against the selected comparison agents: `rule28-smart`, `mc-strong`,
+`glenn-aloi`, `glenn2009_constant`, `glenn2010_linear`, and `couto`. The four
+paper agents were also evaluated directly against `mc-strong` and
+`rule28-smart`. Each matchup used 3,000 games, alternating seats, 64 MC
+rollouts, and a 2,000-turn limit. Matchup-specific seed offsets were used;
+results were printed without saving logs or raw game records. No confidence
+intervals were computed.
+
+| Model | rule28-smart | mc-strong | glenn-aloi | glenn2009_constant | glenn2010_linear | couto |
+|---|---:|---:|---:|---:|---:|---:|
+| DDQN | 61.2% | 50.5% | 79.0% | 66.2% | 61.3% | 60.2% |
+| PPO | **63.5%** | 53.7% | **81.3%** | **67.2%** | 67.1% | **64.6%** |
+| Ridge | 62.9% | **54.4%** | **81.8%** | 66.0% | **68.9%** | 64.1% |
+
+| Paper agent | vs mc-strong | vs rule28-smart |
+|---|---:|---:|
+| glenn-aloi | 20.2% | 22.7% |
+| glenn2009_constant | 36.9% | 41.0% |
+| glenn2010_linear | 36.2% | 41.2% |
+| couto | 41.1% | 45.7% |
+
+PPO was strongest overall among the three retained project models. Ridge was
+strongest against `mc-strong` and `glenn2010_linear`, while DDQN was nearly
+even with `mc-strong`. `mc-strong` substantially outperformed all four paper
+agents in the direct comparison. These point estimates are descriptive and do
+not establish statistical significance.
+
+### Selected paper agents against Random
+
+As an additional calibration comparison on 2026-10-27, the four selected
+paper agents were evaluated against `random`. Each matchup used 3,000 games,
+alternating seats, a 2,000-turn limit, and no saved logs or raw game records.
+There were no draws.
+
+| Paper agent | Win rate vs Random | Wins |
+|---|---:|---:|
+| `glenn-aloi` | 78.0% | 2,341 / 3,000 |
+| `glenn2009_constant` | 95.4% | 2,862 / 3,000 |
+| `glenn2010_linear` | 94.2% | 2,827 / 3,000 |
+| `couto` | **96.1%** | 2,882 / 3,000 |
+
+`couto` had the highest win rate against `random`, followed closely by the
+2009 Constant and 2010 Linear agents. `glenn-aloi` was substantially weaker
+in this calibration matchup.
+
+### Post-merge paper-agent and retained-model rerun
+
+After PR #1 was merged as `0d53b965`, the README comparison was rerun because
+the PR changes published-policy behavior and legal-move ordering. The retained
+model run used PPO seed 460 (`top_1.pt`), DDQN seed 448 (`best.pt`), and Ridge
+seed 642 (`ridge_domain.joblib`). It used 3,000 games per matchup, seed
+`20261103`, alternating seats, a 2,000-turn limit, MC-64, four workers, and
+5,000 paired-bootstrap samples. Raw game records, the matrix, and the summary
+are archived in `docs/experiments/post_merge_20261103/`.
+
+| Model | rule28-smart | mc-strong | glenn-aloi | glenn2009_constant | glenn2010_linear | couto |
+|---|---:|---:|---:|---:|---:|---:|
+| PPO-460 | 64.8% | 53.4% | 68.1% | 69.2% | 66.4% | 67.6% |
+| DDQN-448 | 61.0% | 51.3% | 64.1% | 64.8% | 60.3% | 66.1% |
+| Ridge-642 | 63.4% | 54.0% | 66.9% | 68.0% | 65.7% | 68.3% |
+
+The paper agents' own rates in the same matrix were 43.0%, 41.5%, 43.4%, and
+43.1% against `rule28-smart`, and 39.4%, 37.1%, 37.7%, and 37.1% against
+`mc-strong`, in the order Glenn–Aloi, Glenn 2009, Glenn 2010, and Couto.
+A separate 3,000-game Random calibration with seed `20261027` gave 95.6%,
+95.3%, 97.5%, and 95.3%, respectively. These results supersede the earlier
+pre-merge point estimates in this document and in the README. The old run did
+not save raw records, so exact reconstruction of its seed offsets is not
+possible; the new run is the reproducible reference.
+
+### Carter public checkpoint adaptation
+
+The public Carter repository publishes `Code/dqn_multi_opp.keras` at
+`JCameronCarter/HonorsThesis`. This checkpoint was loaded as the reported
+`51 -> 64 -> 64 -> 2` network, with Carter's heuristic dice-pair selector and
+the action convention `0=stop`, `1=continue`. Because TensorFlow was not
+available in the evaluation environment, the weights inside the Keras archive
+were read directly and evaluated with an equivalent PyTorch inference network;
+the architecture and weights were not retrained or modified.
+
+Using the current simulator's 51-feature adapter, seed `20261104`, alternating
+seats, 3,000 games per matchup, and a 2,000-turn limit, Carter's adapted
+checkpoint produced:
+
+| Opponent | Carter wins | Carter win rate |
+|---|---:|---:|
+| Random | 594 / 3,000 | 19.8% |
+| rule28-smart | 51 / 3,000 | 1.7% |
+| mc-strong | 52 / 3,000 | 1.7% |
+| PPO-460 | 34 / 3,000 | 1.1% |
+| DDQN-448 | 44 / 3,000 | 1.5% |
+| Ridge-642 | 53 / 3,000 | 1.8% |
+| glenn-aloi | 22 / 3,000 | 0.7% |
+| glenn2009_constant | 19 / 3,000 | 0.6% |
+| glenn2010_linear | 34 / 3,000 | 1.1% |
+| couto | 46 / 3,000 | 1.5% |
+
+These results are a **checkpoint and feature/simulator adaptation**, not a
+reproduction of Carter's original game environment or training evaluation.
+The 19.8% result against Random is evidence that the feature and rule
+translation is not behaviorally equivalent; therefore these numbers should
+not be used to claim that Carter's original agent performs this poorly under
+its own environment. The public checkpoint provenance is retained here so
+the comparison is transparent.
+
+The same Random calibration was extended to the Carter adaptation using seed
+`20261027`, 3,000 games, alternating seats, and a 2,000-turn limit. Carter won
+749 games (24.97%, reported as 25.0% in the README). The saved result is
+`docs/experiments/post_merge_20261103/random_vs_paper/04_carter_vs_random.json`.
+This remains a simulator/feature adaptation, not a reproduction of Carter's
+original-environment result.

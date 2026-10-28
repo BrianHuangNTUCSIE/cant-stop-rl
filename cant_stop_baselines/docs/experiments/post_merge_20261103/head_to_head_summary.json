@@ -1,0 +1,2049 @@
+{
+  "games_per_matchup": 3000,
+  "seed": 20261103,
+  "device": "cpu",
+  "workers": 4,
+  "mc_rollouts": 64,
+  "pairing_policy": "agent-specific; couto uses its original secured-progress pairing, while couto-ga-stop and training-facing learned agents use fixed GA pairing",
+  "paired_bootstrap_unit": "shared_dice_seed_two_seat_games",
+  "models": [
+    {
+      "name": "ridge642",
+      "kind": "classical_ml",
+      "path": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+    },
+    {
+      "name": "ddqn448",
+      "kind": "dqn",
+      "path": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+    },
+    {
+      "name": "ppo460",
+      "kind": "ppo",
+      "path": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+    },
+    {
+      "name": "rule28-smart",
+      "kind": "baseline"
+    },
+    {
+      "name": "mc-strong",
+      "kind": "baseline"
+    },
+    {
+      "name": "glenn-aloi",
+      "kind": "baseline"
+    },
+    {
+      "name": "glenn2009_constant",
+      "kind": "baseline"
+    },
+    {
+      "name": "glenn2010_linear",
+      "kind": "baseline"
+    },
+    {
+      "name": "couto",
+      "kind": "baseline"
+    }
+  ],
+  "matrix_rows_model_win_rate_vs_columns": {
+    "ridge642": {
+      "ridge642": null,
+      "ddqn448": 0.543,
+      "ppo460": 0.49433333333333335,
+      "rule28-smart": 0.634,
+      "mc-strong": 0.5403333333333333,
+      "glenn-aloi": 0.6686666666666666,
+      "glenn2009_constant": 0.6796666666666666,
+      "glenn2010_linear": 0.657,
+      "couto": 0.6833333333333333
+    },
+    "ddqn448": {
+      "ridge642": 0.457,
+      "ddqn448": null,
+      "ppo460": 0.457,
+      "rule28-smart": 0.6096666666666667,
+      "mc-strong": 0.513,
+      "glenn-aloi": 0.6406666666666667,
+      "glenn2009_constant": 0.6483333333333333,
+      "glenn2010_linear": 0.6033333333333334,
+      "couto": 0.6606666666666666
+    },
+    "ppo460": {
+      "ridge642": 0.5056666666666667,
+      "ddqn448": 0.543,
+      "ppo460": null,
+      "rule28-smart": 0.6483333333333333,
+      "mc-strong": 0.5343333333333333,
+      "glenn-aloi": 0.6813333333333333,
+      "glenn2009_constant": 0.692,
+      "glenn2010_linear": 0.6643333333333333,
+      "couto": 0.6756666666666666
+    },
+    "rule28-smart": {
+      "ridge642": 0.366,
+      "ddqn448": 0.3903333333333333,
+      "ppo460": 0.3516666666666667,
+      "rule28-smart": null,
+      "mc-strong": 0.426,
+      "glenn-aloi": 0.5703333333333334,
+      "glenn2009_constant": 0.5846666666666667,
+      "glenn2010_linear": 0.5656666666666667,
+      "couto": 0.569
+    },
+    "mc-strong": {
+      "ridge642": 0.45966666666666667,
+      "ddqn448": 0.487,
+      "ppo460": 0.4656666666666667,
+      "rule28-smart": 0.574,
+      "mc-strong": null,
+      "glenn-aloi": 0.606,
+      "glenn2009_constant": 0.6286666666666667,
+      "glenn2010_linear": 0.6233333333333333,
+      "couto": 0.6286666666666667
+    },
+    "glenn-aloi": {
+      "ridge642": 0.3313333333333333,
+      "ddqn448": 0.35933333333333334,
+      "ppo460": 0.31866666666666665,
+      "rule28-smart": 0.42966666666666664,
+      "mc-strong": 0.394,
+      "glenn-aloi": null,
+      "glenn2009_constant": 0.5176666666666667,
+      "glenn2010_linear": 0.49066666666666664,
+      "couto": 0.515
+    },
+    "glenn2009_constant": {
+      "ridge642": 0.32033333333333336,
+      "ddqn448": 0.3516666666666667,
+      "ppo460": 0.308,
+      "rule28-smart": 0.41533333333333333,
+      "mc-strong": 0.37133333333333335,
+      "glenn-aloi": 0.48233333333333334,
+      "glenn2009_constant": null,
+      "glenn2010_linear": 0.4686666666666667,
+      "couto": 0.496
+    },
+    "glenn2010_linear": {
+      "ridge642": 0.343,
+      "ddqn448": 0.39666666666666667,
+      "ppo460": 0.33566666666666667,
+      "rule28-smart": 0.43433333333333335,
+      "mc-strong": 0.37666666666666665,
+      "glenn-aloi": 0.5093333333333333,
+      "glenn2009_constant": 0.5313333333333333,
+      "glenn2010_linear": null,
+      "couto": 0.5456666666666666
+    },
+    "couto": {
+      "ridge642": 0.31666666666666665,
+      "ddqn448": 0.3393333333333333,
+      "ppo460": 0.3243333333333333,
+      "rule28-smart": 0.431,
+      "mc-strong": 0.37133333333333335,
+      "glenn-aloi": 0.485,
+      "glenn2009_constant": 0.504,
+      "glenn2010_linear": 0.4543333333333333,
+      "couto": null
+    }
+  },
+  "matchups": {
+    "ridge642_vs_ddqn448": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1629,
+          "win_rate": 0.543,
+          "win_rate_wilson95": [
+            0.5251306721892407,
+            0.5607593468203814
+          ],
+          "seat0_wins": 875,
+          "seat1_wins": 754,
+          "total_turns": 20223,
+          "avg_turns_per_game": 6.741,
+          "total_rolls": 118552,
+          "avg_rolls_per_game": 39.51733333333333,
+          "total_busts": 8475,
+          "busts_per_turn": 0.41907728823616675,
+          "total_stops": 11748,
+          "name": "ridge642",
+          "model_kind": "classical_ml",
+          "paired_bootstrap_win_rate95": [
+            0.5256666666666666,
+            0.5606666666666666
+          ],
+          "model_file": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+        },
+        {
+          "id": "B",
+          "wins": 1371,
+          "win_rate": 0.457,
+          "win_rate_wilson95": [
+            0.43924065317961863,
+            0.47486932781075947
+          ],
+          "seat0_wins": 746,
+          "seat1_wins": 625,
+          "total_turns": 20094,
+          "avg_turns_per_game": 6.698,
+          "total_rolls": 113256,
+          "avg_rolls_per_game": 37.752,
+          "total_busts": 8646,
+          "busts_per_turn": 0.4302776948342789,
+          "total_stops": 11448,
+          "name": "ddqn448",
+          "model_kind": "dqn",
+          "model_file": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ridge642_vs_ppo460": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1483,
+          "win_rate": 0.49433333333333335,
+          "win_rate_wilson95": [
+            0.4764612298023919,
+            0.5122199304831618
+          ],
+          "seat0_wins": 814,
+          "seat1_wins": 669,
+          "total_turns": 19833,
+          "avg_turns_per_game": 6.611,
+          "total_rolls": 116710,
+          "avg_rolls_per_game": 38.903333333333336,
+          "total_busts": 8612,
+          "busts_per_turn": 0.4342257853073161,
+          "total_stops": 11221,
+          "name": "ridge642",
+          "model_kind": "classical_ml",
+          "paired_bootstrap_win_rate95": [
+            0.477,
+            0.5113333333333333
+          ],
+          "model_file": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+        },
+        {
+          "id": "B",
+          "wins": 1517,
+          "win_rate": 0.5056666666666667,
+          "win_rate_wilson95": [
+            0.4877800695168382,
+            0.5235387701976082
+          ],
+          "seat0_wins": 831,
+          "seat1_wins": 686,
+          "total_turns": 19850,
+          "avg_turns_per_game": 6.616666666666666,
+          "total_rolls": 109365,
+          "avg_rolls_per_game": 36.455,
+          "total_busts": 7325,
+          "busts_per_turn": 0.3690176322418136,
+          "total_stops": 12525,
+          "name": "ppo460",
+          "model_kind": "ppo",
+          "model_file": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ridge642_vs_rule28-smart": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1902,
+          "win_rate": 0.634,
+          "win_rate_wilson95": [
+            0.616601372740526,
+            0.6510558958010868
+          ],
+          "seat0_wins": 1026,
+          "seat1_wins": 876,
+          "total_turns": 20784,
+          "avg_turns_per_game": 6.928,
+          "total_rolls": 123463,
+          "avg_rolls_per_game": 41.154333333333334,
+          "total_busts": 9000,
+          "busts_per_turn": 0.4330254041570439,
+          "total_stops": 11784,
+          "name": "ridge642",
+          "model_kind": "classical_ml",
+          "paired_bootstrap_win_rate95": [
+            0.617,
+            0.651
+          ],
+          "model_file": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+        },
+        {
+          "id": "B",
+          "wins": 1098,
+          "win_rate": 0.366,
+          "win_rate_wilson95": [
+            0.34894410419891325,
+            0.3833986272594741
+          ],
+          "seat0_wins": 624,
+          "seat1_wins": 474,
+          "total_turns": 20382,
+          "avg_turns_per_game": 6.794,
+          "total_rolls": 88508,
+          "avg_rolls_per_game": 29.502666666666666,
+          "total_busts": 4697,
+          "busts_per_turn": 0.2304484348935335,
+          "total_stops": 15685,
+          "name": "rule28-smart",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ridge642_vs_mc-strong": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1621,
+          "win_rate": 0.5403333333333333,
+          "win_rate_wilson95": [
+            0.5224594513655441,
+            0.5581040548372795
+          ],
+          "seat0_wins": 889,
+          "seat1_wins": 732,
+          "total_turns": 19784,
+          "avg_turns_per_game": 6.594666666666667,
+          "total_rolls": 116048,
+          "avg_rolls_per_game": 38.68266666666667,
+          "total_busts": 8304,
+          "busts_per_turn": 0.41973311767084515,
+          "total_stops": 11480,
+          "name": "ridge642",
+          "model_kind": "classical_ml",
+          "paired_bootstrap_win_rate95": [
+            0.5223333333333333,
+            0.5576666666666666
+          ],
+          "model_file": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+        },
+        {
+          "id": "B",
+          "wins": 1379,
+          "win_rate": 0.45966666666666667,
+          "win_rate_wilson95": [
+            0.44189594516272035,
+            0.47754054863445594
+          ],
+          "seat0_wins": 768,
+          "seat1_wins": 611,
+          "total_turns": 19663,
+          "avg_turns_per_game": 6.554333333333333,
+          "total_rolls": 107272,
+          "avg_rolls_per_game": 35.757333333333335,
+          "total_busts": 7825,
+          "busts_per_turn": 0.39795555103493874,
+          "total_stops": 11838,
+          "name": "mc-strong",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ridge642_vs_glenn-aloi": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 2006,
+          "win_rate": 0.6686666666666666,
+          "win_rate_wilson95": [
+            0.6516171488590798,
+            0.6852847861709102
+          ],
+          "seat0_wins": 1057,
+          "seat1_wins": 949,
+          "total_turns": 20795,
+          "avg_turns_per_game": 6.931666666666667,
+          "total_rolls": 123399,
+          "avg_rolls_per_game": 41.133,
+          "total_busts": 8891,
+          "busts_per_turn": 0.42755470064919454,
+          "total_stops": 11904,
+          "name": "ridge642",
+          "model_kind": "classical_ml",
+          "paired_bootstrap_win_rate95": [
+            0.6526666666666666,
+            0.6856666666666666
+          ],
+          "model_file": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+        },
+        {
+          "id": "B",
+          "wins": 994,
+          "win_rate": 0.3313333333333333,
+          "win_rate_wilson95": [
+            0.31471521382908973,
+            0.34838285114092016
+          ],
+          "seat0_wins": 551,
+          "seat1_wins": 443,
+          "total_turns": 20289,
+          "avg_turns_per_game": 6.763,
+          "total_rolls": 101330,
+          "avg_rolls_per_game": 33.776666666666664,
+          "total_busts": 7343,
+          "busts_per_turn": 0.36192025235349207,
+          "total_stops": 12946,
+          "name": "glenn-aloi",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ridge642_vs_glenn2009_constant": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 2039,
+          "win_rate": 0.6796666666666666,
+          "win_rate_wilson95": [
+            0.6627490724287515,
+            0.6961247279292813
+          ],
+          "seat0_wins": 1089,
+          "seat1_wins": 950,
+          "total_turns": 20945,
+          "avg_turns_per_game": 6.9816666666666665,
+          "total_rolls": 124386,
+          "avg_rolls_per_game": 41.462,
+          "total_busts": 9039,
+          "busts_per_turn": 0.4315588445929816,
+          "total_stops": 11906,
+          "name": "ridge642",
+          "model_kind": "classical_ml",
+          "paired_bootstrap_win_rate95": [
+            0.6633333333333333,
+            0.6963333333333334
+          ],
+          "model_file": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+        },
+        {
+          "id": "B",
+          "wins": 961,
+          "win_rate": 0.32033333333333336,
+          "win_rate_wilson95": [
+            0.3038752720707186,
+            0.3372509275712485
+          ],
+          "seat0_wins": 550,
+          "seat1_wins": 411,
+          "total_turns": 20406,
+          "avg_turns_per_game": 6.802,
+          "total_rolls": 100507,
+          "avg_rolls_per_game": 33.50233333333333,
+          "total_busts": 7290,
+          "busts_per_turn": 0.35724786827403704,
+          "total_stops": 13116,
+          "name": "glenn2009_constant",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ridge642_vs_glenn2010_linear": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1971,
+          "win_rate": 0.657,
+          "win_rate_wilson95": [
+            0.639821878454932,
+            0.6737765630453157
+          ],
+          "seat0_wins": 1056,
+          "seat1_wins": 915,
+          "total_turns": 20617,
+          "avg_turns_per_game": 6.872333333333334,
+          "total_rolls": 123930,
+          "avg_rolls_per_game": 41.31,
+          "total_busts": 8950,
+          "busts_per_turn": 0.43410777513702287,
+          "total_stops": 11667,
+          "name": "ridge642",
+          "model_kind": "classical_ml",
+          "paired_bootstrap_win_rate95": [
+            0.6393333333333333,
+            0.6746666666666666
+          ],
+          "model_file": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+        },
+        {
+          "id": "B",
+          "wins": 1029,
+          "win_rate": 0.343,
+          "win_rate_wilson95": [
+            0.3262234369546843,
+            0.36017812154506806
+          ],
+          "seat0_wins": 585,
+          "seat1_wins": 444,
+          "total_turns": 20146,
+          "avg_turns_per_game": 6.715333333333334,
+          "total_rolls": 76320,
+          "avg_rolls_per_game": 25.44,
+          "total_busts": 4786,
+          "busts_per_turn": 0.2375657698798769,
+          "total_stops": 15360,
+          "name": "glenn2010_linear",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ridge642_vs_couto": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 2050,
+          "win_rate": 0.6833333333333333,
+          "win_rate_wilson95": [
+            0.6664620624086811,
+            0.6997356930586994
+          ],
+          "seat0_wins": 1099,
+          "seat1_wins": 951,
+          "total_turns": 20929,
+          "avg_turns_per_game": 6.976333333333334,
+          "total_rolls": 120916,
+          "avg_rolls_per_game": 40.30533333333333,
+          "total_busts": 8667,
+          "busts_per_turn": 0.4141143867361078,
+          "total_stops": 12262,
+          "name": "ridge642",
+          "model_kind": "classical_ml",
+          "paired_bootstrap_win_rate95": [
+            0.6663333333333333,
+            0.7
+          ],
+          "model_file": "cant_stop_baselines/runs/ridge_multi_policy_seed642/ridge_domain.joblib"
+        },
+        {
+          "id": "B",
+          "wins": 950,
+          "win_rate": 0.31666666666666665,
+          "win_rate_wilson95": [
+            0.3002643069413005,
+            0.33353793759131894
+          ],
+          "seat0_wins": 549,
+          "seat1_wins": 401,
+          "total_turns": 20379,
+          "avg_turns_per_game": 6.793,
+          "total_rolls": 99932,
+          "avg_rolls_per_game": 33.31066666666667,
+          "total_busts": 8794,
+          "busts_per_turn": 0.43152264586093525,
+          "total_stops": 11585,
+          "name": "couto",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ddqn448_vs_ppo460": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1371,
+          "win_rate": 0.457,
+          "win_rate_wilson95": [
+            0.43924065317961863,
+            0.47486932781075947
+          ],
+          "seat0_wins": 739,
+          "seat1_wins": 632,
+          "total_turns": 21275,
+          "avg_turns_per_game": 7.091666666666667,
+          "total_rolls": 119121,
+          "avg_rolls_per_game": 39.707,
+          "total_busts": 9249,
+          "busts_per_turn": 0.4347356051703878,
+          "total_stops": 12026,
+          "name": "ddqn448",
+          "model_kind": "dqn",
+          "paired_bootstrap_win_rate95": [
+            0.43966666666666665,
+            0.47533333333333333
+          ],
+          "model_file": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1629,
+          "win_rate": 0.543,
+          "win_rate_wilson95": [
+            0.5251306721892407,
+            0.5607593468203814
+          ],
+          "seat0_wins": 868,
+          "seat1_wins": 761,
+          "total_turns": 21404,
+          "avg_turns_per_game": 7.134666666666667,
+          "total_rolls": 118890,
+          "avg_rolls_per_game": 39.63,
+          "total_busts": 8046,
+          "busts_per_turn": 0.37591104466454867,
+          "total_stops": 13358,
+          "name": "ppo460",
+          "model_kind": "ppo",
+          "model_file": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ddqn448_vs_rule28-smart": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1829,
+          "win_rate": 0.6096666666666667,
+          "win_rate_wilson95": [
+            0.5920807490339415,
+            0.626972090145637
+          ],
+          "seat0_wins": 979,
+          "seat1_wins": 850,
+          "total_turns": 21635,
+          "avg_turns_per_game": 7.211666666666667,
+          "total_rolls": 124949,
+          "avg_rolls_per_game": 41.64966666666667,
+          "total_busts": 9664,
+          "busts_per_turn": 0.44668361451351973,
+          "total_stops": 11971,
+          "name": "ddqn448",
+          "model_kind": "dqn",
+          "paired_bootstrap_win_rate95": [
+            0.592,
+            0.627
+          ],
+          "model_file": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1171,
+          "win_rate": 0.3903333333333333,
+          "win_rate_wilson95": [
+            0.37302790985436296,
+            0.4079192509660585
+          ],
+          "seat0_wins": 650,
+          "seat1_wins": 521,
+          "total_turns": 21306,
+          "avg_turns_per_game": 7.102,
+          "total_rolls": 92070,
+          "avg_rolls_per_game": 30.69,
+          "total_busts": 4892,
+          "busts_per_turn": 0.2296066835633155,
+          "total_stops": 16414,
+          "name": "rule28-smart",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ddqn448_vs_mc-strong": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1539,
+          "win_rate": 0.513,
+          "win_rate_wilson95": [
+            0.4951089146309789,
+            0.5308578353021627
+          ],
+          "seat0_wins": 846,
+          "seat1_wins": 693,
+          "total_turns": 20933,
+          "avg_turns_per_game": 6.977666666666667,
+          "total_rolls": 116725,
+          "avg_rolls_per_game": 38.90833333333333,
+          "total_busts": 8774,
+          "busts_per_turn": 0.41914680170066404,
+          "total_stops": 12159,
+          "name": "ddqn448",
+          "model_kind": "dqn",
+          "paired_bootstrap_win_rate95": [
+            0.496,
+            0.53
+          ],
+          "model_file": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1461,
+          "win_rate": 0.487,
+          "win_rate_wilson95": [
+            0.46914216469783737,
+            0.5048910853690212
+          ],
+          "seat0_wins": 807,
+          "seat1_wins": 654,
+          "total_turns": 20894,
+          "avg_turns_per_game": 6.964666666666667,
+          "total_rolls": 115242,
+          "avg_rolls_per_game": 38.414,
+          "total_busts": 8449,
+          "busts_per_turn": 0.40437446156791423,
+          "total_stops": 12445,
+          "name": "mc-strong",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ddqn448_vs_glenn-aloi": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1922,
+          "win_rate": 0.6406666666666667,
+          "win_rate_wilson95": [
+            0.6233275264489967,
+            0.6576460241096117
+          ],
+          "seat0_wins": 1018,
+          "seat1_wins": 904,
+          "total_turns": 21568,
+          "avg_turns_per_game": 7.189333333333333,
+          "total_rolls": 123816,
+          "avg_rolls_per_game": 41.272,
+          "total_busts": 9263,
+          "busts_per_turn": 0.42947885756676557,
+          "total_stops": 12305,
+          "name": "ddqn448",
+          "model_kind": "dqn",
+          "paired_bootstrap_win_rate95": [
+            0.6236666666666667,
+            0.6573333333333333
+          ],
+          "model_file": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1078,
+          "win_rate": 0.35933333333333334,
+          "win_rate_wilson95": [
+            0.3423539758903883,
+            0.3766724735510034
+          ],
+          "seat0_wins": 596,
+          "seat1_wins": 482,
+          "total_turns": 21146,
+          "avg_turns_per_game": 7.048666666666667,
+          "total_rolls": 105603,
+          "avg_rolls_per_game": 35.201,
+          "total_busts": 7630,
+          "busts_per_turn": 0.36082474226804123,
+          "total_stops": 13516,
+          "name": "glenn-aloi",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ddqn448_vs_glenn2009_constant": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1945,
+          "win_rate": 0.6483333333333333,
+          "win_rate_wilson95": [
+            0.6310670469846257,
+            0.6652202278935276
+          ],
+          "seat0_wins": 1046,
+          "seat1_wins": 899,
+          "total_turns": 21745,
+          "avg_turns_per_game": 7.248333333333333,
+          "total_rolls": 123625,
+          "avg_rolls_per_game": 41.208333333333336,
+          "total_busts": 9227,
+          "busts_per_turn": 0.42432743159346975,
+          "total_stops": 12518,
+          "name": "ddqn448",
+          "model_kind": "dqn",
+          "paired_bootstrap_win_rate95": [
+            0.631,
+            0.6653333333333333
+          ],
+          "model_file": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1055,
+          "win_rate": 0.3516666666666667,
+          "win_rate_wilson95": [
+            0.33477977210647236,
+            0.3689329530153743
+          ],
+          "seat0_wins": 601,
+          "seat1_wins": 454,
+          "total_turns": 21300,
+          "avg_turns_per_game": 7.1,
+          "total_rolls": 105281,
+          "avg_rolls_per_game": 35.093666666666664,
+          "total_busts": 7604,
+          "busts_per_turn": 0.35699530516431927,
+          "total_stops": 13696,
+          "name": "glenn2009_constant",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ddqn448_vs_glenn2010_linear": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1810,
+          "win_rate": 0.6033333333333334,
+          "win_rate_wilson95": [
+            0.5857062040128032,
+            0.6206961672506295
+          ],
+          "seat0_wins": 985,
+          "seat1_wins": 825,
+          "total_turns": 22003,
+          "avg_turns_per_game": 7.334333333333333,
+          "total_rolls": 119370,
+          "avg_rolls_per_game": 39.79,
+          "total_busts": 8611,
+          "busts_per_turn": 0.3913557242194246,
+          "total_stops": 13392,
+          "name": "ddqn448",
+          "model_kind": "dqn",
+          "paired_bootstrap_win_rate95": [
+            0.5856666666666667,
+            0.6216666666666667
+          ],
+          "model_file": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1190,
+          "win_rate": 0.39666666666666667,
+          "win_rate_wilson95": [
+            0.3793038327493706,
+            0.4142937959871968
+          ],
+          "seat0_wins": 675,
+          "seat1_wins": 515,
+          "total_turns": 21693,
+          "avg_turns_per_game": 7.231,
+          "total_rolls": 82170,
+          "avg_rolls_per_game": 27.39,
+          "total_busts": 5093,
+          "busts_per_turn": 0.23477619508597244,
+          "total_stops": 16600,
+          "name": "glenn2010_linear",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ddqn448_vs_couto": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1982,
+          "win_rate": 0.6606666666666666,
+          "win_rate_wilson95": [
+            0.643527726074559,
+            0.6773946705350361
+          ],
+          "seat0_wins": 1057,
+          "seat1_wins": 925,
+          "total_turns": 22397,
+          "avg_turns_per_game": 7.4656666666666665,
+          "total_rolls": 122995,
+          "avg_rolls_per_game": 40.998333333333335,
+          "total_busts": 9047,
+          "busts_per_turn": 0.40393802741438584,
+          "total_stops": 13350,
+          "name": "ddqn448",
+          "model_kind": "dqn",
+          "paired_bootstrap_win_rate95": [
+            0.6436666666666667,
+            0.6773333333333333
+          ],
+          "model_file": "cant_stop_baselines/runs/ddqn_mc_counterfactual_seed448/best.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1018,
+          "win_rate": 0.3393333333333333,
+          "win_rate_wilson95": [
+            0.3226053294649638,
+            0.3564722739254409
+          ],
+          "seat0_wins": 575,
+          "seat1_wins": 443,
+          "total_turns": 21915,
+          "avg_turns_per_game": 7.305,
+          "total_rolls": 106725,
+          "avg_rolls_per_game": 35.575,
+          "total_busts": 9528,
+          "busts_per_turn": 0.43477070499657766,
+          "total_stops": 12387,
+          "name": "couto",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ppo460_vs_rule28-smart": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1945,
+          "win_rate": 0.6483333333333333,
+          "win_rate_wilson95": [
+            0.6310670469846257,
+            0.6652202278935276
+          ],
+          "seat0_wins": 1048,
+          "seat1_wins": 897,
+          "total_turns": 21344,
+          "avg_turns_per_game": 7.1146666666666665,
+          "total_rolls": 123012,
+          "avg_rolls_per_game": 41.004,
+          "total_busts": 8769,
+          "busts_per_turn": 0.41084145427286356,
+          "total_stops": 12575,
+          "name": "ppo460",
+          "model_kind": "ppo",
+          "paired_bootstrap_win_rate95": [
+            0.6316666666666667,
+            0.6656666666666666
+          ],
+          "model_file": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1055,
+          "win_rate": 0.3516666666666667,
+          "win_rate_wilson95": [
+            0.33477977210647236,
+            0.3689329530153743
+          ],
+          "seat0_wins": 603,
+          "seat1_wins": 452,
+          "total_turns": 20899,
+          "avg_turns_per_game": 6.966333333333333,
+          "total_rolls": 90726,
+          "avg_rolls_per_game": 30.242,
+          "total_busts": 4882,
+          "busts_per_turn": 0.23359969376525191,
+          "total_stops": 16017,
+          "name": "rule28-smart",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ppo460_vs_mc-strong": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1603,
+          "win_rate": 0.5343333333333333,
+          "win_rate_wilson95": [
+            0.5164510789970687,
+            0.552127773390459
+          ],
+          "seat0_wins": 871,
+          "seat1_wins": 732,
+          "total_turns": 20505,
+          "avg_turns_per_game": 6.835,
+          "total_rolls": 112745,
+          "avg_rolls_per_game": 37.58166666666666,
+          "total_busts": 7476,
+          "busts_per_turn": 0.3645940014630578,
+          "total_stops": 13029,
+          "name": "ppo460",
+          "model_kind": "ppo",
+          "paired_bootstrap_win_rate95": [
+            0.5166666666666667,
+            0.552
+          ],
+          "model_file": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1397,
+          "win_rate": 0.4656666666666667,
+          "win_rate_wilson95": [
+            0.44787222660954107,
+            0.48354892100293134
+          ],
+          "seat0_wins": 768,
+          "seat1_wins": 629,
+          "total_turns": 20402,
+          "avg_turns_per_game": 6.800666666666666,
+          "total_rolls": 112734,
+          "avg_rolls_per_game": 37.578,
+          "total_busts": 8411,
+          "busts_per_turn": 0.41226350357808056,
+          "total_stops": 11991,
+          "name": "mc-strong",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ppo460_vs_glenn-aloi": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 2044,
+          "win_rate": 0.6813333333333333,
+          "win_rate_wilson95": [
+            0.6644366480526301,
+            0.6977662228096516
+          ],
+          "seat0_wins": 1110,
+          "seat1_wins": 934,
+          "total_turns": 21418,
+          "avg_turns_per_game": 7.139333333333333,
+          "total_rolls": 121747,
+          "avg_rolls_per_game": 40.58233333333333,
+          "total_busts": 8356,
+          "busts_per_turn": 0.3901391353067513,
+          "total_stops": 13062,
+          "name": "ppo460",
+          "model_kind": "ppo",
+          "paired_bootstrap_win_rate95": [
+            0.6653333333333333,
+            0.698
+          ],
+          "model_file": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+        },
+        {
+          "id": "B",
+          "wins": 956,
+          "win_rate": 0.31866666666666665,
+          "win_rate_wilson95": [
+            0.3022337771903484,
+            0.33556335194736975
+          ],
+          "seat0_wins": 566,
+          "seat1_wins": 390,
+          "total_turns": 20874,
+          "avg_turns_per_game": 6.958,
+          "total_rolls": 104426,
+          "avg_rolls_per_game": 34.80866666666667,
+          "total_busts": 7615,
+          "busts_per_turn": 0.36480789498898153,
+          "total_stops": 13259,
+          "name": "glenn-aloi",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ppo460_vs_glenn2009_constant": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 2076,
+          "win_rate": 0.692,
+          "win_rate_wilson95": [
+            0.6752429804539597,
+            0.708265941635515
+          ],
+          "seat0_wins": 1133,
+          "seat1_wins": 943,
+          "total_turns": 21541,
+          "avg_turns_per_game": 7.1803333333333335,
+          "total_rolls": 121761,
+          "avg_rolls_per_game": 40.587,
+          "total_busts": 8378,
+          "busts_per_turn": 0.3889327329279049,
+          "total_stops": 13163,
+          "name": "ppo460",
+          "model_kind": "ppo",
+          "paired_bootstrap_win_rate95": [
+            0.6753333333333333,
+            0.709
+          ],
+          "model_file": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+        },
+        {
+          "id": "B",
+          "wins": 924,
+          "win_rate": 0.308,
+          "win_rate_wilson95": [
+            0.29173405836448496,
+            0.3247570195460402
+          ],
+          "seat0_wins": 557,
+          "seat1_wins": 367,
+          "total_turns": 20965,
+          "avg_turns_per_game": 6.988333333333333,
+          "total_rolls": 103852,
+          "avg_rolls_per_game": 34.617333333333335,
+          "total_busts": 7564,
+          "busts_per_turn": 0.3607917958502266,
+          "total_stops": 13401,
+          "name": "glenn2009_constant",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ppo460_vs_glenn2010_linear": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1993,
+          "win_rate": 0.6643333333333333,
+          "win_rate_wilson95": [
+            0.6472347043688162,
+            0.6810116473501266
+          ],
+          "seat0_wins": 1055,
+          "seat1_wins": 938,
+          "total_turns": 20983,
+          "avg_turns_per_game": 6.9943333333333335,
+          "total_rolls": 120612,
+          "avg_rolls_per_game": 40.204,
+          "total_busts": 8066,
+          "busts_per_turn": 0.38440642424820093,
+          "total_stops": 12917,
+          "name": "ppo460",
+          "model_kind": "ppo",
+          "paired_bootstrap_win_rate95": [
+            0.647,
+            0.6813333333333333
+          ],
+          "model_file": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+        },
+        {
+          "id": "B",
+          "wins": 1007,
+          "win_rate": 0.33566666666666667,
+          "win_rate_wilson95": [
+            0.3189883526498734,
+            0.3527652956311837
+          ],
+          "seat0_wins": 562,
+          "seat1_wins": 445,
+          "total_turns": 20490,
+          "avg_turns_per_game": 6.83,
+          "total_rolls": 77758,
+          "avg_rolls_per_game": 25.919333333333334,
+          "total_busts": 4812,
+          "busts_per_turn": 0.2348462664714495,
+          "total_stops": 15678,
+          "name": "glenn2010_linear",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "ppo460_vs_couto": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 2027,
+          "win_rate": 0.6756666666666666,
+          "win_rate_wilson95": [
+            0.658699884860692,
+            0.6921841462871434
+          ],
+          "seat0_wins": 1075,
+          "seat1_wins": 952,
+          "total_turns": 21939,
+          "avg_turns_per_game": 7.313,
+          "total_rolls": 118508,
+          "avg_rolls_per_game": 39.50266666666667,
+          "total_busts": 7892,
+          "busts_per_turn": 0.3597246911892064,
+          "total_stops": 14047,
+          "name": "ppo460",
+          "model_kind": "ppo",
+          "paired_bootstrap_win_rate95": [
+            0.6583333333333333,
+            0.6926666666666667
+          ],
+          "model_file": "cant_stop_baselines/runs/ppo_mc_focused_seed460/top_1.pt"
+        },
+        {
+          "id": "B",
+          "wins": 973,
+          "win_rate": 0.3243333333333333,
+          "win_rate_wilson95": [
+            0.3078158537128565,
+            0.34130011513930797
+          ],
+          "seat0_wins": 548,
+          "seat1_wins": 425,
+          "total_turns": 21412,
+          "avg_turns_per_game": 7.137333333333333,
+          "total_rolls": 104578,
+          "avg_rolls_per_game": 34.85933333333333,
+          "total_busts": 9270,
+          "busts_per_turn": 0.4329348029142537,
+          "total_stops": 12142,
+          "name": "couto",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "rule28-smart_vs_mc-strong": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1278,
+          "win_rate": 0.426,
+          "win_rate_wilson95": [
+            0.40841079581471823,
+            0.44377847379663
+          ],
+          "seat0_wins": 725,
+          "seat1_wins": 553,
+          "total_turns": 21663,
+          "avg_turns_per_game": 7.221,
+          "total_rolls": 93664,
+          "avg_rolls_per_game": 31.221333333333334,
+          "total_busts": 5040,
+          "busts_per_turn": 0.23265475695886997,
+          "total_stops": 16623,
+          "name": "rule28-smart",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.4083333333333333,
+            0.44366666666666665
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1722,
+          "win_rate": 0.574,
+          "win_rate_wilson95": [
+            0.5562215262033701,
+            0.5915892041852817
+          ],
+          "seat0_wins": 947,
+          "seat1_wins": 775,
+          "total_turns": 21885,
+          "avg_turns_per_game": 7.295,
+          "total_rolls": 116607,
+          "avg_rolls_per_game": 38.869,
+          "total_busts": 8289,
+          "busts_per_turn": 0.3787525702535984,
+          "total_stops": 13596,
+          "name": "mc-strong",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "rule28-smart_vs_glenn-aloi": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1711,
+          "win_rate": 0.5703333333333334,
+          "win_rate_wilson95": [
+            0.5525404474571931,
+            0.5879463278221111
+          ],
+          "seat0_wins": 935,
+          "seat1_wins": 776,
+          "total_turns": 23013,
+          "avg_turns_per_game": 7.671,
+          "total_rolls": 98725,
+          "avg_rolls_per_game": 32.90833333333333,
+          "total_busts": 5307,
+          "busts_per_turn": 0.2306087863381567,
+          "total_stops": 17706,
+          "name": "rule28-smart",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.553,
+            0.588
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1289,
+          "win_rate": 0.42966666666666664,
+          "win_rate_wilson95": [
+            0.4120536721778889,
+            0.4474595525428069
+          ],
+          "seat0_wins": 724,
+          "seat1_wins": 565,
+          "total_turns": 22802,
+          "avg_turns_per_game": 7.600666666666666,
+          "total_rolls": 113841,
+          "avg_rolls_per_game": 37.947,
+          "total_busts": 8392,
+          "busts_per_turn": 0.36803789141303395,
+          "total_stops": 14410,
+          "name": "glenn-aloi",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "rule28-smart_vs_glenn2009_constant": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1754,
+          "win_rate": 0.5846666666666667,
+          "win_rate_wilson95": [
+            0.5669357761054235,
+            0.6021810055104213
+          ],
+          "seat0_wins": 944,
+          "seat1_wins": 810,
+          "total_turns": 23070,
+          "avg_turns_per_game": 7.69,
+          "total_rolls": 98940,
+          "avg_rolls_per_game": 32.98,
+          "total_busts": 5308,
+          "busts_per_turn": 0.23008235804074556,
+          "total_stops": 17762,
+          "name": "rule28-smart",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.567,
+            0.602
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1246,
+          "win_rate": 0.41533333333333333,
+          "win_rate_wilson95": [
+            0.39781899448957875,
+            0.4330642238945765
+          ],
+          "seat0_wins": 690,
+          "seat1_wins": 556,
+          "total_turns": 22816,
+          "avg_turns_per_game": 7.605333333333333,
+          "total_rolls": 112556,
+          "avg_rolls_per_game": 37.51866666666667,
+          "total_busts": 8271,
+          "busts_per_turn": 0.36250876577840113,
+          "total_stops": 14545,
+          "name": "glenn2009_constant",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "rule28-smart_vs_glenn2010_linear": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1697,
+          "win_rate": 0.5656666666666667,
+          "win_rate_wilson95": [
+            0.5478568689020882,
+            0.5833085089653189
+          ],
+          "seat0_wins": 935,
+          "seat1_wins": 762,
+          "total_turns": 22711,
+          "avg_turns_per_game": 7.570333333333333,
+          "total_rolls": 98168,
+          "avg_rolls_per_game": 32.72266666666667,
+          "total_busts": 5238,
+          "busts_per_turn": 0.23063713618951168,
+          "total_stops": 17473,
+          "name": "rule28-smart",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.5483333333333333,
+            0.5823333333333334
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1303,
+          "win_rate": 0.43433333333333335,
+          "win_rate_wilson95": [
+            0.4166914910346811,
+            0.45214313109791177
+          ],
+          "seat0_wins": 738,
+          "seat1_wins": 565,
+          "total_turns": 22514,
+          "avg_turns_per_game": 7.504666666666667,
+          "total_rolls": 85181,
+          "avg_rolls_per_game": 28.393666666666668,
+          "total_busts": 5426,
+          "busts_per_turn": 0.2410055965177223,
+          "total_stops": 17088,
+          "name": "glenn2010_linear",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "rule28-smart_vs_couto": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1707,
+          "win_rate": 0.569,
+          "win_rate_wilson95": [
+            0.5512021188727969,
+            0.586621400003108
+          ],
+          "seat0_wins": 929,
+          "seat1_wins": 778,
+          "total_turns": 23190,
+          "avg_turns_per_game": 7.73,
+          "total_rolls": 98525,
+          "avg_rolls_per_game": 32.84166666666667,
+          "total_busts": 5246,
+          "busts_per_turn": 0.22621819749892194,
+          "total_stops": 17944,
+          "name": "rule28-smart",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.5516666666666666,
+            0.587
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1293,
+          "win_rate": 0.431,
+          "win_rate_wilson95": [
+            0.41337859999689186,
+            0.4487978811272031
+          ],
+          "seat0_wins": 722,
+          "seat1_wins": 571,
+          "total_turns": 22983,
+          "avg_turns_per_game": 7.661,
+          "total_rolls": 110951,
+          "avg_rolls_per_game": 36.983666666666664,
+          "total_busts": 9786,
+          "busts_per_turn": 0.42579297741809163,
+          "total_stops": 13197,
+          "name": "couto",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "mc-strong_vs_glenn-aloi": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1818,
+          "win_rate": 0.606,
+          "win_rate_wilson95": [
+            0.5883898486774556,
+            0.6233390353927754
+          ],
+          "seat0_wins": 979,
+          "seat1_wins": 839,
+          "total_turns": 22038,
+          "avg_turns_per_game": 7.346,
+          "total_rolls": 112924,
+          "avg_rolls_per_game": 37.641333333333336,
+          "total_busts": 7697,
+          "busts_per_turn": 0.3492603684544877,
+          "total_stops": 14341,
+          "name": "mc-strong",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.5886666666666667,
+            0.6236666666666667
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1182,
+          "win_rate": 0.394,
+          "win_rate_wilson95": [
+            0.37666096460722465,
+            0.4116101513225445
+          ],
+          "seat0_wins": 661,
+          "seat1_wins": 521,
+          "total_turns": 21720,
+          "avg_turns_per_game": 7.24,
+          "total_rolls": 108251,
+          "avg_rolls_per_game": 36.083666666666666,
+          "total_busts": 7876,
+          "busts_per_turn": 0.36261510128913443,
+          "total_stops": 13844,
+          "name": "glenn-aloi",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "mc-strong_vs_glenn2009_constant": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1886,
+          "win_rate": 0.6286666666666667,
+          "win_rate_wilson95": [
+            0.6112230076640143,
+            0.6457812352640019
+          ],
+          "seat0_wins": 1007,
+          "seat1_wins": 879,
+          "total_turns": 22184,
+          "avg_turns_per_game": 7.394666666666667,
+          "total_rolls": 113701,
+          "avg_rolls_per_game": 37.900333333333336,
+          "total_busts": 7753,
+          "busts_per_turn": 0.3494861161197259,
+          "total_stops": 14431,
+          "name": "mc-strong",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.6116666666666667,
+            0.6456666666666667
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1114,
+          "win_rate": 0.37133333333333335,
+          "win_rate_wilson95": [
+            0.3542187647359982,
+            0.3887769923359857
+          ],
+          "seat0_wins": 621,
+          "seat1_wins": 493,
+          "total_turns": 21798,
+          "avg_turns_per_game": 7.266,
+          "total_rolls": 107278,
+          "avg_rolls_per_game": 35.75933333333333,
+          "total_busts": 7883,
+          "busts_per_turn": 0.361638682447931,
+          "total_stops": 13915,
+          "name": "glenn2009_constant",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "mc-strong_vs_glenn2010_linear": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1870,
+          "win_rate": 0.6233333333333333,
+          "win_rate_wilson95": [
+            0.6058468940958318,
+            0.6405043232185877
+          ],
+          "seat0_wins": 1009,
+          "seat1_wins": 861,
+          "total_turns": 21611,
+          "avg_turns_per_game": 7.203666666666667,
+          "total_rolls": 113747,
+          "avg_rolls_per_game": 37.91566666666667,
+          "total_busts": 7672,
+          "busts_per_turn": 0.3550043959094905,
+          "total_stops": 13939,
+          "name": "mc-strong",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.606,
+            0.6413333333333333
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1130,
+          "win_rate": 0.37666666666666665,
+          "win_rate_wilson95": [
+            0.3594956767814122,
+            0.39415310590416813
+          ],
+          "seat0_wins": 639,
+          "seat1_wins": 491,
+          "total_turns": 21241,
+          "avg_turns_per_game": 7.080333333333333,
+          "total_rolls": 80519,
+          "avg_rolls_per_game": 26.839666666666666,
+          "total_busts": 5017,
+          "busts_per_turn": 0.23619415281766395,
+          "total_stops": 16224,
+          "name": "glenn2010_linear",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "mc-strong_vs_couto": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1886,
+          "win_rate": 0.6286666666666667,
+          "win_rate_wilson95": [
+            0.6112230076640143,
+            0.6457812352640019
+          ],
+          "seat0_wins": 1027,
+          "seat1_wins": 859,
+          "total_turns": 22377,
+          "avg_turns_per_game": 7.459,
+          "total_rolls": 115659,
+          "avg_rolls_per_game": 38.553,
+          "total_busts": 8088,
+          "busts_per_turn": 0.3614425526209948,
+          "total_stops": 14289,
+          "name": "mc-strong",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.611,
+            0.6453333333333333
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1114,
+          "win_rate": 0.37133333333333335,
+          "win_rate_wilson95": [
+            0.3542187647359982,
+            0.3887769923359857
+          ],
+          "seat0_wins": 641,
+          "seat1_wins": 473,
+          "total_turns": 21991,
+          "avg_turns_per_game": 7.330333333333333,
+          "total_rolls": 106682,
+          "avg_rolls_per_game": 35.56066666666667,
+          "total_busts": 9516,
+          "busts_per_turn": 0.43272247737710884,
+          "total_stops": 12475,
+          "name": "couto",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "glenn-aloi_vs_glenn2009_constant": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1553,
+          "win_rate": 0.5176666666666667,
+          "win_rate_wilson95": [
+            0.4997747270454523,
+            0.5355134202995863
+          ],
+          "seat0_wins": 803,
+          "seat1_wins": 750,
+          "total_turns": 23101,
+          "avg_turns_per_game": 7.700333333333333,
+          "total_rolls": 114265,
+          "avg_rolls_per_game": 38.08833333333333,
+          "total_busts": 8481,
+          "busts_per_turn": 0.36712696420068397,
+          "total_stops": 14620,
+          "name": "glenn-aloi",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.5053333333333333,
+            0.53
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1447,
+          "win_rate": 0.48233333333333334,
+          "win_rate_wilson95": [
+            0.46448657970041374,
+            0.5002252729545478
+          ],
+          "seat0_wins": 750,
+          "seat1_wins": 697,
+          "total_turns": 23048,
+          "avg_turns_per_game": 7.682666666666667,
+          "total_rolls": 113154,
+          "avg_rolls_per_game": 37.718,
+          "total_busts": 8379,
+          "busts_per_turn": 0.36354564387365496,
+          "total_stops": 14669,
+          "name": "glenn2009_constant",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "glenn-aloi_vs_glenn2010_linear": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1472,
+          "win_rate": 0.49066666666666664,
+          "win_rate_wilson95": [
+            0.4728012168210423,
+            0.5085559883551638
+          ],
+          "seat0_wins": 800,
+          "seat1_wins": 672,
+          "total_turns": 22408,
+          "avg_turns_per_game": 7.469333333333333,
+          "total_rolls": 112148,
+          "avg_rolls_per_game": 37.382666666666665,
+          "total_busts": 8176,
+          "busts_per_turn": 0.36486968939664405,
+          "total_stops": 14232,
+          "name": "glenn-aloi",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.4723333333333333,
+            0.5083333333333333
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1528,
+          "win_rate": 0.5093333333333333,
+          "win_rate_wilson95": [
+            0.49144401164483625,
+            0.5271987831789577
+          ],
+          "seat0_wins": 828,
+          "seat1_wins": 700,
+          "total_turns": 22436,
+          "avg_turns_per_game": 7.478666666666666,
+          "total_rolls": 85017,
+          "avg_rolls_per_game": 28.339,
+          "total_busts": 5344,
+          "busts_per_turn": 0.23818862542342664,
+          "total_stops": 17092,
+          "name": "glenn2010_linear",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "glenn-aloi_vs_couto": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1545,
+          "win_rate": 0.515,
+          "win_rate_wilson95": [
+            0.4971083577756577,
+            0.5328532767625827
+          ],
+          "seat0_wins": 835,
+          "seat1_wins": 710,
+          "total_turns": 23240,
+          "avg_turns_per_game": 7.746666666666667,
+          "total_rolls": 113442,
+          "avg_rolls_per_game": 37.814,
+          "total_busts": 8287,
+          "busts_per_turn": 0.35658347676419966,
+          "total_stops": 14953,
+          "name": "glenn-aloi",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.49733333333333335,
+            0.533
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1455,
+          "win_rate": 0.485,
+          "win_rate_wilson95": [
+            0.4671467232374174,
+            0.5028916422243424
+          ],
+          "seat0_wins": 790,
+          "seat1_wins": 665,
+          "total_turns": 23195,
+          "avg_turns_per_game": 7.7316666666666665,
+          "total_rolls": 110885,
+          "avg_rolls_per_game": 36.961666666666666,
+          "total_busts": 9769,
+          "busts_per_turn": 0.42116835524897606,
+          "total_stops": 13426,
+          "name": "couto",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "glenn2009_constant_vs_glenn2010_linear": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1406,
+          "win_rate": 0.4686666666666667,
+          "win_rate_wilson95": [
+            0.4508613389253555,
+            0.48655213559476496
+          ],
+          "seat0_wins": 760,
+          "seat1_wins": 646,
+          "total_turns": 22449,
+          "avg_turns_per_game": 7.483,
+          "total_rolls": 111555,
+          "avg_rolls_per_game": 37.185,
+          "total_busts": 8176,
+          "busts_per_turn": 0.3642033052697225,
+          "total_stops": 14273,
+          "name": "glenn2009_constant",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.4503333333333333,
+            0.4866666666666667
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1594,
+          "win_rate": 0.5313333333333333,
+          "win_rate_wilson95": [
+            0.5134478644052352,
+            0.5491386610746445
+          ],
+          "seat0_wins": 854,
+          "seat1_wins": 740,
+          "total_turns": 22543,
+          "avg_turns_per_game": 7.514333333333333,
+          "total_rolls": 85595,
+          "avg_rolls_per_game": 28.531666666666666,
+          "total_busts": 5423,
+          "busts_per_turn": 0.24056248059264518,
+          "total_stops": 17120,
+          "name": "glenn2010_linear",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "glenn2009_constant_vs_couto": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1488,
+          "win_rate": 0.496,
+          "win_rate_wilson95": [
+            0.47812518961431844,
+            0.5138850411754841
+          ],
+          "seat0_wins": 801,
+          "seat1_wins": 687,
+          "total_turns": 23360,
+          "avg_turns_per_game": 7.786666666666667,
+          "total_rolls": 112969,
+          "avg_rolls_per_game": 37.656333333333336,
+          "total_busts": 8282,
+          "busts_per_turn": 0.3545376712328767,
+          "total_stops": 15078,
+          "name": "glenn2009_constant",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.4786666666666667,
+            0.5133333333333333
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1512,
+          "win_rate": 0.504,
+          "win_rate_wilson95": [
+            0.48611495882451583,
+            0.5218748103856815
+          ],
+          "seat0_wins": 813,
+          "seat1_wins": 699,
+          "total_turns": 23372,
+          "avg_turns_per_game": 7.790666666666667,
+          "total_rolls": 111388,
+          "avg_rolls_per_game": 37.129333333333335,
+          "total_busts": 9814,
+          "busts_per_turn": 0.4199041588225227,
+          "total_stops": 13558,
+          "name": "couto",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    },
+    "glenn2010_linear_vs_couto": {
+      "games": 3000,
+      "seed": 20261103,
+      "draws": 0,
+      "agents": [
+        {
+          "id": "A",
+          "wins": 1637,
+          "win_rate": 0.5456666666666666,
+          "win_rate_wilson95": [
+            0.5278024066475464,
+            0.5634141251688738
+          ],
+          "seat0_wins": 899,
+          "seat1_wins": 738,
+          "total_turns": 23149,
+          "avg_turns_per_game": 7.716333333333333,
+          "total_rolls": 87116,
+          "avg_rolls_per_game": 29.038666666666668,
+          "total_busts": 5536,
+          "busts_per_turn": 0.23914639941250163,
+          "total_stops": 17613,
+          "name": "glenn2010_linear",
+          "model_kind": "baseline",
+          "paired_bootstrap_win_rate95": [
+            0.5273333333333333,
+            0.5636666666666666
+          ]
+        },
+        {
+          "id": "B",
+          "wins": 1363,
+          "win_rate": 0.4543333333333333,
+          "win_rate_wilson95": [
+            0.43658587483112615,
+            0.47219759335245354
+          ],
+          "seat0_wins": 762,
+          "seat1_wins": 601,
+          "total_turns": 23012,
+          "avg_turns_per_game": 7.6706666666666665,
+          "total_rolls": 110292,
+          "avg_rolls_per_game": 36.764,
+          "total_busts": 9622,
+          "busts_per_turn": 0.4181296714757518,
+          "total_stops": 13390,
+          "name": "couto",
+          "model_kind": "baseline"
+        }
+      ],
+      "bootstrap_samples": 5000
+    }
+  }
+}
