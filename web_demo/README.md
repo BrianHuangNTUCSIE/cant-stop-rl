@@ -33,6 +33,8 @@ budget（正式報告中的結果仍應使用原 Python simulator）。
 Browser 的 `snapshot()` 會回傳複製資料，agent 或 debug code 不會透過
 snapshot 修改正在進行的遊戲。PPO exporter 會匯出 policy head（而非 value
 head），因此產生的 `models/ppo.json` 可直接在瀏覽器執行。
+八動作 PPO checkpoint 會在 pair phase 使用 logits 0--5 選擇排序後的合法配對，並在
+decision phase 使用 logits 6--7；兩動作 PPO 維持 GA pairing。
 
 介面中的玩家 A、玩家 B 都可以各自選擇 agent；選擇 `玩家操作` 可以進行本地雙人遊戲，選擇兩個 AI 則會自動播放整局。
 

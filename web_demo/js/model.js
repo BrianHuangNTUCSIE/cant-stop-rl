@@ -1,3 +1,5 @@
+import {sortedMoves} from './policy.js';
+
 // Small dependency-free MLP inference. Training remains in Python; only the
 // online network is shipped to the browser.
 export class BrowserDQN {
@@ -13,11 +15,16 @@ export class BrowserDQN {
   }
   action(features) {
     const q=this.forward(features);
-    // Joint PPO checkpoints reserve actions 0--5 for pairing and use 6/7 for
-    // Continue/Stop.  The browser keeps GA pairing, so only the decision head
-    // is consulted here.
     if(this.payload.action_size===8)return q[7]>q[6]?'stop':'continue';
     return q[1]>q[0]?'stop':'continue';
+  }
+  pairAction(features, moves) {
+    if(this.payload.action_size!==8) return null;
+    const logits=this.forward(features);
+    const ordered=sortedMoves(moves);
+    const index=logits.slice(0, Math.min(6, ordered.length)).reduce(
+      (best, value, i) => value>logits[best] ? i : best, 0);
+    return ordered[index] ?? null;
   }
 }
 
