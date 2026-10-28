@@ -149,6 +149,16 @@ class TestCantStop(unittest.TestCase):
                          Move((6,)))
         self.assertEqual(GlennAloiAgent().choose_move(state, moves, rng), Move((6,)))
 
+    def test_glenn_aloi_duplicate_pair_uses_one_new_marker_penalty(self):
+        state = State((self.permanent, self.permanent), self.owner, (), 0, 0)
+        moves = (Move((7, 7)), Move((6,)))
+        # Two advances on one new marker: 3 + 3 - 6 = 0, which beats
+        # column 6's 4 - 6 = -2.
+        self.assertEqual(
+            GlennAloiAgent().choose_move(state, moves, random.Random(1)),
+            moves[0],
+        )
+
     def test_published_strong_agent_stop_formulas_differ(self):
         state = State((self.permanent, self.permanent), self.owner,
                       ((2, 1), (7, 1), (12, 1)), 0, 1)
