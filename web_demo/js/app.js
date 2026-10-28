@@ -1,6 +1,7 @@
 import {Game, chooseGA, legalMoves, COLUMNS, LENGTHS, bustProbability} from './game.js';
 import {BrowserDQN, heuristicAction} from './model.js';
 import {gaPairScore, glennAloiPairScore, sortedMoves} from './policy.js';
+import {PendingActions} from './pending.js';
 import {detectLocale, setLocale, t} from './i18n.js';
 
 setLocale(detectLocale());
@@ -105,7 +106,7 @@ async function choosePair(g,moves,name){
     }
     const candidates=actions.map((a,i)=>({a,i})).filter(x=>plays[x.i]||name==='vmerckle_monte');
     const best=candidates.reduce((x,y)=>wins[y.i]/Math.max(plays[y.i],1)>wins[x.i]/Math.max(plays[x.i],1)?y:x,candidates[0]);
-    pendingVmerckle.set(stateKey(g,g.player),best.a.action===0);
+    pendingVmerckle.set(best.a.post,g.player,best.a.action===0);
     return best.a.move;
   }
   if(name==='glenn-aloi')return moves.reduce((best,m)=>{
@@ -214,7 +215,7 @@ async function mcStop(g,player,name){
       const moves=legalMoves(dice,sim); if(!moves.length)return 0;
       const selected=chooseGA(sim,moves);
       active={...active}; for(const c of selected)active[c]=(active[c]??me[c-2])+1;
-      const points=rule28Points({...g,active,player});
+  const points=rule28Points({...g,active},player);
       if(Object.entries(active).some(([c,p])=>p===LENGTHS[c]) ||
          (Object.keys(active).length>=3&&points>=28))return bankValue(active);
     }
@@ -274,8 +275,7 @@ async function fullGameRollout(g,action,root){
 // stop/continue), unlike the old browser fallback which used a race score.
 // This compact implementation preserves that action-space distinction and
 // the flat-vs-UCB1 selection; rollouts use the same random full-game policy.
-const pendingVmerckle=new Map();
-function stateKey(g,player){return `${player}:${Object.entries(g.active).sort((a,b)=>a[0]-b[0]).map(([c,p])=>`${c}=${p}`).join(',')}`;}
+const pendingVmerckle=new PendingActions();
 function cloneForSearch(g){return {permanent:g.permanent.map(x=>x.slice()),owner:g.owner.slice(),active:{...g.active},player:g.player,rolls:g.rolls,phase:g.phase,winner:g.winner};}
 async function randomSearchRollout(g,action,root){
   const generation=runGeneration;
@@ -303,9 +303,7 @@ async function randomSearchRollout(g,action,root){
 function vmerckleStop(g,player,name){
   // Search is scheduled at the pair stage; the decision stage consumes the
   // selected root action, matching Python's pending-action protocol.
-  const key=stateKey(g,player),action=pendingVmerckle.get(key);
-  pendingVmerckle.delete(key);
-  return action??false;
+  return pendingVmerckle.consume(g,player);
 }
 async function stopDecision(g,name,player){
   const active=Object.entries(g.active), me=g.permanent[player], opp=g.permanent[1-player];
@@ -342,7 +340,7 @@ async function stopDecision(g,name,player){
   if(name==='vmerckle_monte'||name==='vmerckle_monte_uct')return vmerckleStop(g,player,name);
   return false;
 }
-function featuresForDQN(g,player,strategic=false,domain=false,moves=null){const s=g.snapshot(),me=s.permanent[player],opp=s.permanent[1-player],lengths=[3,5,7,9,11,13,11,9,7,5,3],f=[];for(let i=0;i<11;i++)f.push(me[i]/lengths[i]);for(let i=0;i<11;i++)f.push(opp[i]/lengths[i]);for(const c of COLUMNS)f.push((s.active[c]||0)/LENGTHS[c]);for(const c of COLUMNS)f.push(s.active[c]?1:0);for(const o of s.owner)f.push(o===player?1:o===1-player?-1:0);const completed=s.owner.filter(o=>o===player).length,oppCompleted=s.owner.filter(o=>o===1-player).length;f.push(completed/3,oppCompleted/3,Math.min(s.rolls/20,1));const bust=bustProbability(g),risk=Object.entries(s.active).reduce((x,[c,p])=>x+(p-me[c-2])/LENGTHS[c],0),reached=Object.entries(s.active).filter(([c,p])=>p===LENGTHS[c]).length;f.push(bust,risk);if(domain||strategic){const mp=me.reduce((x,v,i)=>x+v/lengths[i],0)/11,op=opp.reduce((x,v,i)=>x+v/lengths[i],0)/11;const rule=rule28Points({...g,active:g.active,player});f.push(Object.keys(s.active).length/3,reached/3,Math.min(completed+reached,3)/3,completed+reached>=3?1:0,mp-op,risk*(1-bust),Math.min(rule/40,1),oppCompleted>=2?1:0);if(strategic){for(let i=0;i<11;i++){const c=COLUMNS[i];f.push(Math.max(0,(s.active[c]??me[i])-me[i])/lengths[i])}const near=opp.reduce((x,v,i)=>x+(s.owner[i]===-1&&lengths[i]-v<=1?1:0),0);f.push(near/3)}}return f;}
+function featuresForDQN(g,player,strategic=false,domain=false,moves=null){const s=g.snapshot(),me=s.permanent[player],opp=s.permanent[1-player],lengths=[3,5,7,9,11,13,11,9,7,5,3],f=[];for(let i=0;i<11;i++)f.push(me[i]/lengths[i]);for(let i=0;i<11;i++)f.push(opp[i]/lengths[i]);for(const c of COLUMNS)f.push((s.active[c]||0)/LENGTHS[c]);for(const c of COLUMNS)f.push(s.active[c]?1:0);for(const o of s.owner)f.push(o===player?1:o===1-player?-1:0);const completed=s.owner.filter(o=>o===player).length,oppCompleted=s.owner.filter(o=>o===1-player).length;f.push(completed/3,oppCompleted/3,Math.min(s.rolls/20,1));const bust=bustProbability(g),risk=Object.entries(s.active).reduce((x,[c,p])=>x+(p-me[c-2])/LENGTHS[c],0),reached=Object.entries(s.active).filter(([c,p])=>p===LENGTHS[c]).length;f.push(bust,risk);if(domain||strategic){const mp=me.reduce((x,v,i)=>x+v/lengths[i],0)/11,op=opp.reduce((x,v,i)=>x+v/lengths[i],0)/11;const rule=rule28Points({...g,active:g.active},player);f.push(Object.keys(s.active).length/3,reached/3,Math.min(completed+reached,3)/3,completed+reached>=3?1:0,mp-op,risk*(1-bust),Math.min(rule/40,1),oppCompleted>=2?1:0);if(strategic){for(let i=0;i<11;i++){const c=COLUMNS[i];f.push(Math.max(0,(s.active[c]??me[i])-me[i])/lengths[i])}const near=opp.reduce((x,v,i)=>x+(s.owner[i]===-1&&lengths[i]-v<=1?1:0),0);f.push(near/3)}}return f;}
 function modelFeatures(g,player,policy,moves=null){const base=policy.payload.observation_size-(policy.payload.action_size===8?18:0);const strategic=base===80;const domain=base===68||strategic;const f=featuresForDQN(g,player,strategic,domain);if(moves){for(const move of sortedMoves(moves).slice(0,6))f.push(move[0]/12,(move[1]??0)/12,1);while(f.length<base+18)f.push(0);}if(f.length!==base+(moves?18:0))return null;return f;}
 function chooseLearnedPair(g,moves){if(!ppo||ppo.payload.action_size!==8)return null;const f=modelFeatures(g,g.player,ppo,moves);return f?ppo.pairAction(f,moves):null;}
 async function decide(name,g,player){if(name==='dqn'&&model){const f=modelFeatures(g,player,model);return f?model.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ppo'&&ppo){const f=modelFeatures(g,player,ppo);return f?ppo.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='dqn'||name==='ppo')return heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});return await stopDecision(g,name,player)?'stop':'continue';}
