@@ -1,18 +1,18 @@
 # Can't Stop Browser Demo
 
-這是一個不需要後端的純前端 demo。介面可選擇雙方 agent，包括專案中的 DDQN、Rule28、Glenn & Aloi、Glenn 2009/2010、Couto、Random，以及瀏覽器版的 Monte Carlo / root-UCB 適配。直接用瀏覽器開啟 `index.html`，或在本資料夾執行：
+This is a dependency-free frontend demo. You can select agents for both players, including the project's DDQN, Ridge, PPO, Rule of 28, Glenn & Aloi, Glenn 2009/2010, Couto, Random, and browser adaptations of Monte Carlo and root-UCB search. Open `index.html` in a browser, or run:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-然後開啟 <http://localhost:8000>。使用 HTTP server 是因為瀏覽器通常不允許 `file://` 載入 ES modules 與 JSON。
+Then open <http://localhost:8000>. An HTTP server is required because browsers usually block ES modules and JSON loaded from `file://` URLs.
 
-## 已發布的訓練模型
+## Published trained models
 
-目前 demo 發布可直接由瀏覽器載入的 JSON 權重，不放入 binary `.pt` 檔。`models/dqn.json` 是 DDQN、`models/ppo.json` 是 PPO 的 domain-feature 匯出檔；來源、seed、feature 版本與 checksum 見 [`models/README.md`](models/README.md)。
+The demo publishes browser-loadable JSON weights instead of binary `.pt` files. `models/dqn.json` contains DDQN weights, `models/ppo.json` contains the domain-feature PPO export, and `models/ridge.json` contains the domain-feature Ridge scaler and coefficients. Sources, seeds, feature versions, and checksums are documented in [`models/README.md`](models/README.md).
 
-請在原專案已安裝 PyTorch 的環境重新匯出時執行：
+To re-export a model in an environment with PyTorch installed, run:
 
 ```bash
 ../.venv/bin/python tools/export_weights.py \
@@ -20,39 +20,42 @@ python3 -m http.server 8000
   models/dqn.json
 ```
 
-（若從原專案的 `final` 目錄執行，請自行調整 checkpoint 路徑。）產生 JSON 後，網頁會自動載入對應模型；沒有模型時會明確顯示並使用 heuristic fallback。PPO 的發布檔已包含在 repository 中。
+If you run this from the repository's `final` directory, adjust the checkpoint path as needed. After the JSON is generated, the page loads the model automatically. If a model is missing, the page reports that clearly and uses a heuristic fallback. The published PPO and Ridge files are included in this repository.
 
 ## GitHub Pages
 
-push 到 `main` 且變更 `web_demo/` 時，`.github/workflows/deploy-pages.yml` 會將 `web_demo/` 直接發布到 GitHub Pages；也可手動執行 workflow。Repository 的 **Settings → Pages → Build and deployment → Source** 必須設定為 **GitHub Actions**。部署不需要 npm、PyTorch 或 Python server。
+When a push to `main` changes `web_demo/`, `.github/workflows/deploy-pages.yml` publishes `web_demo/` directly to GitHub Pages. The workflow can also be started manually. In the repository, set **Settings → Pages → Build and deployment → Source** to **GitHub Actions**. Deployment does not require npm, PyTorch, or a Python server.
 
-線上 demo：<https://brianhuangntucsie.github.io/cant-stop-rl/>（若 Pages 尚未啟用，請先完成上述 repository 設定）。
+Live demo: <https://brianhuangntucsie.github.io/cant-stop-rl/>. If Pages is not enabled, complete the repository setup above first.
 
-瀏覽器 demo 僅供互動展示。其 JavaScript 隨機數與較小的 search rollout budget 不等同於 Python 正式評估，不能取代報告中的結果。
+The browser demo is for interactive demonstration only. Its JavaScript randomness and smaller search-rollout budgets are not equivalent to the formal Python evaluation and must not replace the results in the report.
 
 ### Agent fidelity
 
-遊戲規則、合法走法順序、Rule 28、Glenn & Aloi、Glenn 2009
-Constant、Glenn 2010 Linear，以及 Couto 的 pairing/Stop 判斷會對齊目前
-Python engine；paper agent 的平手處理也保留 Python 的 first-max 行為。
-Random 與 Python 一樣是隨機 policy。`mc`、`mc-full-game`、`mc-strong`、
-`vmerckle_monte` 和 `vmerckle_monte_uct` 也都有對應的 root/action search；
-瀏覽器版本使用 JavaScript 的非 seeded RNG，且為保持互動性採用較小的 rollout
-budget（正式報告中的結果仍應使用原 Python simulator）。
+The game rules, legal-move ordering, Rule of 28, Glenn & Aloi, Glenn 2009 Constant, Glenn 2010 Linear, and Couto pairing/Stop decisions match the current Python engine. Tie handling for paper agents also preserves Python's first-max behavior.
 
-Browser 的 `snapshot()` 會回傳複製資料，agent 或 debug code 不會透過
-snapshot 修改正在進行的遊戲。PPO exporter 會匯出 policy head（而非 value
-head），因此產生的 `models/ppo.json` 可直接在瀏覽器執行。
-八動作 PPO checkpoint 會在 pair phase 使用 logits 0--5 選擇排序後的合法配對，並在
-decision phase 使用 logits 6--7；兩動作 PPO 維持 GA pairing。
+Random uses a random policy, as in Python. `mc`, `mc-full-game`, `mc-strong`, `vmerckle_monte`, and `vmerckle_monte_uct` each have a corresponding root/action search. The browser versions use an unseeded JavaScript RNG and smaller rollout budgets to remain interactive; formal report results must still use the original Python simulator.
 
-介面中的玩家 A、玩家 B 都可以各自選擇 agent；選擇 `玩家操作` 可以進行本地雙人遊戲，選擇兩個 AI 則會自動播放整局。
+The browser `snapshot()` returns copied data, so agents and debug code cannot mutate the live game through a snapshot. The PPO exporter exports the policy head rather than the value head, allowing the generated `models/ppo.json` to run directly in the browser.
 
-## 架構
+The **Quick test** panel runs a user-selected number of headless AI-vs-AI games without rendering each move, then reports both players' win counts and win rates. Select AI agents for both players before starting a test.
 
-- `js/game.js`: 瀏覽器遊戲狀態機與 GA dice pairing
-- `js/model.js`: dependency-free MLP inference
-- `js/app.js`: UI 與 AI 回合流程
-- `tools/export_weights.py`: PyTorch checkpoint 到瀏覽器 JSON 的轉換
+An eight-action PPO checkpoint uses logits 0–5 to choose a sorted legal pairing during the pair phase and logits 6–7 during the decision phase. A two-action PPO checkpoint continues to use GA pairing.
 
-模型權重會公開給使用者，這是純前端應用的正常限制；不適合用於需要保護模型或防作弊的遊戲。
+The interface lets Player A and Player B select agents independently. Selecting **Human** enables a local two-player game; selecting two AI agents plays the entire game automatically.
+
+## Architecture
+
+- `js/game.js`: Browser game state machine and GA dice pairing
+- `js/model.js`: Dependency-free MLP and Ridge inference
+- `js/app.js`: UI and AI turn lifecycle
+
+The Ridge policy uses the separate `feature_count`/`feature_mode` metadata
+schema and the 68-value domain encoder; neural policies use their
+`observation_size`/`action_size` schema. Invalid Ridge feature metadata or
+vector lengths are rejected rather than silently substituting another policy.
+- `tools/export_weights.py`: PyTorch checkpoint to browser JSON conversion
+
+Model weights are public because this is a frontend-only application. This design is not suitable for games that need to protect models or prevent cheating.
+
+The Traditional Chinese source is preserved in [`README.zh-TW.md`](README.zh-TW.md).

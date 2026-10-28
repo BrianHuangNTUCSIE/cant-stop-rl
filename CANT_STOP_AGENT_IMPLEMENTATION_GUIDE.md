@@ -2,63 +2,63 @@
 
 > **Audience:** Local coding agent (OpenCode / Claude Code / Codex) working inside an existing Can't Stop project.
 > **Objective:** Integrate independently selectable, reproducible AI opponents into the **existing** game engine, with consistent rules, interfaces, evaluation, and provenance. Do not replace the engine or overwrite the existing DDQN.
-> **Language:** This document is written in Traditional Chinese; keep code, API names, and commit messages in English.
+> **Language:** This document is written in English. The Traditional Chinese source is preserved in [`CANT_STOP_AGENT_IMPLEMENTATION_GUIDE.zh-TW.md`](CANT_STOP_AGENT_IMPLEMENTATION_GUIDE.zh-TW.md). Keep code, API names, and commit messages in English.
 > **Research scope:** Glenn & Aloi (2009), Glenn (2010), Medeiros et al. (2022), Lanctot et al. (2013), Carter (2026), and relevant public GitHub implementations.
 
-## 0. 非協商原則（先讀）
+## 0. Non-negotiable principles (read first)
 
-1. **Inspect before coding.** 先閱讀 `AGENTS.md`、教授的 project spec、現有遊戲規則、agent API、baseline、DDQN、evaluator 與 tests。不得假設本文件的介面就是 repo 的介面。
-2. **Preserve the game engine.** 使用薄 adapter 整合新 agent；不得為了移植演算法另造一套遊戲規則。若參考實作與現有規則不同，明確記錄並以本專案規則為準。
-3. **Do not fake reproduction.** 只有在程式、權重、超參數、decision logic 足以一致重建時才能標記 `faithful_reproduction`。否則標記 `adaptation` 或 `inspired_baseline`。
-4. **Separate two decisions.** Can't Stop 有 (a) 骰子配對／選 column，(b) 繼續擲骰／停止；研究常只解決其中一個。未定義的部分必須使用明確命名的既有策略，不可默默補上。
-5. **No training by default.** 優先移植已公布的 champion、推論程式或可直接運行的演算法。訓練／synthesis 應是可選的獨立命令，不可讓測試自動觸發長時間訓練。
-6. **No invented results.** 不可宣稱論文勝率等於在本 engine 的勝率；每個比較都要在同一規則、同一評估器下重新測量。
-7. **License discipline.** 公開可讀的 GitHub repo 不代表允許複製。先查 `LICENSE`、NOTICE、來源註解。無明確授權時，優先獨立重實作論文中公開的演算法；不要直接複製原始碼。保留 attribution。
-8. **Keep existing baselines.** `random`、`rule28-smart`、`mc`、`ddqn` 應繼續可用，且新增功能不應改變它們的預設行為。
-9. **Research uncertainty is a feature.** 任何無法從論文或來源核實的細節應寫入 `docs/reproduction_gaps.md`，不可猜測後宣稱 exact。
+1. **Inspect before coding.** First read `AGENTS.md`, the professor's project specification, the existing game rules, agent API, baselines, DDQN, evaluator, and tests. Do not assume the interfaces in this document are the repository interfaces.
+2. **Preserve the game engine.** integrate new agents through thin adapters; do not create a second ruleset to port an algorithm. If a reference implementation differs from the existing rules, document the difference and use this project's rules.
+3. **Do not fake reproduction.** Mark a method as `faithful_reproduction` only when appropriate; otherwise mark it as `adaptation` or `inspired_baseline`.
+4. **Separate two decisions.** Can't Stop has (a) dice pairing/column selection and (b) continue/stop decisions; research often addresses only one. Undefined parts must use an explicitly named existing policy and must not be silently filled in.
+5. **No training by default.** prefer porting published champions, inference code, or directly runnable algorithms. Training/synthesis should be optional standalone commands; tests must not trigger long training automatically.
+6. **No invented results.** do not claim that paper win rates equal win rates in this engine; remeasure every comparison under the same rules and evaluator.
+7. **License discipline.** A publicly readable GitHub repository does not imply permission to copy. First check `LICENSE`, `NOTICE`, and source comments. When no clear license exists, independently reimplement algorithms disclosed in papers rather than copying source code. Preserve attribution.
+8. **Keep existing baselines.** `random`, `rule28-smart`, `mc`, and `ddqn` must remain available, and new features must not change their default behavior.
+9. **Research uncertainty is a feature.** record any details that cannot be verified from papers or sources in `docs/reproduction_gaps.md`; do not guess and claim exact.
 
-## 1. 實作範圍與優先順序
+## 1. Implementation scope and priority
 
-### 分級
+### Levels
 
-- **A — source-backed:** 有可公開檢視的實作；可讀、可測、可依授權移植。若無授權，僅作為理解行為的參考。
-- **B — paper-backed:** 論文公開足夠公式、參數或 pseudocode，可獨立重建核心方法；仍可能有規則／tie-break 等差異。
-- **C — partial:** 研究方向有價值，但無法核實完整決策函式、模型權重或完整訓練流程；不得標記為 exact。
+- **A — source-backed:** A publicly inspectable implementation exists; it can be read, tested, and ported subject to its license. Without a license, use it only as a behavioral reference.
+- **B — paper-backed:** The paper publishes enough formulas, parameters, or pseudocode to independently rebuild the core method; rules or tie-break differences may remain.
+- **C — partial:** The research direction is useful, but the complete decision function, model weights, or training process cannot be verified; do not label it exact.
 
-| ID | 演算法／策略 | 主要類型 | 來源級別 | 預設優先級 | 交付標籤 |
+| ID | Algorithm / strategy | Category | Source level | Default priority | Delivery label |
 |---|---|---|---|---|---|
 | `glenn2009_constant` | GA-optimized Constant heuristic | Rule-based | B | P0 | `paper_reimplementation` |
 | `glenn2010_linear` | GA-optimized Linear champion | Rule-based | B | P0 | `paper_reimplementation` |
-| `sketch_ga_champion` | 2022 paper 使用的 GA champion（如原 repo 提供） | Programmatic | A（待查） | P1 | `source_port` 或 `unavailable` |
-| `sketch_sa` | Sketch-guided Simulated Annealing synthesis | Program synthesis | A | P1 | `source_port`／`adaptation` |
-| `sketch_uct` | Sketch-guided UCT synthesis | Program synthesis | A | P2 | `source_port`／`adaptation` |
-| `vmerckle_monte` | Monte Carlo rollout decision | Search | A（授權待查） | P1 | `clean_room_reimplementation` |
-| `vmerckle_monte_uct` | Root-level UCB / bandit search | Search | A（授權待查） | P1 | `clean_room_reimplementation` |
-| `expectimax` | Chance-node expectimax | Search | B（generic） | P2 | `adaptation` |
-| `star1ss` / `star2ss` | MCMS sampled *-minimax | Search | B（部分細節待查） | P2 | `adaptation` |
-| `mcts_dpw` | MCTS with double progressive widening | Search | B（部分細節待查） | P2 | `adaptation` |
-| `carter2026_dqn` | DQN stop/continue, heuristic dice selection | RL | A + thesis | P2 | `architecture_reproduction`（除非取得原權重） |
-| `lourenco_polynomial` | Probability + polynomial heuristic | Rule-based | A（授權待查） | P3 | `clean_room_reimplementation` |
+| `sketch_ga_champion` | GA champion used in the 2022 paper (if provided by the original repository) | Programmatic | A (verification pending) | P1 | `source_port` or `unavailable` |
+| `sketch_sa` | Sketch-guided Simulated Annealing synthesis | Program synthesis | A | P1 | `source_port` / `adaptation` |
+| `sketch_uct` | Sketch-guided UCT synthesis | Program synthesis | A | P2 | `source_port` / `adaptation` |
+| `vmerckle_monte` | Monte Carlo rollout decision | Search | A(license verification pending) | P1 | `clean_room_reimplementation` |
+| `vmerckle_monte_uct` | Root-level UCB / bandit search | Search | A(license verification pending) | P1 | `clean_room_reimplementation` |
+| `expectimax` | Chance-node expectimax | Search | B (generic) | P2 | `adaptation` |
+| `star1ss` / `star2ss` | MCMS sampled *-minimax | Search | B(some details pending verification) | P2 | `adaptation` |
+| `mcts_dpw` | MCTS with double progressive widening | Search | B(some details pending verification) | P2 | `adaptation` |
+| `carter2026_dqn` | DQN stop/continue, heuristic dice selection | RL | A + thesis | P2 | `architecture_reproduction`(unless original weights are obtained) |
+| `lourenco_polynomial` | Probability + polynomial heuristic | Rule-based | A(license verification pending) | P3 | `clean_room_reimplementation` |
 | `tabletopgames_mcts` | Generic framework search reference | Framework | A | P3 | `reference_only` |
 
-**注意：** `sketch_sa` / `sketch_uct` 原本是**合成策略的程序**，不是單一固定策略。應分別提供 synthesis pipeline 與其輸出之可執行 policy。`carter2026_dqn` 若只有模型架構、沒有原作者 checkpoint，不能聲稱複製了原作者的 trained agent。
+**Note:** `sketch_sa` / `sketch_uct` are originally **programs for synthesizing strategies**, not single fixed policies. Provide a separate synthesis pipeline and an executable policy from its output.`carter2026_dqn` if only the model architecture is available and no original-author checkpoint exists, do not claim to reproduce the author's trained agent.
 
-## 2. 必讀資料與連結（讀取順序）
+## 2. Required sources and links (reading order)
 
 ### 2.1 Primary research
 
 1. **Glenn & Aloi (2009), _A Generalized Heuristic for Can't Stop_** — https://cdn.aaai.org/ocs/123/123-2430-1-PB.pdf
-   - 查閱：評分函式、column progress、pair choice、risk/stop decision、Constant/Linear 參數表、Rule of 28 比較。
-   - **必須從原 PDF 逐式轉錄 scoring equation**；下面的權重表只是核對清單，不能替代公式。
+   - Review the scoring function, column progress, pair choice, risk/stop decision, Constant/Linear parameter tables, and Rule-of-28 comparison.
+   - **Transcribe every scoring equation from the original PDF**; the weight table below is only a checklist and cannot replace the formulas.
 2. **Glenn (2010), _Optimizing Genetic Algorithm Parameters for a Stochastic Game_** — https://www.scitepress.org/PublishedPapers/2010/30791/30791.pdf
-   - 查閱：修正後的 Linear champion、完整參數、position normalization、rounding/floor、stop threshold、與 2009 版本差異。
-3. **Medeiros et al. (2022), _What Can We Learn Even from the Weakest? Learning Sketches for Programmatic Strategies_** — local PDF: `04719-MedeirosL(2).pdf`（若存在於 repo；否則請使用使用者提供之附件）；code: https://github.com/leandrocouto/sketch-learning
+   - Review the corrected Linear champion, complete parameters, position normalization, rounding/floor behavior, stop threshold, and differences from the 2009 version.
+3. **Medeiros et al. (2022), _What Can We Learn Even from the Weakest? Learning Sketches for Programmatic Strategies_** — local PDF: `04719-MedeirosL(2).pdf` (if present in the repository; otherwise use the attachment provided by the user); code: https://github.com/leandrocouto/sketch-learning
    - Read repo README: https://github.com/leandrocouto/sketch-learning/blob/master/cant-stop-sketch-learning/README.md
-   - 查閱：DSL、human/Glenn/random demonstrations、sketch learning、SA、UCT、evaluation protocol。
+   - Review the DSL, human/Glenn/random demonstrations, sketch learning, SA, UCT, and evaluation protocol.
 4. **Lanctot et al. (2013), _Monte Carlo *-Minimax Search_** — https://www.ijcai.org/Proceedings/13/Papers/093.pdf
-   - 查閱：Star1/Star2、ExpSS、Star1SS、Star2SS、chance sampling、MCTS-DPW、evaluation function 與 game-specific settings 是否完全揭露。
-5. **J. Cameron Carter (2026), _Using Machine Learning to Optimize the Board Game Can't Stop_** — local PDF: `Using Machine Learning to Optimize The Board Game Cant Stop(2).pdf`（若存在）；source: https://github.com/JCameronCarter/HonorsThesis
-   - 查閱：51-feature encoding、stop/continue-only DQN、dice heuristic、network、reward、training、Appendix B code。
+   - Review Star1/Star2, ExpSS, Star1SS, Star2SS, chance sampling, MCTS-DPW, the evaluation function, and whether game-specific settings are fully disclosed.
+5. **J. Cameron Carter (2026), _Using Machine Learning to Optimize the Board Game Can't Stop_** — local PDF: `Using Machine Learning to Optimize The Board Game Cant Stop(2).pdf` (if present); source: https://github.com/JCameronCarter/HonorsThesis
+   - Review:51-feature encoding, stop/continue-only DQN, dice heuristic, network, reward, training, and Appendix B code.
 
 ### 2.2 Public source / comparison projects
 
@@ -71,7 +71,7 @@
 
 **Do not automatically clone and copy code.** First verify availability, repository layout, commit SHA, license, dependencies and whether the code really contains the claimed strategy. Record provenance with the experiment configuration and report notes.
 
-## 3. Existing-engine audit — 必須先完成
+## 3. Existing-engine audit — must be completed first
 
 Find and document:
 
