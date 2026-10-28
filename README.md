@@ -12,6 +12,10 @@ Our models are not merely classifiers that imitate labels: they play complete ga
 
 The final two-seed retraining check showed that PPO and Ridge remained competitive while DDQN was more seed-sensitive. These are fresh complete-game evaluations—not training accuracy. The full experiment record, caveats, and raw-artifact locations are documented in [`EXPERIMENT_STATUS.md`](cant_stop_baselines/docs/EXPERIMENT_STATUS.md).
 
+The compact, report-ready evidence table and figures are in
+[`docs/final_results/`](cant_stop_baselines/docs/final_results/). They separate
+formal held-out results from descriptive sweeps and negative diagnostics.
+
 ## Why this problem matters
 
 *Can't Stop* makes risk-sensitive control visible and measurable:

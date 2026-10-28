@@ -2,6 +2,10 @@
 
 Updated 2026-10-27.
 
+The report-ready evidence package is maintained in `docs/final_results/`. It
+contains the final model table, provenance CSV, and three dependency-free SVG
+figures; it does not replace the detailed run records below.
+
 ## Prior-work comparison status
 
 The source/revision and fidelity audit for the paper and public-code agents is

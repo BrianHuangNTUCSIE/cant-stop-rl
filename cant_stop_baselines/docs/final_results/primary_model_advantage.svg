@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="540" viewBox="0 0 920 540">
+<style>text{font-family:Arial,sans-serif;fill:#172033} .grid{stroke:#d9dee8} .axis{stroke:#344054} .label{font-size:14px} .small{font-size:12px} .title{font-size:20px;font-weight:bold}</style>
+<text x="460.0" y="32" text-anchor="middle" class="title">PPO advantage over retained baselines</text>
+<line x1="90" y1="445.0" x2="885" y2="445.0" class="grid"/>
+<text x="78" y="450.0" text-anchor="end" class="small">0</text>
+<line x1="90" y1="70" x2="90" y2="445" class="axis"/>
+<line x1="90" y1="445" x2="885" y2="445" class="axis"/>
+<text x="288.8" y="472" text-anchor="middle" class="label">Rule28-smart</text>
+<rect x="244.6" y="295.0" width="40.3" height="150.0" fill="#2563eb"/>
+<text x="264.8" y="288.0" text-anchor="middle" class="small">3.2</text>
+<line x1="264.8" y1="196.6" x2="264.8" y2="388.8" stroke="#172033" stroke-width="2"/>
+<line x1="259.8" y1="196.6" x2="269.8" y2="196.6" stroke="#172033"/>
+<line x1="259.8" y1="388.8" x2="269.8" y2="388.8" stroke="#172033"/>
+<rect x="292.6" y="234.1" width="40.3" height="210.9" fill="#16a34a"/>
+<text x="312.8" y="227.1" text-anchor="middle" class="small">4.5</text>
+<line x1="312.8" y1="130.9" x2="312.8" y2="341.9" stroke="#172033" stroke-width="2"/>
+<line x1="307.8" y1="130.9" x2="317.8" y2="130.9" stroke="#172033"/>
+<line x1="307.8" y1="341.9" x2="317.8" y2="341.9" stroke="#172033"/>
+<text x="686.2" y="472" text-anchor="middle" class="label">MC</text>
+<rect x="642.1" y="318.4" width="40.3" height="126.6" fill="#2563eb"/>
+<text x="662.2" y="311.4" text-anchor="middle" class="small">2.7</text>
+<line x1="662.2" y1="210.6" x2="662.2" y2="416.9" stroke="#172033" stroke-width="2"/>
+<line x1="657.2" y1="210.6" x2="667.2" y2="210.6" stroke="#172033"/>
+<line x1="657.2" y1="416.9" x2="667.2" y2="416.9" stroke="#172033"/>
+<rect x="690.1" y="243.4" width="40.3" height="201.6" fill="#16a34a"/>
+<text x="710.2" y="236.4" text-anchor="middle" class="small">4.3</text>
+<line x1="710.2" y1="135.6" x2="710.2" y2="355.9" stroke="#172033" stroke-width="2"/>
+<line x1="705.2" y1="135.6" x2="715.2" y2="135.6" stroke="#172033"/>
+<line x1="705.2" y1="355.9" x2="715.2" y2="355.9" stroke="#172033"/>
+<rect x="90" y="502" width="14" height="14" fill="#2563eb"/>
+<text x="110" y="514" class="small">PPO minus DDQN</text>
+<rect x="280" y="502" width="14" height="14" fill="#16a34a"/>
+<text x="300" y="514" class="small">PPO minus Ridge</text>
+<text x="18" y="257.5" transform="rotate(-90 18 257.5)" text-anchor="middle" class="label">Percentage points</text>
+</svg>
