@@ -8,7 +8,7 @@ The project is important beyond one board game: it is a controlled testbed for s
 
 ## Headline result: our agents versus prior work
 
-Our models are not merely classifiers that imitate labels: they play complete games against **traditional baselines and agents from previous work**. In a common direct comparison of **3,000 games per matchup**, our PPO, DDQN, and Ridge agents beat the published Glenn–Aloi, Glenn 2009, Glenn 2010, and Couto strategies in several matchups. The stronger `mc-strong` opponent also exposes a useful research result: it beats all four prior heuristic agents, while our learned agents remain competitive against it.
+Our models are not merely classifiers that imitate labels: they play complete games against **traditional baselines and agents from previous work**. In direct comparisons of **3,000 games per matchup**, our PPO, DDQN, and Ridge agents beat the published Glenn–Aloi, Glenn 2009, Glenn 2010, and Couto strategies in several matchups. We also include `couto-ga-stop`, a scope-matched adaptation that keeps Couto's Stop/Continue policy but fixes dice pairing to Glenn–Aloi. The stronger `mc-strong` opponent exposes a useful research result: it beats the prior heuristic agents, while our learned agents remain competitive against it.
 
 The final two-seed retraining check showed that PPO and Ridge remained competitive while DDQN was more seed-sensitive. These are fresh complete-game evaluations—not training accuracy. The full experiment record, caveats, and raw-artifact locations are documented in [`EXPERIMENT_STATUS.md`](cant_stop_baselines/docs/EXPERIMENT_STATUS.md).
 
@@ -27,7 +27,7 @@ formal held-out results from descriptive sweeps and negative diagnostics.
 
 ## Evidence: our agents versus published agents
 
-The post-merge direct comparison used **3,000 games per matchup**, alternating seats and 64 Monte Carlo rollouts where applicable. It used PPO seed 460, DDQN seed 448, and Ridge seed 642; “win rate” means the row agent's win rate against the column opponent. Raw records are archived under [`docs/experiments/post_merge_20261103`](cant_stop_baselines/docs/experiments/post_merge_20261103).
+The post-merge direct comparison used **3,000 games per matchup**, alternating seats and 64 Monte Carlo rollouts where applicable. It used PPO seed 460, DDQN seed 448, and Ridge seed 642; “win rate” means the row agent's win rate against the column opponent. Raw records are archived under [`docs/experiments/post_merge_20261103`](cant_stop_baselines/docs/experiments/post_merge_20261103). The `Couto-GA-stop` column is from the separately archived 3,000-game external-opponent evaluation with the same alternating-seat and turn-limit protocol (seed `60000644`), because that scope-matched matchup was not included in the post-merge matrix.
 
 That directory name is an archive label, not a universal evaluation date: the
 paper-agent JSON batches use seeds 20261027–20261030, Carter's adapted
@@ -35,11 +35,11 @@ checkpoint uses 20261027, and the root head-to-head CSV/summary batch uses
 20261103. See the root [`manifest.json`](cant_stop_baselines/docs/experiments/post_merge_20261103/manifest.json)
 for runners, commands, raw-record paths, and summary paths.
 
-| Our agent | vs Rule-of-28-smart | vs `mc-strong` | vs Glenn–Aloi | vs Glenn 2009 | vs Glenn 2010 | vs Couto |
-|---|---:|---:|---:|---:|---:|---:|
-| **PPO** | **64.8%** | 53.4% | **68.1%** | **69.2%** | **66.4%** | 67.6% |
-| **DDQN** | 61.0% | 51.3% | 64.1% | 64.8% | 60.3% | 66.1% |
-| **Ridge** | 63.4% | **54.0%** | 66.9% | 68.0% | 65.7% | **68.3%** |
+| Our agent | vs Rule-of-28-smart | vs `mc-strong` | vs Glenn–Aloi | vs Glenn 2009 | vs Glenn 2010 | vs Couto | vs Couto-GA-stop |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **PPO** | **64.8%** | 53.4% | **68.1%** | **69.2%** | **66.4%** | 67.6% | **65.8%** |
+| **DDQN** | 61.0% | 51.3% | 64.1% | 64.8% | 60.3% | 66.1% | 63.2% |
+| **Ridge** | 63.4% | **54.0%** | 66.9% | 68.0% | 65.7% | **68.3%** | 63.7% |
 
 For the reverse comparison, the prior agents' own win rates were much lower:
 
@@ -49,11 +49,12 @@ For the reverse comparison, the prior agents' own win rates were much lower:
 | Glenn 2009 Constant [2] | 41.5% | 37.1% | 95.3% |
 | Glenn 2010 Linear [2] | 43.4% | 37.7% | 97.5% |
 | Couto / Sketch-SA(O) [3] | 43.1% | 37.1% | 95.3% |
+| Couto-GA-stop (scope-matched adaptation) | **pending** | **pending** | **pending** |
 | Carter adapted checkpoint [4] | 1.8% | 2.1% | 21.5% |
 | vmerckle flat Monte Carlo [6] | 2.8% | 2.6% | 70.9% |
 | vmerckle root-only UCB1 [6] | 4.5% | 3.7% | 77.4% |
 
-The `mc-strong` implementation therefore beats all four prior heuristic agents in this direct comparison, while our PPO, DDQN, and Ridge policies remain competitive against it. These values replace the pre-merge matrix; the prior implementation used different paper-policy behavior.
+The `mc-strong` implementation therefore beats the four full prior heuristic agents in this direct comparison, while our PPO, DDQN, and Ridge policies remain competitive against it. The scope-matched `couto-ga-stop` results come from the separately archived 3,000-game external-opponent evaluation (same alternating-seat protocol); its reverse baseline results were not generated and are marked pending rather than inferred. These values replace the pre-merge matrix; the prior implementation used different paper-policy behavior.
 
 The Glenn–Aloi full heuristic and `glenn2009_constant` are two policy variants
 from the same Glenn & Aloi 2009 work. They can be compared as policies, but
@@ -68,6 +69,24 @@ Rule-of-28-smart, and 62/3,000 (2.07%) against `mc-strong`; it uses an equivalen
 `51 -> 64 -> 64 -> 2` inference network, Carter's action convention and
 heuristic dice-pair selector, with no retraining. It is not a result from
 Carter's original environment.
+
+### What each comparison controls
+
+| Comparison agent | Dice-pairing choice | Stop/Continue choice |
+|---|---|---|
+| PPO, DDQN, Ridge | No; fixed Glenn–Aloi | Yes; learned/project policy |
+| Rule-of-28, `mc-strong` | Yes; Glenn–Aloi heuristic | Yes; project baseline policy |
+| Glenn–Aloi, Glenn 2009, Glenn 2010 | Yes; agent-selected | Yes; published/project policy |
+| Couto / Sketch-SA(O) | Yes; agent-selected | Yes; Couto policy |
+| `couto-ga-stop` | No; fixed Glenn–Aloi | Yes; Couto policy only |
+| Carter adapted checkpoint | Yes; Carter heuristic selector | Yes; Carter checkpoint |
+| vmerckle flat Monte Carlo / root-only UCB1 | Yes; search-selected | Yes; search rollout policy |
+
+End-to-end comparisons against agents that also choose pairings do not isolate
+the Stop/Continue policy. The `couto-ga-stop` column is the closer
+scope-matched comparison because only its Stop/Continue policy differs from the
+fixed-pairing setup; it is still a project adaptation, not a second independent
+prior work.
 
 These results show the main contribution clearly: our agents improve on the traditional baseline and defeat several previous agents, while no single policy dominates every opponent. The ranking is opponent-dependent, which is why we report a matrix rather than one cherry-picked score.
 

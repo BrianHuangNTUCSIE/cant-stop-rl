@@ -478,6 +478,13 @@ The external-opponent evaluation used 3,000 games per matchup, seed `60000644`,
 MC-64, and 5,000 paired-bootstrap samples. Artifacts are in
 `runs/four_models_vs_external_seed60000644/`.
 
+This is the scope-matched comparison for `couto-ga-stop`: it retains Couto's
+Stop/Continue policy while fixing dice pairing to Glenn--Aloi. It therefore
+isolates Stop/Continue more closely than the end-to-end `couto` comparison,
+which also lets Couto select pairings. The results are included in the root
+README's main comparison table; no reverse `couto-ga-stop` baseline matchups
+were run, so those entries are explicitly marked pending rather than inferred.
+
 | Model | Rule28-smart | MC | Glenn--Aloi | Couto-GA-stop | Minimum |
 |---|---:|---:|---:|---:|---:|
 | PPO-451 | **64.1%** | **55.3%** | 80.9% | **65.8%** | **55.3%** |

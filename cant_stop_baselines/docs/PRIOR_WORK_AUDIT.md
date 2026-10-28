@@ -18,7 +18,7 @@ separate 2010 work.
 | `glenn-aloi` | Glenn & Aloi heuristic | pairing and Stop/Continue | `clean_room_adaptation` | Translated formula and current engine transitions; no release binary is claimed. |
 | `couto` | Medeiros, Aleixo & Lelis (2022) | pairing and Stop/Continue | `behavioral_port` | Ports the policy, not the synthesis pipeline or demonstrations. |
 | `couto-ga-stop` | Same source | Stop/Continue only | `project_adaptation` | Replaces original pairing with fixed Glenn–Aloi pairing. |
-| `carter-public-adapted` | Carter checkpoint and `rl_player.py` | inference | `checkpoint/feature/simulator adaptation` | Static `Prob_Table`, `columns_started`, `CarterNumpyAgent`, current rules/features; original simulator and training data are not reproduced. |
+| `carter-public-adapted` | Carter checkpoint and `rl_player.py` | heuristic pairing + Stop/Continue checkpoint | `checkpoint/feature/simulator adaptation` | Static `Prob_Table`, `columns_started`, `CarterNumpyAgent`, current rules/features; original simulator and training data are not reproduced. |
 | `vmerckle_monte` | `vmerckle/CantStop-AI`, commit `25be22910e3bfc5c351f38ff5461602d95dacd0a` | root pairing + stopping | `clean_room_behavioral_port` | Root-only flat Monte Carlo and random full-game rollouts. |
 | `vmerckle_monte_uct` | Same source | root pairing + stopping | `clean_room_behavioral_port` | Root-only UCB1 bandit, **not** full-tree MCTS. |
 | `mc`, `mc-strong`, `mc-full-game` | This project | stopping baselines | `project_baseline` | Extensions, not external reproductions. |
