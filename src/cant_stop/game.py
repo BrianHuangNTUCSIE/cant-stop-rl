@@ -21,6 +21,7 @@ class Game:
         self.active: dict[int, int] = {}
         self.current_player = 0
         self.rolls_this_turn = 0
+        self.columns_started: set[int] = set()
         self.phase = "roll"
         self.winner: int | None = None
         self.last_dice: tuple[int, ...] | None = None
@@ -33,11 +34,13 @@ class Game:
     def snapshot(self) -> State:
         return State((tuple(self.permanent[0]), tuple(self.permanent[1])),
                      tuple(self.owner), tuple(sorted(self.active.items())),
-                     self.current_player, self.rolls_this_turn)
+                     self.current_player, self.rolls_this_turn,
+                     tuple(sorted(self.columns_started)))
 
     def _end_turn(self) -> None:
         self.active.clear()
         self.rolls_this_turn = 0
+        self.columns_started.clear()
         self.current_player = 1 - self.current_player
         self.phase = "roll"
         self.last_dice = None
@@ -64,7 +67,9 @@ class Game:
     def apply_move(self, move: Move) -> None:
         if self.phase != "pair" or move not in self.available:
             raise ValueError("Expected a legal move after rolling")
+        before = set(self.active)
         self.active = advance_active(self.active, self.permanent[self.current_player], move)
+        self.columns_started.update(set(self.active) - before)
         self.rolls_this_turn += 1
         self.phase = "decision"
         self.available = ()

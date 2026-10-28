@@ -547,6 +547,7 @@ class FullGameMonteCarloAgent:
         game.active = state.active_dict()
         game.current_player = state.current_player
         game.rolls_this_turn = state.rolls_this_turn
+        game.columns_started = set(state.columns_started)
         game.phase = "decision"
         return game
 
@@ -613,6 +614,7 @@ def _copy_decision_game(state: State):
     game.active = state.active_dict()
     game.current_player = state.current_player
     game.rolls_this_turn = state.rolls_this_turn
+    game.columns_started = set(state.columns_started)
     game.phase = "decision"
     return game
 
@@ -674,6 +676,7 @@ class _VMerckleSearchAgent:
                                         move).items())),
             state.current_player,
             state.rolls_this_turn + 1,
+            state.columns_started,
         )
 
     def _win_rate(self, state: State, action: tuple[Move, int],

@@ -13,7 +13,8 @@ from .game import Game
 from .model import Move, State
 from .rl_env import JointAction, StopContinueAction, StopContinueEnv
 from .sketch_program import SketchProgramAgent, SketchProgramError
-from .carter_adapter import CarterAdapterError, CarterKerasAgent, carter_features
+from .carter_adapter import (CarterAdapterError, CarterKerasAgent,
+                             CarterNumpyAgent, carter_features)
 from .paired_analysis import paired_bootstrap, paired_units
 from .rules import (advance_active, bust_probability, legal_moves, pair_score,
                     reached_top, rule28_points)
@@ -27,7 +28,7 @@ __all__ = [
     "Move", "RandomAgent", "Rule28Agent", "STEP_VALUE", "State",
     "StrongMonteCarloAgent", "VMerckleMonteAgent", "VMerckleMonteUCTAgent",
     "SketchProgramAgent", "SketchProgramError",
-    "CarterAdapterError", "CarterKerasAgent", "carter_features",
+    "CarterAdapterError", "CarterKerasAgent", "CarterNumpyAgent", "carter_features",
     "paired_bootstrap", "paired_units",
     "JointAction", "StopContinueAction", "StopContinueEnv",
     "advance_active", "bust_probability", "evaluate", "legal_moves",

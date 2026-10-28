@@ -25,6 +25,10 @@ class State:
     active: tuple[tuple[int, int], ...]  # (column, absolute runner position)
     current_player: int
     rolls_this_turn: int
+    # Columns first opened during this turn.  This is needed by the published
+    # Carter encoder, whose Rule-of-28 implementation distinguishes an initial
+    # marker from later advances.
+    columns_started: tuple[int, ...] = ()
 
     def active_dict(self) -> dict[int, int]:
         return dict(self.active)

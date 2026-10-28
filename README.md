@@ -29,11 +29,11 @@ formal held-out results from descriptive sweeps and negative diagnostics.
 
 The post-merge direct comparison used **3,000 games per matchup**, alternating seats and 64 Monte Carlo rollouts where applicable. It used PPO seed 460, DDQN seed 448, and Ridge seed 642; “win rate” means the row agent's win rate against the column opponent. Raw records are archived under [`docs/experiments/post_merge_20261103`](cant_stop_baselines/docs/experiments/post_merge_20261103).
 
-| Our agent | vs Rule-of-28-smart | vs `mc-strong` | vs Glenn–Aloi | vs Glenn 2009 | vs Glenn 2010 | vs Couto | vs Carter* |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| **PPO** | **64.8%** | 53.4% | **68.1%** | **69.2%** | **66.4%** | 67.6% | **98.9%** |
-| **DDQN** | 61.0% | 51.3% | 64.1% | 64.8% | 60.3% | 66.1% | **98.5%** |
-| **Ridge** | 63.4% | **54.0%** | 66.9% | 68.0% | 65.7% | **68.3%** | **98.2%** |
+| Our agent | vs Rule-of-28-smart | vs `mc-strong` | vs Glenn–Aloi | vs Glenn 2009 | vs Glenn 2010 | vs Couto |
+|---|---:|---:|---:|---:|---:|---:|
+| **PPO** | **64.8%** | 53.4% | **68.1%** | **69.2%** | **66.4%** | 67.6% |
+| **DDQN** | 61.0% | 51.3% | 64.1% | 64.8% | 60.3% | 66.1% |
+| **Ridge** | 63.4% | **54.0%** | 66.9% | 68.0% | 65.7% | **68.3%** |
 
 For the reverse comparison, the prior agents' own win rates were much lower:
 
@@ -43,7 +43,7 @@ For the reverse comparison, the prior agents' own win rates were much lower:
 | Glenn 2009 Constant [2] | 41.5% | 37.1% | 95.3% |
 | Glenn 2010 Linear [2] | 43.4% | 37.7% | 97.5% |
 | Couto / Sketch-SA(O) [3] | 43.1% | 37.1% | 95.3% |
-| Carter adapted checkpoint [4] | 1.7% | 1.7% | 25.0% |
+| Carter adapted checkpoint [4] | — | — | 25.0% |
 | vmerckle flat Monte Carlo [6] | 2.8% | 2.6% | 70.9% |
 | vmerckle root-only UCB1 [6] | 4.5% | 3.7% | 77.4% |
 
@@ -51,13 +51,11 @@ The `mc-strong` implementation therefore beats all four prior heuristic agents i
 
 \* Carter is the public `dqn_multi_opp.keras` checkpoint from [J. Cameron
 Carter's repository](https://github.com/JCameronCarter/HonorsThesis), evaluated
-as a checkpoint and feature/simulator adaptation. The values in this column
-are the corresponding complement of Carter's win rate: PPO 34/3,000, DDQN
-44/3,000, and Ridge 53/3,000. The checkpoint was evaluated with an equivalent
-PyTorch inference network using Carter's `51 -> 64 -> 64 -> 2` architecture,
-Stop/Continue action convention, and heuristic dice-pair selector; it was not
-retrained. These results should not be interpreted as Carter's original-
-environment performance.
+as a checkpoint and feature/simulator adaptation. The canonical archived
+calibration is 644/3,000 (21.47%) against Random; it uses an equivalent
+`51 -> 64 -> 64 -> 2` inference network, Carter's action convention and
+heuristic dice-pair selector, with no retraining. It is not a result from
+Carter's original environment.
 
 These results show the main contribution clearly: our agents improve on the traditional baseline and defeat several previous agents, while no single policy dominates every opponent. The ranking is opponent-dependent, which is why we report a matrix rather than one cherry-picked score.
 

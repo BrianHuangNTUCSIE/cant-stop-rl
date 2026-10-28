@@ -277,6 +277,21 @@ class TestCantStop(unittest.TestCase):
         self.assertEqual(features[3 * 11], 0.0)
         self.assertEqual(features[-3:], [0.0, 0.0, 0.0])
 
+    def test_carter_feature_encoder_uses_published_probability_table(self):
+        state = State((self.permanent, self.permanent), self.owner,
+                      ((2, 1), (3, 1), (4, 1)), 0, 1,
+                      (2, 3, 4))
+        features = carter_features(state)
+        self.assertEqual(features[46], 0.52)
+        self.assertEqual(features[45], 34 / 50)  # 12 + 10 + 8 + all-low bonus
+
+    def test_game_snapshot_tracks_started_columns_for_carter(self):
+        game = Game()
+        game.roll(random.Random(1), (1, 1, 1, 1))
+        game.apply_move(game.available[0])
+        self.assertEqual(game.snapshot().columns_started,
+                         tuple(sorted(game.active)))
+
     def test_bad_actions_rejected(self):
         game = Game()
         with self.assertRaises(RuntimeError):

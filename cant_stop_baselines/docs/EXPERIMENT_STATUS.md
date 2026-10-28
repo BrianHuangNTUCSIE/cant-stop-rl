@@ -914,34 +914,25 @@ available in the evaluation environment, the weights inside the Keras archive
 were read directly and evaluated with an equivalent PyTorch inference network;
 the architecture and weights were not retrained or modified.
 
-Using the current simulator's 51-feature adapter, seed `20261104`, alternating
-seats, 3,000 games per matchup, and a 2,000-turn limit, Carter's adapted
-checkpoint produced:
+The canonical archived run uses the current simulator's Carter-compatible
+51-feature encoder, seed `20261027`, alternating seats, 3,000 games, and a
+2,000-turn limit. Carter's adapted checkpoint produced:
+
+It is reproducible with:
+`python3 scripts/evaluate_carter_adaptation.py --checkpoint PATH_TO/dqn_multi_opp.keras --output docs/experiments/post_merge_20261103/random_vs_paper/04_carter_vs_random.json`.
+The committed artifact records the checkpoint Git blob SHA, while the runner
+also records the local file's SHA-256.
 
 | Opponent | Carter wins | Carter win rate |
 |---|---:|---:|
-| Random | 594 / 3,000 | 19.8% |
-| rule28-smart | 51 / 3,000 | 1.7% |
-| mc-strong | 52 / 3,000 | 1.7% |
-| PPO-460 | 34 / 3,000 | 1.1% |
-| DDQN-448 | 44 / 3,000 | 1.5% |
-| Ridge-642 | 53 / 3,000 | 1.8% |
-| glenn-aloi | 22 / 3,000 | 0.7% |
-| glenn2009_constant | 19 / 3,000 | 0.6% |
-| glenn2010_linear | 34 / 3,000 | 1.1% |
-| couto | 46 / 3,000 | 1.5% |
+| Random | 644 / 3,000 | 21.47% |
 
 These results are a **checkpoint and feature/simulator adaptation**, not a
 reproduction of Carter's original game environment or training evaluation.
-The 19.8% result against Random is evidence that the feature and rule
-translation is not behaviorally equivalent; therefore these numbers should
-not be used to claim that Carter's original agent performs this poorly under
-its own environment. The public checkpoint provenance is retained here so
-the comparison is transparent.
-
-The same Random calibration was extended to the Carter adaptation using seed
-`20261027`, 3,000 games, alternating seats, and a 2,000-turn limit. Carter won
-749 games (24.97%, reported as 25.0% in the README). The saved result is
-`docs/experiments/post_merge_20261103/random_vs_paper/04_carter_vs_random.json`.
+The 24.97% result against Random is evidence that the feature and rule
+translation is not behaviorally equivalent; it must not be used to claim that
+Carter's original agent performs this poorly under its own environment. The
+saved result is `docs/experiments/post_merge_20261103/random_vs_paper/04_carter_vs_random.json`.
 This remains a simulator/feature adaptation, not a reproduction of Carter's
-original-environment result.
+original-environment result. An earlier unarchived 20261104 diagnostic is not
+reported as an experiment result.
