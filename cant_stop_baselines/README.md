@@ -666,8 +666,8 @@ meaning.
 | `mc` | GA constant move weights | One-turn Monte Carlo rollout estimate vs banking now; rollout policy = `rule28-smart` | — | — | — |
 | `mc-full-game` | GA constant move weights | Full-game Monte Carlo rollout policy | — | — | — |
 | `mc-strong` | GA constant move weights | Stronger one-turn Monte Carlo rollout policy | — | — | — |
-| `vmerckle_monte` | Root-only flat Monte Carlo search | Root action selected by rollout win rate | — | — | — |
-| `vmerckle_monte_uct` | Root-only UCB1 bandit search | Root action selected by UCB1 rollout estimates | — | — | — |
+| `vmerckle_monte` | Root-only flat Monte Carlo search | Root action selected by rollout win rate | 70.9% | 2.8% | 2.6% |
+| `vmerckle_monte_uct` | Root-only UCB1 bandit search | Root action selected by UCB1 rollout estimates | 77.4% | 4.5% | 3.7% |
 | `glenn-aloi` | Full released Glenn–Aloi optimized pairing | Full optimized progress/difficulty score and threshold 29 | 95.6% | 43.0% | 39.4% |
 | `glenn2009_constant` | Glenn & Aloi (2009) GA constant move weights | Published Rule-of-28 stopping policy | 95.3% | 41.5% | 37.1% |
 | `glenn2010_linear` | Glenn (2010) linear champion weights | Published Rule-of-28 stopping policy | **97.5%** | 43.4% | 37.7% |
@@ -700,10 +700,15 @@ for checkpoint provenance and metadata.
 \* Carter's Random result uses a separate calibration seed and is not directly
 comparable to the post-merge paper-agent run.
 
-The newly added `vmerckle_monte` and `vmerckle_monte_uct` implementations have
-only passed a 2-game seeded smoke comparison so far, so their performance
-columns are intentionally `—` until a larger archived evaluation is run. The
-UCT variant is root-only UCB1, not full-tree MCTS.
+The vmerckle results are means over two independent 1,000-game replicates
+against each opponent, using held-out seeds and raw per-game records. Their
+rollout-budget sweep against `rule28-smart` used 500 games per replicate and
+budgets of 16, 64, and 256 simulations. Mean win rates rose from 0.3%/0.8%
+at budget 16 to 3.3%/4.3% at 64 and 10.3%/11.5% at 256 for flat/UCB1,
+respectively. The archived matrix, paired-bootstrap analyses, manifests, and
+runtime/search-budget metadata are under
+`docs/experiments/vmerckle_20261028/`. The UCT variant is root-only UCB1, not
+full-tree MCTS.
 
 GA constant dice-pair move weights (Glenn & Aloi, Table 1):
 

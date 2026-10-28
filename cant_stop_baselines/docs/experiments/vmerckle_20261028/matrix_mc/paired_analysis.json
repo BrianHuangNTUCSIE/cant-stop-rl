@@ -1,0 +1,106 @@
+{
+  "results": [
+    {
+      "games": 1000,
+      "paired_units": 500,
+      "a_wins": 25,
+      "b_wins": 975,
+      "draws": 0,
+      "observed_margin_a_minus_b": -0.95,
+      "bootstrap_percentile95": [
+        -0.968,
+        -0.93
+      ],
+      "sign_flip_p_value": 0.0001999600079984003,
+      "resamples": 5000,
+      "analysis_seed": 441,
+      "unit_definition": "all records sharing evaluator dice seed",
+      "input": "docs/experiments/vmerckle_20261028/matrix_mc/00_r00_vmerckle_monte_vs_mc-strong.json",
+      "agent_a": "vmerckle_monte",
+      "agent_b": "mc-strong",
+      "evaluation_seed": 20261028
+    },
+    {
+      "games": 1000,
+      "paired_units": 500,
+      "a_wins": 26,
+      "b_wins": 974,
+      "draws": 0,
+      "observed_margin_a_minus_b": -0.948,
+      "bootstrap_percentile95": [
+        -0.966,
+        -0.928
+      ],
+      "sign_flip_p_value": 0.0001999600079984003,
+      "resamples": 5000,
+      "analysis_seed": 441,
+      "unit_definition": "all records sharing evaluator dice seed",
+      "input": "docs/experiments/vmerckle_20261028/matrix_mc/00_r01_vmerckle_monte_vs_mc-strong.json",
+      "agent_a": "vmerckle_monte",
+      "agent_b": "mc-strong",
+      "evaluation_seed": 21261028
+    },
+    {
+      "games": 1000,
+      "paired_units": 500,
+      "a_wins": 27,
+      "b_wins": 973,
+      "draws": 0,
+      "observed_margin_a_minus_b": -0.946,
+      "bootstrap_percentile95": [
+        -0.966,
+        -0.926
+      ],
+      "sign_flip_p_value": 0.0001999600079984003,
+      "resamples": 5000,
+      "analysis_seed": 441,
+      "unit_definition": "all records sharing evaluator dice seed",
+      "input": "docs/experiments/vmerckle_20261028/matrix_mc/01_r00_vmerckle_monte_uct_vs_mc-strong.json",
+      "agent_a": "vmerckle_monte_uct",
+      "agent_b": "mc-strong",
+      "evaluation_seed": 20261029
+    },
+    {
+      "games": 1000,
+      "paired_units": 500,
+      "a_wins": 46,
+      "b_wins": 954,
+      "draws": 0,
+      "observed_margin_a_minus_b": -0.908,
+      "bootstrap_percentile95": [
+        -0.932,
+        -0.882
+      ],
+      "sign_flip_p_value": 0.0001999600079984003,
+      "resamples": 5000,
+      "analysis_seed": 441,
+      "unit_definition": "all records sharing evaluator dice seed",
+      "input": "docs/experiments/vmerckle_20261028/matrix_mc/01_r01_vmerckle_monte_uct_vs_mc-strong.json",
+      "agent_a": "vmerckle_monte_uct",
+      "agent_b": "mc-strong",
+      "evaluation_seed": 21261029
+    }
+  ],
+  "between_seed_summary": [
+    {
+      "agent_a": "vmerckle_monte",
+      "agent_b": "mc-strong",
+      "replicates": 2,
+      "mean_margin_a_minus_b": -0.949,
+      "sample_sd_margin": 0.0014142135623730963,
+      "min_margin": -0.95,
+      "max_margin": -0.948,
+      "interpretation": "between-seed descriptive variability; no significance claim"
+    },
+    {
+      "agent_a": "vmerckle_monte_uct",
+      "agent_b": "mc-strong",
+      "replicates": 2,
+      "mean_margin_a_minus_b": -0.927,
+      "sample_sd_margin": 0.026870057685088752,
+      "min_margin": -0.946,
+      "max_margin": -0.908,
+      "interpretation": "between-seed descriptive variability; no significance claim"
+    }
+  ]
+}

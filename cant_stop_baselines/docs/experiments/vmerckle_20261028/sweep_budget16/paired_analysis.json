@@ -1,0 +1,106 @@
+{
+  "results": [
+    {
+      "games": 500,
+      "paired_units": 250,
+      "a_wins": 2,
+      "b_wins": 498,
+      "draws": 0,
+      "observed_margin_a_minus_b": -0.992,
+      "bootstrap_percentile95": [
+        -1.0,
+        -0.98
+      ],
+      "sign_flip_p_value": 0.0001999600079984003,
+      "resamples": 5000,
+      "analysis_seed": 441,
+      "unit_definition": "all records sharing evaluator dice seed",
+      "input": "docs/experiments/vmerckle_20261028/sweep_budget16/00_r00_vmerckle_monte_vs_rule28-smart.json",
+      "agent_a": "vmerckle_monte",
+      "agent_b": "rule28-smart",
+      "evaluation_seed": 20261028
+    },
+    {
+      "games": 500,
+      "paired_units": 250,
+      "a_wins": 1,
+      "b_wins": 499,
+      "draws": 0,
+      "observed_margin_a_minus_b": -0.996,
+      "bootstrap_percentile95": [
+        -1.0,
+        -0.988
+      ],
+      "sign_flip_p_value": 0.0001999600079984003,
+      "resamples": 5000,
+      "analysis_seed": 441,
+      "unit_definition": "all records sharing evaluator dice seed",
+      "input": "docs/experiments/vmerckle_20261028/sweep_budget16/00_r01_vmerckle_monte_vs_rule28-smart.json",
+      "agent_a": "vmerckle_monte",
+      "agent_b": "rule28-smart",
+      "evaluation_seed": 21261028
+    },
+    {
+      "games": 500,
+      "paired_units": 250,
+      "a_wins": 5,
+      "b_wins": 495,
+      "draws": 0,
+      "observed_margin_a_minus_b": -0.98,
+      "bootstrap_percentile95": [
+        -0.996,
+        -0.96
+      ],
+      "sign_flip_p_value": 0.0001999600079984003,
+      "resamples": 5000,
+      "analysis_seed": 441,
+      "unit_definition": "all records sharing evaluator dice seed",
+      "input": "docs/experiments/vmerckle_20261028/sweep_budget16/01_r00_vmerckle_monte_uct_vs_rule28-smart.json",
+      "agent_a": "vmerckle_monte_uct",
+      "agent_b": "rule28-smart",
+      "evaluation_seed": 20261029
+    },
+    {
+      "games": 500,
+      "paired_units": 250,
+      "a_wins": 3,
+      "b_wins": 497,
+      "draws": 0,
+      "observed_margin_a_minus_b": -0.988,
+      "bootstrap_percentile95": [
+        -1.0,
+        -0.972
+      ],
+      "sign_flip_p_value": 0.0001999600079984003,
+      "resamples": 5000,
+      "analysis_seed": 441,
+      "unit_definition": "all records sharing evaluator dice seed",
+      "input": "docs/experiments/vmerckle_20261028/sweep_budget16/01_r01_vmerckle_monte_uct_vs_rule28-smart.json",
+      "agent_a": "vmerckle_monte_uct",
+      "agent_b": "rule28-smart",
+      "evaluation_seed": 21261029
+    }
+  ],
+  "between_seed_summary": [
+    {
+      "agent_a": "vmerckle_monte",
+      "agent_b": "rule28-smart",
+      "replicates": 2,
+      "mean_margin_a_minus_b": -0.994,
+      "sample_sd_margin": 0.0028284271247461927,
+      "min_margin": -0.996,
+      "max_margin": -0.992,
+      "interpretation": "between-seed descriptive variability; no significance claim"
+    },
+    {
+      "agent_a": "vmerckle_monte_uct",
+      "agent_b": "rule28-smart",
+      "replicates": 2,
+      "mean_margin_a_minus_b": -0.984,
+      "sample_sd_margin": 0.005656854249492385,
+      "min_margin": -0.988,
+      "max_margin": -0.98,
+      "interpretation": "between-seed descriptive variability; no significance claim"
+    }
+  ]
+}

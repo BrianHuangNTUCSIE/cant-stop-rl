@@ -18,6 +18,33 @@ details to support a faithful reproduction. Adding an unverified adaptation
 would make the comparison less credible, so this remains an explicit exclusion
 rather than an inaccurately named MCTS baseline.
 
+## vmerckle held-out comparison and budget sweep
+
+The vmerckle agents were formally evaluated on 2026-10-28 with two independent
+1,000-game replicates per matchup, alternating seats, held-out seeds, a
+2,000-turn limit, and raw game records. The table reports the mean win rate of
+the named vmerckle agent over the two replicates:
+
+| Agent | Random | Rule28-smart | MC-strong |
+|---|---:|---:|---:|
+| `vmerckle_monte` | 70.85% | 2.75% | 2.55% |
+| `vmerckle_monte_uct` | 77.35% | 4.50% | 3.65% |
+
+A budget sweep against `rule28-smart` used two 500-game replicates per budget:
+
+| Rollout budget | Flat Monte Carlo | Root-only UCB1 |
+|---:|---:|---:|
+| 16 | 0.3% | 0.8% |
+| 64 | 3.3% | 4.3% |
+| 256 | 10.3% | 11.5% |
+
+Each JSON report records elapsed runtime, total rollout budget, allocation
+semantics, Python/platform metadata, and the seed formula. Paired-bootstrap
+outputs are saved beside each matrix/sweep. The complete evidence is in
+`docs/experiments/vmerckle_20261028/`. These point estimates are descriptive;
+the very low rates against the stronger baselines should not be interpreted as
+evidence of optimal search or as a full-tree MCTS result.
+
 ## Experiment infrastructure readiness
 
 The in-process Python reference training path is ready for new controlled
