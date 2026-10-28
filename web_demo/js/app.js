@@ -2,9 +2,10 @@ import {Game, chooseGA, legalMoves, COLUMNS, LENGTHS, bustProbability} from './g
 import {BrowserDQN, heuristicAction} from './model.js';
 import {gaPairScore, glennAloiPairScore, sortedMoves} from './policy.js';
 import {PendingActions} from './pending.js';
-import {detectLocale, setLocale, t} from './i18n.js';
+import {setLocale, t} from './i18n.js';
 
-setLocale(detectLocale());
+// English is the default UI language; the Traditional Chinese catalog remains available.
+setLocale('en');
 
 const AGENTS = [
   ['human',''], ['random',''], ['rule28',''],
@@ -18,13 +19,39 @@ const AGENTS = [
 ];
 const $=id=>document.getElementById(id); const game=new Game();
 let model=null, ppo=null, dqnLoading=true, ppoLoading=true, agents=['human','rule28-smart'];
+const SCORE_KEY='cant-stop-browser-demo-score-v1';
+let scores=loadScores(), resultRecorded=false;
 const label=name=>t(`agent.${name}`);
+function loadScores(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(SCORE_KEY));
+    if(Array.isArray(saved)&&saved.length===2&&saved.every(value=>Number.isInteger(value)&&value>=0))return saved;
+  }catch(_){/* Storage may be unavailable in private/restricted browsing modes. */}
+  return [0,0];
+}
+function saveScores(){
+  try{localStorage.setItem(SCORE_KEY,JSON.stringify(scores));}catch(_){/* Keep the in-memory score if storage is unavailable. */}
+}
+function renderScores(){
+  $('player-1-score').textContent=t('record',{wins:scores[0],losses:scores[1]});
+  $('player-2-score').textContent=t('record',{wins:scores[1],losses:scores[0]});
+}
+function recordFinishedGame(){
+  if(game.winner===null||resultRecorded)return;
+  scores[game.winner]++;
+  resultRecorded=true;
+  saveScores();
+  renderScores();
+}
 function localizeUI(){
   $('subtitle').textContent=t('subtitle'); $('new-game').textContent=t('newGame');
   $('model-label').textContent=t('loadingModel'); $('player-a-label').childNodes[0].textContent=t('playerA');
   $('player-b-label').childNodes[0].textContent=t('playerB'); $('apply-agents').textContent=t('applyAgents');
   $('board-label').textContent=t('board'); $('roll').textContent=t('roll'); $('stop').textContent=t('stop');
   $('continue').textContent=t('continue'); $('model-info').textContent=t('modelInfo');
+  $('scoreboard-label').textContent=t('scoreboard'); $('clear-stats').textContent=t('clearStats');
+  $('player-1-score-label').textContent=t('player1'); $('player-2-score-label').textContent=t('player2');
+  renderScores();
 }
 function setupSelectors(){for(const id of ['agent-a','agent-b']){$(id).innerHTML=AGENTS.map(([value])=>`<option value="${value}">${label(value)}</option>`).join('');$(id).value=agents[id==='agent-a'?0:1];}updateModelOptions();}
 function updateModelOptions(){
@@ -38,6 +65,7 @@ function modelState(value, loading){return value?t('loaded'):loading?t('loading'
 function modelStatus(){return t('modelsStatus',{dqn:!model&&!dqnLoading?t('dqnMissing'):modelState(model,dqnLoading),ppo:modelState(ppo,ppoLoading)});}
 function isAI(player){return agents[player]!=='human';}
 function render(){
+  recordFinishedGame();
   $('turn-label').textContent=game.phase==='done'?t('gameOver'):t('turn',{player:label(agents[game.player])});
   $('message').textContent=game.message; $('model-label').textContent=modelStatus(); $('roll').disabled=game.phase!=='roll'||game.winner!==null||isAI(game.player);
   $('stop').disabled=game.phase!=='decision'||isAI(game.player); $('continue').disabled=game.phase!=='decision'||isAI(game.player);
@@ -362,8 +390,9 @@ let runGeneration=0;const aiTimers=new Set();
 function scheduleAI(delay,generation=runGeneration){const timer=setTimeout(()=>{aiTimers.delete(timer);if(generation===runGeneration)aiTurn(generation);},delay);aiTimers.add(timer);}
 function invalidateAI(){runGeneration++;for(const timer of aiTimers)clearTimeout(timer);aiTimers.clear();pendingVmerckle.clear();return runGeneration;}
 async function aiTurn(generation=runGeneration){if(generation!==runGeneration||game.winner!==null||!isAI(game.player))return;const name=agents[game.player];if(game.phase==='roll'){if(!game.roll()){render();scheduleAI(350,generation);return}const move=await choosePair(game,game.moves,name);if(generation!==runGeneration)return;game.applyMove(move);render();scheduleAI(350,generation);return}if(game.phase==='decision'){const action=await decide(name,game,game.player);if(generation!==runGeneration)return;action==='stop'?game.stop():game.continue();render();if(game.phase!=='done')scheduleAI(350,generation);}}
-function start(){const generation=invalidateAI();game.reset();render();if(isAI(0))scheduleAI(300,generation);}
+function start(){const generation=invalidateAI();resultRecorded=false;game.reset();render();if(isAI(0))scheduleAI(300,generation);}
 $('apply-agents').onclick=()=>{agents=[$('agent-a').value,$('agent-b').value];start()};$('new-game').onclick=start;
+$('clear-stats').onclick=()=>{scores=[0,0];saveScores();renderScores();};
 $('roll').onclick=()=>{invalidateAI();if(game.roll())render();else{render();scheduleAI(300)}};$('stop').onclick=()=>{invalidateAI();game.stop();render();scheduleAI(300)};$('continue').onclick=()=>{invalidateAI();game.continue();render();scheduleAI(300)};
 localizeUI(); setupSelectors();
 BrowserDQN.load('models/dqn.json').then(m=>{model=m;dqnLoading=false;render()});

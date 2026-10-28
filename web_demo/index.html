@@ -13,6 +13,13 @@
       <button id="new-game" class="secondary">New game</button>
     </header>
     <section class="status" aria-live="polite"><span id="turn-label"></span><span id="model-label">Loading models…</span><span id="message"></span></section>
+    <section class="scoreboard" aria-labelledby="scoreboard-label">
+      <div class="scoreboard-heading"><strong id="scoreboard-label">Win/loss record</strong><button id="clear-stats" class="secondary" type="button">Clear stats</button></div>
+      <div class="scoreboard-cards">
+        <div class="score-card"><strong id="player-1-score-label">Player 1</strong><span id="player-1-score"></span></div>
+        <div class="score-card"><strong id="player-2-score-label">Player 2</strong><span id="player-2-score"></span></div>
+      </div>
+    </section>
     <section class="agent-panel">
       <label id="player-a-label">Player A (first player)<select id="agent-a"></select></label>
       <label id="player-b-label">Player B<select id="agent-b"></select></label>
