@@ -16,6 +16,19 @@ The compact, report-ready evidence table and figures are in
 [`docs/final_results/`](cant_stop_baselines/docs/final_results/). They separate
 formal held-out results from descriptive sweeps and negative diagnostics.
 
+## Download the trained models
+
+The retained DDQN, PPO, and Ridge models are publicly available on the
+[Hugging Face model page](https://huggingface.co/BrianHuang2003/cant-stop-ddqn).
+It includes the DDQN checkpoint (`best.pt`), PPO checkpoint
+(`ppo/best.pt`), Ridge model (`ridge/ridge_domain.joblib`), provenance metadata,
+and SHA-256 checksums. These are project-specific models; use the loading and
+evaluation code in this repository rather than treating them as generic
+Transformers models.
+
+For a step-by-step choice between downloading this checkpoint and training a
+new model locally, see the [model guide](docs/MODEL_GUIDE.md).
+
 ## Why this problem matters
 
 *Can't Stop* makes risk-sensitive control visible and measurable:
