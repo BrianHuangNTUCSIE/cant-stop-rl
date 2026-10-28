@@ -1,6 +1,6 @@
 import {Game, chooseGA, legalMoves, COLUMNS, LENGTHS, bustProbability} from './game.js';
 import {BrowserDQN, heuristicAction} from './model.js';
-import {gaPairScore, sortedMoves} from './policy.js';
+import {gaPairScore, glennAloiPairScore, sortedMoves} from './policy.js';
 
 const AGENTS = [
   ['human','玩家操作'], ['random','Random'], ['rule28','Rule of 28'],
@@ -86,7 +86,7 @@ function choosePair(g,moves,name){
     return best.a.move;
   }
   if(name==='glenn-aloi')return moves.reduce((best,m)=>{
-    const score=gaPairScore(g.active,m);
+    const score=glennAloiPairScore(g.active,m);
     const old=best?best.score:-Infinity; return score>old?{move:m,score}:best;
   },null).move;
   if(name==='glenn2009_constant')return moves.reduce((best,m)=>{
