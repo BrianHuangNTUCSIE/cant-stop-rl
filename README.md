@@ -40,6 +40,8 @@ For the reverse comparison, the prior agents' own win rates were much lower:
 | Glenn 2010 Linear [2] | 43.4% | 37.7% | 97.5% |
 | Couto / Sketch-SA(O) [3] | 43.1% | 37.1% | 95.3% |
 | Carter adapted checkpoint [4] | 1.7% | 1.7% | 25.0% |
+| vmerckle flat Monte Carlo [6] | 2.8% | 2.6% | 70.9% |
+| vmerckle root-only UCB1 [6] | 4.5% | 3.7% | 77.4% |
 
 The `mc-strong` implementation therefore beats all four prior heuristic agents in this direct comparison, while our PPO, DDQN, and Ridge policies remain competitive against it. These values replace the pre-merge matrix; the prior implementation used different paper-policy behavior.
 
@@ -148,6 +150,7 @@ Known limitations include two-player games only, fixed dice pairing in the promo
 - **[3]** Leandro C. Medeiros, David S. Aleixo, and Levi H. S. Lelis, [*What Can We Learn Even From the Weakest? Learning Sketches for Programmatic Strategies*](https://doi.org/10.1609/aaai.v36i7.20744), AAAI 2022. Source of the Couto/Sketch-SA(O) comparison agent.
 - **[4]** J. Cameron Carter, *Using Machine Learning to Optimize the Board Game Can't Stop* (2026), user-provided thesis. Used as an additional implementation and feature reference; the adapter is explicitly labeled in this repository.
 - **[5]** This project, [experiment record](cant_stop_baselines/docs/EXPERIMENT_STATUS.md). Ridge, DDQN, PPO, and `mc-strong` are project implementations; their reported win rates come from this repository's seeded complete-game evaluations.
+- **[6]** vmerckle/CantStop-AI, inspected commit `25be22910e3bfc5c351f38ff5461602d95dacd0a`; these are clean-room behavioral ports. The UCB1 variant is root-only, not full-tree MCTS. See the [vmerckle experiment record](cant_stop_baselines/docs/experiments/vmerckle_20261028/) and [prior-work audit](cant_stop_baselines/docs/PRIOR_WORK_AUDIT.md).
 
 ## License
 

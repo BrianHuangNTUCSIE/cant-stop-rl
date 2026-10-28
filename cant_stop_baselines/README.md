@@ -1,5 +1,10 @@
 # Can't Stop — Python baseline simulator
 
+This file documents the simulator, CLI, training pipeline, and agent APIs.
+For the project narrative and complete performance tables, see the
+[repository overview](../README.md). Experimental provenance and raw results
+are linked from that overview and `docs/EXPERIMENT_STATUS.md`.
+
 A reproducible **two-player** implementation of *Can't Stop* for the CS 441 reinforcement-learning final project. The simulator uses Python **3.10+** with **no third-party dependencies**; DQN training additionally requires PyTorch.
 
 ## Run
@@ -657,23 +662,23 @@ meaning.
 
 ## Agent variants
 
-| CLI name | Pair selection | Stop / Continue policy | vs Random | vs `rule28-smart` | vs `mc-strong` |
-|---|---|---|---:|---:|---:|
-| `random` | Random legal move | Stop with probability `0.3` after each successful roll | — | — | — |
-| `rule28` | Classical center preference (`6-abs(7-col)`, new runner penalty 6) | Pure Keller Rule of 28: at least 3 active runners, score >=28 | — | — | — |
-| `rule28-ga-pure` | Glenn & Aloi (2009) GA constant *move* weights | Same pure Rule of 28 | — | — | — |
-| `rule28-smart` | GA constant move weights | Stop at >=28 with 3 markers **or** as soon as any column temporarily reaches the top | — | — | — |
-| `mc` | GA constant move weights | One-turn Monte Carlo rollout estimate vs banking now; rollout policy = `rule28-smart` | — | — | — |
-| `mc-full-game` | GA constant move weights | Full-game Monte Carlo rollout policy | — | — | — |
-| `mc-strong` | GA constant move weights | Stronger one-turn Monte Carlo rollout policy | — | — | — |
-| `vmerckle_monte` | Root-only flat Monte Carlo search | Root action selected by rollout win rate | 70.9% | 2.8% | 2.6% |
-| `vmerckle_monte_uct` | Root-only UCB1 bandit search | Root action selected by UCB1 rollout estimates | 77.4% | 4.5% | 3.7% |
-| `glenn-aloi` | Full released Glenn–Aloi optimized pairing | Full optimized progress/difficulty score and threshold 29 | 95.6% | 43.0% | 39.4% |
-| `glenn2009_constant` | Glenn & Aloi (2009) GA constant move weights | Published Rule-of-28 stopping policy | 95.3% | 41.5% | 37.1% |
-| `glenn2010_linear` | Glenn (2010) linear champion weights | Published Rule-of-28 stopping policy | **97.5%** | 43.4% | 37.7% |
-| `couto` | Original Sketch-SA(O), including secured board progress | Original synthesized quadratic-difficulty Stop/Continue policy | 95.3% | 43.1% | 37.1% |
-| `couto-ga-stop` | Fixed GA constant move weights | Couto Stop/Continue policy only (**project adaptation**) | — | — | — |
-| `carter-public-adapted` | Carter checkpoint heuristic selector | Public checkpoint translated to this simulator (**adaptation**) | 25.0%* | — | — |
+| CLI name | Pair selection | Stop / Continue policy |
+|---|---|---|
+| `random` | Random legal move | Stop with probability `0.3` after each successful roll |
+| `rule28` | Classical center preference (`6-abs(7-col)`, new runner penalty 6) | Pure Keller Rule of 28: at least 3 active runners, score >=28 |
+| `rule28-ga-pure` | Glenn & Aloi (2009) GA constant *move* weights | Same pure Rule of 28 |
+| `rule28-smart` | GA constant move weights | Stop at >=28 with 3 markers **or** as soon as any column temporarily reaches the top |
+| `mc` | GA constant move weights | One-turn Monte Carlo rollout estimate vs banking now; rollout policy = `rule28-smart` |
+| `mc-full-game` | GA constant move weights | Full-game Monte Carlo rollout policy |
+| `mc-strong` | GA constant move weights | Stronger one-turn Monte Carlo rollout policy |
+| `vmerckle_monte` | Root-only flat Monte Carlo search | Root action selected by rollout win rate |
+| `vmerckle_monte_uct` | Root-only UCB1 bandit search | Root action selected by UCB1 rollout estimates |
+| `glenn-aloi` | Full released Glenn–Aloi optimized pairing | Full optimized progress/difficulty score and threshold 29 |
+| `glenn2009_constant` | Glenn & Aloi (2009) GA constant move weights | Published Rule-of-28 stopping policy |
+| `glenn2010_linear` | Glenn (2010) linear champion weights | Published Rule-of-28 stopping policy |
+| `couto` | Original Sketch-SA(O), including secured board progress | Original synthesized quadratic-difficulty Stop/Continue policy |
+| `couto-ga-stop` | Fixed GA constant move weights | Couto Stop/Continue policy only (**project adaptation**) |
+| `carter-public-adapted` | Carter checkpoint heuristic selector | Public checkpoint translated to this simulator (**adaptation**) |
 
 **Important:** `rule28-smart` remains an explicit, simple hybrid baseline and is
 not Glenn & Aloi's full agent. Use `glenn-aloi` for the released full heuristic.
@@ -681,13 +686,11 @@ not Glenn & Aloi's full agent. Use `glenn-aloi` for the released full heuristic.
 replaces its pairing decision so Stop/Continue can be compared under the same
 fixed pairing policy. Neither strong heuristic requires training.
 
-The performance columns are from the post-merge reference evaluation: 3,000
+Performance results are maintained in the repository overview rather than in
+this implementation catalog. The post-merge paper-agent evaluation used 3,000
 games per matchup, alternating seats, a 2,000-turn limit, and the current
-simulator rules. They are descriptive point estimates, not claims of
-statistical significance. The reproducible artifacts are under
-`docs/experiments/post_merge_20261103/`; these comparisons evaluate
-adaptations/reimplementations in this simulator and do not establish fidelity
-to the original simulators.
+simulator rules; those descriptive point estimates and artifacts are linked in
+the overview and `docs/EXPERIMENT_STATUS.md`.
 
 The public Carter checkpoint is a separate feature/simulator adaptation. In a
 3,000-game calibration against `random`, it won 749 games (25.0%). This low
@@ -696,9 +699,6 @@ Carter's original environment, and must not be interpreted as the original
 agent's performance. See `docs/EXPERIMENT_STATUS.md` and
 `docs/experiments/post_merge_20261103/random_vs_paper/04_carter_vs_random.json`
 for checkpoint provenance and metadata.
-
-\* Carter's Random result uses a separate calibration seed and is not directly
-comparable to the post-merge paper-agent run.
 
 The vmerckle results are means over two independent 1,000-game replicates
 against each opponent, using held-out seeds and raw per-game records. Their
