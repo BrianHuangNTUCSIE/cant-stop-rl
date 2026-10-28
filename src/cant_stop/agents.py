@@ -308,7 +308,7 @@ class Glenn2010LinearAgent(_GlennPaperAgent):
     """
 
     progress_weights: dict[int, int] = field(default_factory=lambda: dict(
-        zip(COLUMNS, (7, 13, 8, 8, 4, 3, 4, 8, 8, 13, 7))
+        zip(COLUMNS, (15, 13, 8, 8, 4, 3, 4, 8, 8, 13, 15))
     ))
     slopes: dict[int, int] = field(default_factory=lambda: dict(
         zip(COLUMNS, (72, 48, 56, 44, 28, 32, 28, 44, 56, 48, 72))
