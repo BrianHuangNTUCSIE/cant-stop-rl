@@ -14,7 +14,7 @@ if str(ROOT) not in sys.path:
 
 from cant_stop.carter_adapter import CarterNumpyAgent
 from cant_stop.evaluation import evaluate
-from cant_stop.agents import RandomAgent
+from cant_stop.agents import AGENT_NAMES, make_agent
 
 
 def main() -> None:
@@ -22,19 +22,21 @@ def main() -> None:
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--games", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=20261027)
+    parser.add_argument("--opponent", choices=AGENT_NAMES, default="random")
     parser.add_argument("--max-turns", type=int, default=2000)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.games < 1 or args.max_turns < 1:
         parser.error("games and max-turns must be positive")
     report = evaluate(
-        CarterNumpyAgent(args.checkpoint), RandomAgent(), games=args.games,
+        CarterNumpyAgent(args.checkpoint),
+        make_agent(args.opponent, 64, 40), games=args.games,
         seed=args.seed, max_total_turns=args.max_turns, include_game_records=True,
     )
     report["metadata"] = {
         "runner": "scripts/evaluate_carter_adaptation.py",
         "agent_a": "carter-public-adapted",
-        "agent_b": "random",
+        "agent_b": args.opponent,
         "games_per_matchup": args.games,
         "evaluation_seed": args.seed,
         "max_total_turns": args.max_turns,

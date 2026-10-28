@@ -43,7 +43,7 @@ For the reverse comparison, the prior agents' own win rates were much lower:
 | Glenn 2009 Constant [2] | 41.5% | 37.1% | 95.3% |
 | Glenn 2010 Linear [2] | 43.4% | 37.7% | 97.5% |
 | Couto / Sketch-SA(O) [3] | 43.1% | 37.1% | 95.3% |
-| Carter adapted checkpoint [4] | — | — | 25.0% |
+| Carter adapted checkpoint [4] | 1.8% | 2.1% | 21.5% |
 | vmerckle flat Monte Carlo [6] | 2.8% | 2.6% | 70.9% |
 | vmerckle root-only UCB1 [6] | 4.5% | 3.7% | 77.4% |
 
@@ -52,7 +52,8 @@ The `mc-strong` implementation therefore beats all four prior heuristic agents i
 \* Carter is the public `dqn_multi_opp.keras` checkpoint from [J. Cameron
 Carter's repository](https://github.com/JCameronCarter/HonorsThesis), evaluated
 as a checkpoint and feature/simulator adaptation. The canonical archived
-calibration is 644/3,000 (21.47%) against Random; it uses an equivalent
+calibration is 644/3,000 (21.47%) against Random, 53/3,000 (1.77%) against
+Rule-of-28-smart, and 62/3,000 (2.07%) against `mc-strong`; it uses an equivalent
 `51 -> 64 -> 64 -> 2` inference network, Carter's action convention and
 heuristic dice-pair selector, with no retraining. It is not a result from
 Carter's original environment.

@@ -926,6 +926,8 @@ also records the local file's SHA-256.
 | Opponent | Carter wins | Carter win rate |
 |---|---:|---:|
 | Random | 644 / 3,000 | 21.47% |
+| rule28-smart | 53 / 3,000 | 1.77% |
+| mc-strong | 62 / 3,000 | 2.07% |
 
 These results are a **checkpoint and feature/simulator adaptation**, not a
 reproduction of Carter's original game environment or training evaluation.
