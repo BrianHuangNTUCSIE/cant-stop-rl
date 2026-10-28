@@ -68,4 +68,4 @@ export class Game {
   }
 }
 
-export function chooseGA(game,moves){let best=-Infinity,chosen=[];for(const m of moves){const score=m.reduce((s,c)=>s+GA_WEIGHTS[c]-(game.active[c]===undefined?6:0),0);if(score>best){best=score;chosen=[m]}else if(score===best)chosen.push(m)}return chosen[Math.floor(Math.random()*chosen.length)];}
+export function chooseGA(game,moves){let best=-Infinity,chosen=[];for(const m of moves){const newMarkers=new Set(m.filter(c=>game.active[c]===undefined));const score=m.reduce((s,c)=>s+GA_WEIGHTS[c],0)-6*newMarkers.size;if(score>best){best=score;chosen=[m]}else if(score===best)chosen.push(m)}return chosen[Math.floor(Math.random()*chosen.length)];}

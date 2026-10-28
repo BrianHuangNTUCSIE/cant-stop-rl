@@ -1,6 +1,7 @@
 import {Game, chooseGA, legalMoves, COLUMNS, LENGTHS, bustProbability} from './game.js';
 import {BrowserDQN, heuristicAction} from './model.js';
 import {gaPairScore, glennAloiPairScore, sortedMoves} from './policy.js';
+import {PendingActions} from './pending.js';
 import {detectLocale, setLocale, t} from './i18n.js';
 
 setLocale(detectLocale());
@@ -75,7 +76,8 @@ function pairScore(g,m,kind='ga'){
   return m.reduce((s,c)=>s+w[c],0)-6*newMarkers.size;
 }
 function bestMoves(moves,scores){const best=Math.max(...scores);return moves.filter((_,i)=>scores[i]===best)}
-function choosePair(g,moves,name){
+async function choosePair(g,moves,name){
+  const generation=runGeneration;
   if(name==='ppo'){
     const learned=chooseLearnedPair(g,moves);
     if(learned)return learned;
@@ -91,17 +93,27 @@ function choosePair(g,moves,name){
     const total=64, wins=Array(actions.length).fill(0), plays=Array(actions.length).fill(0);
     if(name==='vmerckle_monte'){
       const quota=Math.floor(total/actions.length);
-      for(let i=0;i<actions.length;i++)for(let j=0;j<quota;j++)wins[i]+=randomSearchRollout(actions[i].post,actions[i].action,g.player);
+      for(let i=0;i<actions.length;i++)for(let j=0;j<quota;j++){
+        if((i*quota+j)%4===0)await new Promise(resolve=>setTimeout(resolve,0));
+        if(generation!==runGeneration)return null;
+        const result=await randomSearchRollout(actions[i].post,actions[i].action,g.player);
+        if(generation!==runGeneration)return null;
+        wins[i]+=result;
+      }
     }else{
       for(let n=0;n<total;n++){
         let i=plays.findIndex(x=>x===0);
         if(i<0)i=plays.reduce((best,x,k)=>wins[k]/x+Math.sqrt(Math.log(n)/x)>wins[best]/plays[best]+Math.sqrt(Math.log(n)/plays[best])?k:best,0);
-        wins[i]+=randomSearchRollout(actions[i].post,actions[i].action,g.player);plays[i]++;
+        if(n%4===0)await new Promise(resolve=>setTimeout(resolve,0));
+        if(generation!==runGeneration)return null;
+        const result=await randomSearchRollout(actions[i].post,actions[i].action,g.player);
+        if(generation!==runGeneration)return null;
+        wins[i]+=result;plays[i]++;
       }
     }
     const candidates=actions.map((a,i)=>({a,i})).filter(x=>plays[x.i]||name==='vmerckle_monte');
     const best=candidates.reduce((x,y)=>wins[y.i]/Math.max(plays[y.i],1)>wins[x.i]/Math.max(plays[x.i],1)?y:x,candidates[0]);
-    pendingVmerckle={player:g.player,stop:best.a.action===0};
+    pendingVmerckle.set(best.a.post,g.player,best.a.action===0);
     return best.a.move;
   }
   if(name==='glenn-aloi')return moves.reduce((best,m)=>{
@@ -180,14 +192,22 @@ function mcStrongStop(g,player){
 // Python's ``mc`` uses the same one-turn search as mc-strong, but its value
 // function is deliberately local (mc-strong adds race awareness).  Keeping
 // this separate avoids silently making the two selectable agents identical.
-function mcStop(g,player,name){
+async function mcStop(g,player,name){
   if(name==='mc-strong')return mcStrongStop(g,player);
   if(name==='mc-full-game'){
     // Python's FullGameMonteCarloAgent uses GA pairing and Smart Rule 28 in
     // the remainder of each rollout.  vmerckle's separate rollout below is
     // intentionally random, so do not reuse it here.
+    const generation=runGeneration;
     let stop=0,cont=0;for(let i=0;i<64;i++){
-      stop+=fullGameRollout(g,1,player);cont+=fullGameRollout(g,0,player);
+      if(i%2===0)await new Promise(resolve=>setTimeout(resolve,0));
+      if(generation!==runGeneration)return false;
+      const stopResult=await fullGameRollout(g,1,player);
+      if(generation!==runGeneration)return false;
+      stop+=stopResult;
+      const continueResult=await fullGameRollout(g,0,player);
+      if(generation!==runGeneration)return false;
+      cont+=continueResult;
     }
     return stop>=cont;
   }
@@ -209,13 +229,13 @@ function mcStop(g,player,name){
       const moves=legalMoves(dice,sim); if(!moves.length)return 0;
       const selected=chooseGA(sim,moves);
       active={...active}; for(const c of selected)active[c]=(active[c]??me[c-2])+1;
-      const points=rule28Points({...g,active,player},player);
+      const points=rule28Points({...g,active},player);
       if(Object.entries(active).some(([c,p])=>p===LENGTHS[c]) ||
          (Object.keys(active).length>=3&&points>=28))return bankValue(active);
     }
     return bankValue(active);
   };
-  let future=0;for(let i=0;i<rollouts;i++)future+=rollout();
+  let future=0;for(let i=0;i<rollouts;i++){if(i%4===0)await new Promise(resolve=>setTimeout(resolve,0));future+=rollout();}
   return bankValue(g.active)>=future/rollouts;
 }
 
@@ -223,7 +243,8 @@ function mcStop(g,player,name){
 // convention: 1 means bank now and 0 means continue.  This is deliberately
 // separate from randomSearchRollout, whose random pairing/action policy is
 // the vmerckle AIrand adaptation.
-function fullGameRollout(g,action,root){
+async function fullGameRollout(g,action,root){
+  const generation=runGeneration;
   const s=cloneForSearch(g);
   if(action===1){
     for(const [c,p] of Object.entries(s.active)){
@@ -235,6 +256,7 @@ function fullGameRollout(g,action,root){
   }else s.phase='roll';
   let turns=0;
   while(s.winner===null&&turns<2000){
+    if(turns%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return null;}
     if(s.phase==='roll'){
       const dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));
       const moves=legalMoves(dice,s);
@@ -267,9 +289,10 @@ function fullGameRollout(g,action,root){
 // stop/continue), unlike the old browser fallback which used a race score.
 // This compact implementation preserves that action-space distinction and
 // the flat-vs-UCB1 selection; rollouts use the same random full-game policy.
-let pendingVmerckle=null;
+const pendingVmerckle=new PendingActions();
 function cloneForSearch(g){return {permanent:g.permanent.map(x=>x.slice()),owner:g.owner.slice(),active:{...g.active},player:g.player,rolls:g.rolls,phase:g.phase,winner:g.winner};}
-function randomSearchRollout(g,action,root){
+async function randomSearchRollout(g,action,root){
+  const generation=runGeneration;
   const s=cloneForSearch(g); if(action===0){
     for(const [c,p] of Object.entries(s.active)){s.permanent[s.player][c-2]=p;if(+p===LENGTHS[c])s.owner[c-2]=s.player;}
     if(s.owner.filter(x=>x===s.player).length>=3){s.winner=s.player;s.phase='done';s.active={};return s.winner===root?1:0;}
@@ -277,6 +300,7 @@ function randomSearchRollout(g,action,root){
   } else s.phase='roll';
   let turns=0;
   while(turns<2000&&s.winner===null){
+    if(turns%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return null;}
     if(s.phase==='roll'){
       const dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));
       const moves=legalMoves(dice,s);if(!moves.length){s.active={};s.rolls=0;s.player=1-s.player;turns++;continue;}
@@ -284,7 +308,7 @@ function randomSearchRollout(g,action,root){
     }
     if(s.phase==='pair'){const m=s.moves[Math.floor(Math.random()*s.moves.length)];s.active={...s.active};for(const c of m)s.active[c]=(s.active[c]??s.permanent[s.player][c-2])+1;s.rolls++;s.phase='decision';}
     if(s.phase==='decision'){
-      if(rule28ShouldStop(s,s.player)){for(const [c,p] of Object.entries(s.active)){s.permanent[s.player][c-2]=p;if(+p===LENGTHS[c])s.owner[c-2]=s.player;}if(s.owner.filter(x=>x===s.player).length>=3)s.winner=s.player;s.active={};s.rolls=0;s.player=1-s.player;s.phase=s.winner===null?'roll':'done';turns++;}
+     if(Math.random()<.5){for(const [c,p] of Object.entries(s.active)){s.permanent[s.player][c-2]=p;if(+p===LENGTHS[c])s.owner[c-2]=s.player;}if(s.owner.filter(x=>x===s.player).length>=3)s.winner=s.player;s.active={};s.rolls=0;s.player=1-s.player;s.phase=s.winner===null?'roll':'done';turns++;}
       else s.phase='roll';
     }
   }
@@ -293,9 +317,9 @@ function randomSearchRollout(g,action,root){
 function vmerckleStop(g,player,name){
   // Search is scheduled at the pair stage; the decision stage consumes the
   // selected root action, matching Python's pending-action protocol.
-  return pendingVmerckle?.player===player ? pendingVmerckle.stop : false;
+  return pendingVmerckle.consume(g,player);
 }
-function stopDecision(g,name,player){
+async function stopDecision(g,name,player){
   const active=Object.entries(g.active), me=g.permanent[player], opp=g.permanent[1-player];
   if(name==='random')return Math.random()<.3;
   if(name==='rule28')return active.length>=3&&rule28Points(g,player)>=28;
@@ -326,18 +350,21 @@ function stopDecision(g,name,player){
     },0);
     const d=paperDifficulty(cols,7,1,6,5);return score+d*d+d>=29;
   }
-   if(name==='mc'||name==='mc-full-game'||name==='mc-strong')return mcStop(g,player,name);
+   if(name==='mc'||name==='mc-full-game'||name==='mc-strong')return await mcStop(g,player,name);
   if(name==='vmerckle_monte'||name==='vmerckle_monte_uct')return vmerckleStop(g,player,name);
   return false;
 }
-function featuresForDQN(g,player,strategic=false,domain=false,moves=null){const s=g.snapshot(),me=s.permanent[player],opp=s.permanent[1-player],lengths=[3,5,7,9,11,13,11,9,7,5,3],f=[];for(let i=0;i<11;i++)f.push(me[i]/lengths[i]);for(let i=0;i<11;i++)f.push(opp[i]/lengths[i]);for(const c of COLUMNS)f.push((s.active[c]||0)/LENGTHS[c]);for(const c of COLUMNS)f.push(s.active[c]?1:0);for(const o of s.owner)f.push(o===player?1:o===1-player?-1:0);const completed=s.owner.filter(o=>o===player).length,oppCompleted=s.owner.filter(o=>o===1-player).length;f.push(completed/3,oppCompleted/3,Math.min(s.rolls/20,1));const bust=bustProbability(g),risk=Object.entries(s.active).reduce((x,[c,p])=>x+(p-me[c-2])/LENGTHS[c],0),reached=Object.entries(s.active).filter(([c,p])=>p===LENGTHS[c]).length;f.push(bust,risk);if(domain||strategic){const mp=me.reduce((x,v,i)=>x+v/lengths[i],0)/11,op=opp.reduce((x,v,i)=>x+v/lengths[i],0)/11;const rule=rule28Points({...g,active:g.active,player},player);f.push(Object.keys(s.active).length/3,reached/3,Math.min(completed+reached,3)/3,completed+reached>=3?1:0,mp-op,risk*(1-bust),Math.min(rule/40,1),oppCompleted>=2?1:0);if(strategic){for(let i=0;i<11;i++){const c=COLUMNS[i];f.push(Math.max(0,(s.active[c]??me[i])-me[i])/lengths[i])}const near=opp.reduce((x,v,i)=>x+(s.owner[i]===-1&&lengths[i]-v<=1?1:0),0);f.push(near/3)}}return f;}
+function featuresForDQN(g,player,strategic=false,domain=false,moves=null){const s=g.snapshot(),me=s.permanent[player],opp=s.permanent[1-player],lengths=[3,5,7,9,11,13,11,9,7,5,3],f=[];for(let i=0;i<11;i++)f.push(me[i]/lengths[i]);for(let i=0;i<11;i++)f.push(opp[i]/lengths[i]);for(const c of COLUMNS)f.push((s.active[c]||0)/LENGTHS[c]);for(const c of COLUMNS)f.push(s.active[c]?1:0);for(const o of s.owner)f.push(o===player?1:o===1-player?-1:0);const completed=s.owner.filter(o=>o===player).length,oppCompleted=s.owner.filter(o=>o===1-player).length;f.push(completed/3,oppCompleted/3,Math.min(s.rolls/20,1));const bust=bustProbability(g),risk=Object.entries(s.active).reduce((x,[c,p])=>x+(p-me[c-2])/LENGTHS[c],0),reached=Object.entries(s.active).filter(([c,p])=>p===LENGTHS[c]).length;f.push(bust,risk);if(domain||strategic){const mp=me.reduce((x,v,i)=>x+v/lengths[i],0)/11,op=opp.reduce((x,v,i)=>x+v/lengths[i],0)/11;const rule=rule28Points({...g,active:g.active},player);f.push(Object.keys(s.active).length/3,reached/3,Math.min(completed+reached,3)/3,completed+reached>=3?1:0,mp-op,risk*(1-bust),Math.min(rule/40,1),oppCompleted>=2?1:0);if(strategic){for(let i=0;i<11;i++){const c=COLUMNS[i];f.push(Math.max(0,(s.active[c]??me[i])-me[i])/lengths[i])}const near=opp.reduce((x,v,i)=>x+(s.owner[i]===-1&&lengths[i]-v<=1?1:0),0);f.push(near/3)}}return f;}
 function modelFeatures(g,player,policy,moves=null){const base=policy.payload.observation_size-(policy.payload.action_size===8?18:0);const strategic=base===80;const domain=base===68||strategic;const f=featuresForDQN(g,player,strategic,domain);if(moves){for(const move of sortedMoves(moves).slice(0,6))f.push(move[0]/12,(move[1]??0)/12,1);while(f.length<base+18)f.push(0);}if(f.length!==base+(moves?18:0))return null;return f;}
 function chooseLearnedPair(g,moves){if(!ppo||ppo.payload.action_size!==8)return null;const f=modelFeatures(g,g.player,ppo,moves);return f?ppo.pairAction(f,moves):null;}
-function decide(name,g,player){if(name==='dqn'&&model){const f=modelFeatures(g,player,model);return f?model.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ppo'&&ppo){const f=modelFeatures(g,player,ppo);return f?ppo.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='dqn'||name==='ppo')return heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});return stopDecision(g,name,player)?'stop':'continue';}
-function aiTurn(){if(game.winner!==null||!isAI(game.player))return;const name=agents[game.player];if(game.phase==='roll'){if(!game.roll()){render();setTimeout(aiTurn,350);return}game.applyMove(choosePair(game,game.moves,name));render();setTimeout(aiTurn,350);return}if(game.phase==='decision'){const action=decide(name,game,game.player);action==='stop'?game.stop():game.continue();render();if(game.phase!=='done')setTimeout(aiTurn,350);}}
-function start(){game.reset();render();if(isAI(0))setTimeout(aiTurn,300);}
+async function decide(name,g,player){if(name==='dqn'&&model){const f=modelFeatures(g,player,model);return f?model.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ppo'&&ppo){const f=modelFeatures(g,player,ppo);return f?ppo.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='dqn'||name==='ppo')return heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});return await stopDecision(g,name,player)?'stop':'continue';}
+let runGeneration=0;const aiTimers=new Set();
+function scheduleAI(delay,generation=runGeneration){const timer=setTimeout(()=>{aiTimers.delete(timer);if(generation===runGeneration)aiTurn(generation);},delay);aiTimers.add(timer);}
+function invalidateAI(){runGeneration++;for(const timer of aiTimers)clearTimeout(timer);aiTimers.clear();pendingVmerckle.clear();return runGeneration;}
+async function aiTurn(generation=runGeneration){if(generation!==runGeneration||game.winner!==null||!isAI(game.player))return;const name=agents[game.player];if(game.phase==='roll'){if(!game.roll()){render();scheduleAI(350,generation);return}const move=await choosePair(game,game.moves,name);if(generation!==runGeneration)return;game.applyMove(move);render();scheduleAI(350,generation);return}if(game.phase==='decision'){const action=await decide(name,game,game.player);if(generation!==runGeneration)return;action==='stop'?game.stop():game.continue();render();if(game.phase!=='done')scheduleAI(350,generation);}}
+function start(){const generation=invalidateAI();game.reset();render();if(isAI(0))scheduleAI(300,generation);}
 $('apply-agents').onclick=()=>{agents=[$('agent-a').value,$('agent-b').value];start()};$('new-game').onclick=start;
-$('roll').onclick=()=>{if(game.roll())render();else{render();setTimeout(aiTurn,300)}};$('stop').onclick=()=>{game.stop();render();setTimeout(aiTurn,300)};$('continue').onclick=()=>{game.continue();render();setTimeout(aiTurn,300)};
+$('roll').onclick=()=>{invalidateAI();if(game.roll())render();else{render();scheduleAI(300)}};$('stop').onclick=()=>{invalidateAI();game.stop();render();scheduleAI(300)};$('continue').onclick=()=>{invalidateAI();game.continue();render();scheduleAI(300)};
 localizeUI(); setupSelectors();
 BrowserDQN.load('models/dqn.json').then(m=>{model=m;dqnLoading=false;render()});
 BrowserDQN.load('models/ppo.json').then(m=>{ppo=m;ppoLoading=false;updateModelOptions();render()});
