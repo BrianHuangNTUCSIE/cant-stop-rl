@@ -104,11 +104,11 @@ def _wins_after_stop(state: State) -> bool:
 def _neutral_columns(state: State) -> tuple[int, ...]:
     """Columns represented as neutral markers in the reference simulator.
 
-    That simulator removes a neutral from the board as soon as it reaches the
-    top, while our engine retains the top position until the player banks.
-    Excluding top positions here preserves the published policy's observation.
+    The engine retains a top-reaching neutral until the player banks. The
+    published policies also observe that neutral during the remainder of the
+    turn, so it remains in this translated view.
     """
-    return tuple(column for column, pos in state.active if pos < LENGTH[column])
+    return tuple(column for column, _ in state.active)
 
 
 def _difficulty_score(columns: Sequence[int]) -> int:
@@ -136,9 +136,7 @@ def _advanced_this_turn(state: State, column: int) -> int:
     if position is None:
         return 0
     banked = state.permanent[state.current_player][column - 2]
-    if position < LENGTH[column]:
-        return position - banked
-    return LENGTH[column] - banked + 1 if banked > 0 else 0
+    return position - banked
 
 
 def _secured_position(state: State, column: int) -> int:
@@ -148,10 +146,7 @@ def _secured_position(state: State, column: int) -> int:
     position = state.active_dict().get(column)
     if position is None:
         return state.permanent[state.current_player][column - 2]
-    if position < LENGTH[column]:
-        return position
-    banked = state.permanent[state.current_player][column - 2]
-    return LENGTH[column] + 1 if banked > 0 else 0
+    return position
 
 
 @dataclass

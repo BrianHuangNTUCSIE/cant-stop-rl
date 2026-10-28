@@ -23,7 +23,11 @@ def reference_moves(dice, permanent, owner, active):
 
     a, b, c, d = dice
     partitions = ((a + b, c + d), (a + c, b + d), (a + d, b + c))
-    outcomes = set()
+    outcomes = []
+
+    def add(outcome):
+        if outcome not in outcomes:
+            outcomes.append(outcome)
     for left, right in partitions:
         after_left = step(left, active)
         after_right = step(right, active)
@@ -33,13 +37,13 @@ def reference_moves(dice, permanent, owner, active):
         if after_right is not None and step(left, after_right) is not None:
             both_possible = True
         if both_possible:
-            outcomes.add(Move(tuple(sorted((left, right)))))
+            add(Move(tuple(sorted((left, right)))))
         else:
             if after_left is not None:
-                outcomes.add(Move((left,)))
+                add(Move((left,)))
             if after_right is not None:
-                outcomes.add(Move((right,)))
-    return tuple(sorted(outcomes))
+                add(Move((right,)))
+    return tuple(outcomes)
 
 
 class TestMoveGenerationExhaustive(unittest.TestCase):
