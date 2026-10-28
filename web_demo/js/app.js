@@ -34,7 +34,7 @@ function updateModelOptions(){
   }
 }
 function modelState(value, loading){return value?t('loaded'):loading?t('loading'):t('unavailable');}
-function modelStatus(){return t('modelsStatus',{dqn:modelState(model,dqnLoading),ppo:modelState(ppo,ppoLoading)});}
+function modelStatus(){return t('modelsStatus',{dqn:!model&&!dqnLoading?t('dqnMissing'):modelState(model,dqnLoading),ppo:modelState(ppo,ppoLoading)});}
 function isAI(player){return agents[player]!=='human';}
 function render(){
   $('turn-label').textContent=game.phase==='done'?t('gameOver'):t('turn',{player:label(agents[game.player])});
