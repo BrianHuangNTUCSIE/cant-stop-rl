@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <array>
-#include <set>
 #include <utility>
 #include <vector>
 
@@ -51,7 +50,12 @@ inline std::vector<Move> legal_moves(const std::array<int, 4>& dice,
     int active_count = 0;
     for (int position : state.active) active_count += position != -1;
 
-    std::set<Move> choices;
+    std::vector<Move> choices;
+    const auto add_choice = [&choices](const Move& move) {
+        if (std::find(choices.begin(), choices.end(), move) == choices.end()) {
+            choices.push_back(move);
+        }
+    };
     for (const auto& partition : partitions) {
         const int x = partition[0];
         const int y = partition[1];
@@ -62,9 +66,9 @@ inline std::vector<Move> legal_moves(const std::array<int, 4>& dice,
             trial.active[index] = (trial.active[index] == -1)
                 ? trial.permanent[index] + 1 : trial.active[index] + 1;
             if (can_step(x, trial, active_count)) {
-                choices.insert(Move{{x, x}, 2});
+                add_choice(Move{{x, x}, 2});
             } else {
-                choices.insert(Move{{x, 0}, 1});
+                add_choice(Move{{x, 0}, 1});
             }
             continue;
         }
@@ -77,18 +81,18 @@ inline std::vector<Move> legal_moves(const std::array<int, 4>& dice,
             if (active_count + new_needed <= 3) {
                 const int low = std::min(x, y);
                 const int high = std::max(x, y);
-                choices.insert(Move{{low, high}, 2});
+                add_choice(Move{{low, high}, 2});
             } else {
-                choices.insert(Move{{x, 0}, 1});
-                choices.insert(Move{{y, 0}, 1});
+                add_choice(Move{{x, 0}, 1});
+                add_choice(Move{{y, 0}, 1});
             }
         } else if (can_x) {
-            choices.insert(Move{{x, 0}, 1});
+            add_choice(Move{{x, 0}, 1});
         } else if (can_y) {
-            choices.insert(Move{{y, 0}, 1});
+            add_choice(Move{{y, 0}, 1});
         }
     }
-    return {choices.begin(), choices.end()};
+    return choices;
 }
 
 inline State advance_active(const State& state, const Move& move) {

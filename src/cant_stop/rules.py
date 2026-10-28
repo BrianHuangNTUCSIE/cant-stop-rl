@@ -37,13 +37,14 @@ def _can_step(column: int, permanent: Sequence[int], owner: Sequence[int],
 
 def _legal_move_columns(dice: Sequence[int], permanent: Sequence[int],
                         owner: Sequence[int], active: dict[int, int]) -> tuple[tuple[int, ...], ...]:
-    """Return sorted legal outcomes without allocating ``Move`` objects.
+    """Return legal outcomes in dice-partition enumeration order.
 
     This is shared with the hot Monte Carlo rollout path.  Keeping the legality
     logic here avoids a faster-but-different simulator while letting rollouts
     operate on compact column tuples.
 
-    Outcomes respect mandatory use of both sums.
+    Outcomes respect mandatory use of both sums.  The order is significant for
+    published policies that use stable first-match tie breaking.
 
     When there is one free runner and two different new sums, both sums are
     individually usable but not together; expose each single-sum choice.
@@ -60,7 +61,7 @@ def _legal_move_columns_fast(dice: Sequence[int], permanent: Sequence[int],
     ``MonteCarloAgent`` generates validated dice itself.  Avoiding public API
     validation and using a tiny list for at most six outcomes removes hashing
     and temporary set allocations from the rollout hot path.  The returned
-    order is still sorted and duplicate-free, matching ``_legal_move_columns``.
+    order follows dice-partition enumeration and is duplicate-free.
     """
     a, b, c, d = dice
     partitions = ((a+b, c+d), (a+c, b+d), (a+d, b+c))
@@ -105,7 +106,7 @@ def _legal_move_columns_fast(dice: Sequence[int], permanent: Sequence[int],
             add_choice((x,))
         elif can_y:
             add_choice((y,))
-    return tuple(sorted(choices))
+    return tuple(choices)
 
 
 def legal_moves(dice: Sequence[int], permanent: Sequence[int],

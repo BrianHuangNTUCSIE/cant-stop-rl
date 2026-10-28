@@ -11,6 +11,7 @@ from cant_stop import (
     legal_moves, rule28_points, bust_probability,
     pair_score, play_game, evaluate, make_agent,
 )
+from cant_stop.carter_adapter import CarterKerasAgent
 
 
 class TestCantStop(unittest.TestCase):
@@ -158,6 +159,22 @@ class TestCantStop(unittest.TestCase):
         advanced = State((self.permanent, self.permanent), self.owner,
                          ((2, 2), (7, 6), (12, 2)), 0, 2)
         self.assertTrue(CoutoAgent().should_stop(advanced, rng))
+
+    def test_published_agents_retain_top_neutral_until_bank(self):
+        state = State((self.permanent, self.permanent), self.owner,
+                      ((2, LENGTH[2]), (3, 1), (4, 1)), 0, 1)
+        self.assertTrue(GlennAloiAgent().should_stop(state, random.Random(1)))
+        self.assertTrue(CoutoAgent().should_stop(state, random.Random(1)))
+
+    def test_carter_uses_source_partition_order(self):
+        state = State((self.permanent, self.permanent), self.owner,
+                      ((2, 1), (3, 1)), 0, 1)
+        moves = legal_moves((1, 2, 1, 2), self.permanent, self.owner,
+                            state.active_dict())
+        self.assertEqual(moves, (Move((3, 3)), Move((2, 4))))
+        agent = object.__new__(CarterKerasAgent)
+        self.assertEqual(agent.choose_move(state, moves, random.Random(1)),
+                         Move((3, 3)))
 
     def test_published_agents_bank_a_winning_turn(self):
         owner = list(self.owner)
