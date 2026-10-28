@@ -1,5 +1,7 @@
 # Can't Stop — Learning Risk-Aware Game Strategy
 
+🎮 **[Play the live browser demo](https://brianhuangntucsie.github.io/cant-stop-rl/)** — Play against trained DDQN and PPO agents directly in your browser.
+
 > **Can reinforcement learning learn when to push forward—and when to stop—better than hand-designed rules?**
 
 This project studies that question in *Can't Stop*, a board game whose central decision is a compact but difficult form of risk management: every additional roll can create progress, but can also erase the progress made during the current turn. We built and trained our own **Ridge**, **Double DQN (DDQN)**, and **PPO** agents, implemented a stronger **`mc-strong`** Monte Carlo opponent, and created a reproducible evaluation pipeline to compare them under identical dice, seats, and held-out games.
