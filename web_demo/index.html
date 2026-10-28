@@ -25,6 +25,13 @@
       <label id="player-b-label">Player B<select id="agent-b"></select></label>
       <button id="apply-agents" class="secondary">Apply game settings</button>
     </section>
+    <section class="quick-test" aria-labelledby="quick-test-label">
+      <strong id="quick-test-label">Quick test</strong>
+      <label for="quick-games">Games</label>
+      <input id="quick-games" type="number" min="1" max="10000" value="100" step="1">
+      <button id="quick-test" class="secondary" type="button">Run games</button>
+      <output id="quick-result" aria-live="polite"></output>
+    </section>
     <section class="board-heading"><strong id="board-label">Board</strong><span id="neutral-label">Neutral markers: 0 / 3</span></section>
     <section id="board" class="board"></section>
     <section class="dice-panel"><div id="dice" class="dice"></div><div id="moves" class="moves"></div></section>

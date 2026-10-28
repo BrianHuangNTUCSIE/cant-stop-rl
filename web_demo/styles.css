@@ -18,6 +18,10 @@ main { width:min(980px,94vw); margin:0 auto; padding:32px 0 56px; } header,.stat
 .marker-a::after { content:'A'; }
 .marker-b::after { content:'B'; }
 .agent-panel { display:flex; align-items:end; gap:12px; flex-wrap:wrap; padding:15px; margin:12px 0 14px; border:1px solid #ffffff18; border-radius:15px; background:#0a1220aa; }
+.quick-test { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:15px; margin:12px 0 14px; border:1px solid #ffffff18; border-radius:15px; background:#0a1220aa; }
+.quick-test label { color:#9eacc4; font-size:.85rem; }
+.quick-test input[type="number"] { width:6rem; }
+.quick-test output { color:#8de0b5; font-weight:600; }
 .agent-panel label { display:flex; flex-direction:column; gap:5px; color:#9eacc4; font-size:.85rem; }
 select { min-width:190px; padding:10px; border:1px solid #385176; border-radius:9px; background:#17253a; color:#e8eef9; }
 .board-heading { display:flex; justify-content:space-between; align-items:center; margin:18px 2px 8px; color:#d9e8ff; }

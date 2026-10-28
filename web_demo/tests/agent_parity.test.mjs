@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {BrowserDQN} from '../js/model.js';
+import {BrowserDQN, BrowserRidge} from '../js/model.js';
 import {gaPairScore, glennAloiPairScore, sortedMoves} from '../js/policy.js';
 import {PendingActions} from '../js/pending.js';
 
@@ -35,6 +35,40 @@ test('vmerckle pending action is consumed from the post-move state', () => {
 test('domain feature construction passes the acting player to Rule 28', async () => {
   const source=await readFile(new URL('../js/app.js',import.meta.url),'utf8');
   assert.match(source,/rule28Points\(\{\.\.\.g,active:g\.active\},player\)/);
+});
+
+test('Ridge uses its feature_count schema instead of neural metadata', async () => {
+  const source=await readFile(new URL('../js/app.js',import.meta.url),'utf8');
+  assert.match(source,/function ridgeFeatures\(g,player,policy\)/);
+  assert.match(source,/feature_count:count,feature_mode:mode/);
+  assert.match(source,/ridgeFeatures\(g,player,ridge\)/);
+  assert.doesNotMatch(source,/modelFeatures\(g,player,ridge\)/);
+});
+
+test('Ridge rejects feature vectors with the wrong length', () => {
+  const model=new BrowserRidge({feature_count:2,mean:[0,0],scale:[1,1],weights:[1,1],bias:0});
+  assert.throws(() => model.action([0]), /expected 2 values/);
+});
+
+test('quick test runs headless games and reports both win rates', async () => {
+  const source=await readFile(new URL('../js/app.js',import.meta.url),'utf8');
+  assert.match(source,/const testGame=new Game\(\)/);
+  assert.match(source,/wins\[testGame\.winner\]\+\+/);
+  assert.match(source,/Player A \$\{aRate\}%/);
+  assert.match(source,/const testAgents=\[\$\('agent-a'\)\.value,\$\('agent-b'\)\.value\]/);
+  assert.match(source,/if\(testAgents\.some\(name=>name==='human'\)\)/);
+  assert.match(source,/Running test… \$\{i\+1\}\/\$\{count\} games — Player A: \$\{wins\[0\]\} wins, Player B: \$\{wins\[1\]\} wins/);
+  assert.match(source,/Running test… 0\/\$\{count\} games — Player A: 0 wins, Player B: 0 wins/);
+  assert.match(source,/setTimeout\(resolve,0\)/);
+  assert.match(source,/const animate=true/);
+  assert.match(source,/setTimeout\(resolve,animate\?60:0\)/);
+});
+
+test('game status names the player instead of addressing the user', async () => {
+  const source=await readFile(new URL('../js/game.js',import.meta.url),'utf8');
+  assert.match(source,/t\('playerTurn',\{player:1\}\)/);
+  assert.match(source,/t\('playerTurn',\{player:this\.player\+1\}\)/);
+  assert.doesNotMatch(source,/this\.message=t\('yourTurn'\)/);
 });
 
 test('canceled rollout searches stop before recording results', async () => {

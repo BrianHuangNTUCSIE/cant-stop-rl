@@ -20,7 +20,7 @@ const AGENTS = [
 const $=id=>document.getElementById(id); const game=new Game();
 let model=null, ridge=null, ppo=null, dqnLoading=true, ridgeLoading=true, ppoLoading=true, agents=['human','rule28-smart'];
 const SCORE_KEY='cant-stop-browser-demo-score-v1';
-let scores=loadScores(), resultRecorded=false;
+let scores=loadScores(), resultRecorded=false, quickTestRunning=false;
 const label=name=>t(`agent.${name}`);
 function loadScores(){
   try{
@@ -89,6 +89,57 @@ function render(){
     return `<div class="column"><h2>${c}</h2><div class="track">${html}</div><small>A ${a}/${height} · B ${b}/${height}</small></div>`;
   }).join('');
    $('debug').textContent=JSON.stringify({players:agents.map(label),phase:game.phase,neutralMarkers:Object.keys(game.active).length,active:game.active,models:{dqn:!!model,ppo:!!ppo},modelFiles:{dqn:'models/dqn.json',ppo:'models/ppo.json'}},null,2);
+}
+async function runQuickTest(){
+  if(quickTestRunning)return;
+  const count=Number.parseInt($('quick-games').value,10);
+  if(!Number.isInteger(count)||count<1||count>10000){$('quick-result').textContent='Enter a whole number from 1 to 10,000.';return;}
+  const testAgents=[$('agent-a').value,$('agent-b').value];
+  if(testAgents.some(name=>name==='human')){$('quick-result').textContent='Select AI agents for both players first.';return;}
+  const generation=invalidateAI();
+  quickTestRunning=true; $('quick-test').disabled=true; $('quick-result').textContent=`Running test… 0/${count} games — Player A: 0 wins, Player B: 0 wins`;
+  const wins=[0,0];
+  const animate=true;
+  const showQuickGame=async testGame=>{
+    Object.assign(game,{permanent:testGame.permanent.map(row=>row.slice()),owner:testGame.owner.slice(),active:{...testGame.active},player:testGame.player,rolls:testGame.rolls,phase:testGame.phase,dice:testGame.dice.slice(),moves:testGame.moves.slice(),winner:testGame.winner,message:testGame.message});
+    const savedAgents=agents,savedResult=resultRecorded; agents=testAgents; resultRecorded=true; render(); agents=savedAgents; resultRecorded=savedResult;
+    await new Promise(resolve=>setTimeout(resolve,animate?60:0));
+  };
+  try{
+    for(let i=0;i<count;i++){
+      if(generation!==runGeneration)return;
+      const testGame=new Game(); let steps=0;
+      await showQuickGame(testGame);
+      while(testGame.winner===null&&steps++<10000){
+        if(testGame.phase==='roll'){testGame.roll();await showQuickGame(testGame);continue;}
+        if(testGame.phase==='pair'){
+          const move=await choosePair(testGame,testGame.moves,testAgents[testGame.player]);
+          if(generation!==runGeneration)return;
+          if(!move)throw new Error('No legal pairing selected');
+          testGame.applyMove(move); await showQuickGame(testGame); continue;
+        }
+        if(testGame.phase==='decision'){
+          const action=await decide(testAgents[testGame.player],testGame,testGame.player);
+          if(generation!==runGeneration)return;
+          action==='stop'?testGame.stop():testGame.continue();
+          await showQuickGame(testGame);
+        }
+      }
+      if(testGame.winner===null)throw new Error('Game exceeded 10,000 actions');
+      wins[testGame.winner]++;
+      $('quick-result').textContent=`Running test… ${i+1}/${count} games — Player A: ${wins[0]} wins, Player B: ${wins[1]} wins`;
+      // Let the browser repaint the status and process cancellation before
+      // starting the next game.
+      await new Promise(resolve=>setTimeout(resolve,0));
+      if(generation!==runGeneration)return;
+    }
+    const aRate=(100*wins[0]/count).toFixed(1), bRate=(100*wins[1]/count).toFixed(1);
+    $('quick-result').textContent=`${wins[0]}–${wins[1]} wins — Player A ${aRate}%, Player B ${bRate}%`;
+  }catch(error){
+    if(generation===runGeneration)$('quick-result').textContent=`Quick test failed: ${error.message}`;
+  }finally{
+    quickTestRunning=false; $('quick-test').disabled=false;
+  }
 }
 const GA={2:7,3:0,4:2,5:0,6:4,7:3,8:4,9:0,10:2,11:0,12:7};
 const CLASSIC={2:1,3:2,4:3,5:4,6:5,7:6,8:5,9:4,10:3,11:2,12:1};
@@ -386,15 +437,27 @@ async function stopDecision(g,name,player){
   return false;
 }
 function featuresForDQN(g,player,strategic=false,domain=false,moves=null){const s=g.snapshot(),me=s.permanent[player],opp=s.permanent[1-player],lengths=[3,5,7,9,11,13,11,9,7,5,3],f=[];for(let i=0;i<11;i++)f.push(me[i]/lengths[i]);for(let i=0;i<11;i++)f.push(opp[i]/lengths[i]);for(const c of COLUMNS)f.push((s.active[c]||0)/LENGTHS[c]);for(const c of COLUMNS)f.push(s.active[c]?1:0);for(const o of s.owner)f.push(o===player?1:o===1-player?-1:0);const completed=s.owner.filter(o=>o===player).length,oppCompleted=s.owner.filter(o=>o===1-player).length;f.push(completed/3,oppCompleted/3,Math.min(s.rolls/20,1));const bust=bustProbability(g),risk=Object.entries(s.active).reduce((x,[c,p])=>x+(p-me[c-2])/LENGTHS[c],0),reached=Object.entries(s.active).filter(([c,p])=>p===LENGTHS[c]).length;f.push(bust,risk);if(domain||strategic){const mp=me.reduce((x,v,i)=>x+v/lengths[i],0)/11,op=opp.reduce((x,v,i)=>x+v/lengths[i],0)/11;const rule=rule28Points({...g,active:g.active},player);f.push(Object.keys(s.active).length/3,reached/3,Math.min(completed+reached,3)/3,completed+reached>=3?1:0,mp-op,risk*(1-bust),Math.min(rule/40,1),oppCompleted>=2?1:0);if(strategic){for(let i=0;i<11;i++){const c=COLUMNS[i];f.push(Math.max(0,(s.active[c]??me[i])-me[i])/lengths[i])}const near=opp.reduce((x,v,i)=>x+(s.owner[i]===-1&&lengths[i]-v<=1?1:0),0);f.push(near/3)}}return f;}
-function modelFeatures(g,player,policy,moves=null){const base=policy.payload.observation_size-(policy.payload.action_size===8?18:0);const strategic=base===80;const domain=base===68||strategic;const f=featuresForDQN(g,player,strategic,domain);if(moves){for(const move of sortedMoves(moves).slice(0,6))f.push(move[0]/12,(move[1]??0)/12,1);while(f.length<base+18)f.push(0);}if(f.length!==base+(moves?18:0))return null;return f;}
+ function modelFeatures(g,player,policy,moves=null){const base=policy.payload.observation_size-(policy.payload.action_size===8?18:0);const strategic=base===80;const domain=base===68||strategic;const f=featuresForDQN(g,player,strategic,domain);if(moves){for(const move of sortedMoves(moves).slice(0,6))f.push(move[0]/12,(move[1]??0)/12,1);while(f.length<base+18)f.push(0);}if(f.length!==base+(moves?18:0))return null;return f;}
+ // Ridge is a classical model, not an MLP export.  Its metadata uses the
+ // feature_count/feature_mode schema rather than observation_size/action_size.
+ // Keep this encoder separate so a malformed Ridge payload cannot turn the
+ // neural encoder's arithmetic into NaN and silently select Rule of 28.
+ function ridgeFeatures(g,player,policy){
+   const {feature_count:count,feature_mode:mode}=policy.payload;
+   if(mode!=='domain'||count!==68)throw new Error(`Unsupported Ridge feature schema: ${mode}/${count}`);
+   const f=featuresForDQN(g,player,false,true);
+   if(f.length!==count)throw new Error(`Ridge feature encoder produced ${f.length} values; expected ${count}`);
+   return f;
+ }
 function chooseLearnedPair(g,moves){if(!ppo||ppo.payload.action_size!==8)return null;const f=modelFeatures(g,g.player,ppo,moves);return f?ppo.pairAction(f,moves):null;}
-async function decide(name,g,player){if(name==='dqn'&&model){const f=modelFeatures(g,player,model);return f?model.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ppo'&&ppo){const f=modelFeatures(g,player,ppo);return f?ppo.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ridge'&&ridge){const f=modelFeatures(g,player,ridge);return f?ridge.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='dqn'||name==='ppo'||name==='ridge')return heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});return await stopDecision(g,name,player)?'stop':'continue';}
+ async function decide(name,g,player){if(name==='dqn'&&model){const f=modelFeatures(g,player,model);return f?model.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ppo'&&ppo){const f=modelFeatures(g,player,ppo);return f?ppo.action(f):heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});}if(name==='ridge'&&ridge){const f=ridgeFeatures(g,player,ridge);return ridge.action(f);}if(name==='dqn'||name==='ppo'||name==='ridge')return heuristicAction({...g.snapshot(),permanent:[g.permanent[player],g.permanent[1-player]]});return await stopDecision(g,name,player)?'stop':'continue';}
 let runGeneration=0;const aiTimers=new Set();
 function scheduleAI(delay,generation=runGeneration){const timer=setTimeout(()=>{aiTimers.delete(timer);if(generation===runGeneration)aiTurn(generation);},delay);aiTimers.add(timer);}
 function invalidateAI(){runGeneration++;for(const timer of aiTimers)clearTimeout(timer);aiTimers.clear();pendingVmerckle.clear();return runGeneration;}
-async function aiTurn(generation=runGeneration){if(generation!==runGeneration||game.winner!==null||!isAI(game.player))return;const name=agents[game.player];if(game.phase==='roll'){if(!game.roll()){render();scheduleAI(350,generation);return}const move=await choosePair(game,game.moves,name);if(generation!==runGeneration)return;game.applyMove(move);render();scheduleAI(350,generation);return}if(game.phase==='decision'){const action=await decide(name,game,game.player);if(generation!==runGeneration)return;action==='stop'?game.stop():game.continue();render();if(game.phase!=='done')scheduleAI(350,generation);}}
+ async function aiTurn(generation=runGeneration){if(generation!==runGeneration||game.winner!==null||!isAI(game.player))return;const name=agents[game.player];try{if(game.phase==='roll'){if(!game.roll()){render();scheduleAI(350,generation);return}const move=await choosePair(game,game.moves,name);if(generation!==runGeneration)return;game.applyMove(move);render();scheduleAI(350,generation);return}if(game.phase==='decision'){const action=await decide(name,game,game.player);if(generation!==runGeneration)return;action==='stop'?game.stop():game.continue();render();if(game.phase!=='done')scheduleAI(350,generation);}}catch(error){if(generation!==runGeneration)return;game.message=`${name} model error: ${error.message}`;render();}}
 function start(){const generation=invalidateAI();resultRecorded=false;game.reset();render();if(isAI(0))scheduleAI(300,generation);}
 $('apply-agents').onclick=()=>{agents=[$('agent-a').value,$('agent-b').value];start()};$('new-game').onclick=start;
+$('quick-test').onclick=runQuickTest;
 $('clear-stats').onclick=()=>{scores=[0,0];saveScores();renderScores();};
 $('roll').onclick=()=>{invalidateAI();if(game.roll())render();else{render();scheduleAI(300)}};$('stop').onclick=()=>{invalidateAI();game.stop();render();scheduleAI(300)};$('continue').onclick=()=>{invalidateAI();game.continue();render();scheduleAI(300)};
 localizeUI(); setupSelectors();

@@ -38,6 +38,9 @@ export class BrowserRidge {
   }
   action(features) {
     const {mean,scale,weights,bias}=this.payload;
+    if(!Array.isArray(features)||features.length!==this.payload.feature_count||
+       mean.length!==features.length||scale.length!==features.length||weights.length!==features.length)
+      throw new Error(`Invalid Ridge feature vector: expected ${this.payload.feature_count} values`);
     let value=bias;
     for(let i=0;i<features.length;i++) value+=weights[i]*((features[i]-mean[i])/(scale[i]||1));
     return value<=0?'stop':'continue';

@@ -46,7 +46,7 @@ export function bustProbability(game){
 
 export class Game {
   constructor(){this.lengths=LENGTHS;this.reset();}
-  reset(){this.permanent=[[0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0]];this.owner=Array(11).fill(-1);this.active={};this.player=0;this.rolls=0;this.phase='roll';this.dice=[];this.moves=[];this.winner=null;this.message=t('yourTurn');}
+  reset(){this.permanent=[[0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0]];this.owner=Array(11).fill(-1);this.active={};this.player=0;this.rolls=0;this.phase='roll';this.dice=[];this.moves=[];this.winner=null;this.message=t('playerTurn',{player:1});}
   roll(){if(this.phase!=='roll'||this.winner!==null)throw new Error('roll() only allowed in the roll phase');this.dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));this.moves=legalMoves(this.dice,this);if(!this.moves.length){this.message=t('bust');this.active={};this.rolls=0;this.phase='roll';this.player=1-this.player;return false;}this.phase='pair';return true;}
   applyMove(cols){
     if(this.phase!=='pair'||!this.moves.some(move=>move.join()==cols.join()))throw new Error('Expected a legal move after rolling');
@@ -56,7 +56,7 @@ export class Game {
     this.active=nextActive;this.rolls++;this.moves=[];this.phase='decision';
   }
   continue(){if(this.phase!=='decision')throw new Error('continue() only allowed after a move');this.phase='roll';}
-  stop(){if(this.phase!=='decision')throw new Error('stop() only allowed after a move');for(const [c,pos] of Object.entries(this.active)){this.permanent[this.player][c-2]=pos;if(pos===LENGTHS[c])this.owner[c-2]=this.player;}if(this.owner.filter(x=>x===this.player).length>=3){this.winner=this.player;this.phase='done';this.active={};this.moves=[];this.message=t('winner',{player:this.player+1});return;}this.active={};this.rolls=0;this.player=1-this.player;this.phase='roll';this.message=this.player===0?t('yourTurn'):t('aiThinking');}
+  stop(){if(this.phase!=='decision')throw new Error('stop() only allowed after a move');for(const [c,pos] of Object.entries(this.active)){this.permanent[this.player][c-2]=pos;if(pos===LENGTHS[c])this.owner[c-2]=this.player;}if(this.owner.filter(x=>x===this.player).length>=3){this.winner=this.player;this.phase='done';this.active={};this.moves=[];this.message=t('winner',{player:this.player+1});return;}this.active={};this.rolls=0;this.player=1-this.player;this.phase='roll';this.message=t('playerTurn',{player:this.player+1});}
   snapshot(){
     // Match Python's immutable agent-facing State: callers must not be able to
     // mutate the live game through a diagnostic/features snapshot.
