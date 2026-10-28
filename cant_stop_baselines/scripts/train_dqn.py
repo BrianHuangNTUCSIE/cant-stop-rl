@@ -16,6 +16,7 @@ import json
 import os
 import platform
 import random
+import shutil
 import time
 from collections import deque
 from dataclasses import asdict, dataclass
@@ -1646,6 +1647,13 @@ def main() -> None:
         actor_backend.close()
     if counterfactual_executor is not None:
         counterfactual_executor.shutdown(wait=True)
+
+    # Keep the episode trace at the training root for compatibility with the
+    # original single-output layout while retaining the separated evaluation
+    # bundle when --evaluation-output-dir is used.
+    if evaluation_output_dir != output_dir:
+        shutil.copyfile(training_path, output_dir / "training_episodes.csv")
+        shutil.copyfile(evaluation_output_dir / "config.json", output_dir / "config.json")
 
     target.load_state_dict(online.state_dict())
     save_checkpoint(
