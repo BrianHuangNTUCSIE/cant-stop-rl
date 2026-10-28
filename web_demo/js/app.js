@@ -56,7 +56,7 @@ function render(){
     }
     return `<div class="column"><h2>${c}</h2><div class="track">${html}</div><small>A ${a}/${height} · B ${b}/${height}</small></div>`;
   }).join('');
-  $('debug').textContent=JSON.stringify({players:agents.map(label),phase:game.phase,neutralMarkers:Object.keys(game.active).length,active:game.active,models:{dqn:!!model,ppo:!!ppo},modelFiles:{dqn:'models/dqn.json',ppo:ppo?'models/ppo.json':'not published'}},null,2);
+   $('debug').textContent=JSON.stringify({players:agents.map(label),phase:game.phase,neutralMarkers:Object.keys(game.active).length,active:game.active,models:{dqn:!!model,ppo:!!ppo},modelFiles:{dqn:'models/dqn.json',ppo:'models/ppo.json'}},null,2);
 }
 const GA={2:7,3:0,4:2,5:0,6:4,7:3,8:4,9:0,10:2,11:0,12:7};
 const CLASSIC={2:1,3:2,4:3,5:4,6:5,7:6,8:5,9:4,10:3,11:2,12:1};
