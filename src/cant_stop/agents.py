@@ -164,10 +164,12 @@ class GlennAloiAgent:
         active = state.active_dict()
 
         def score(move: Move) -> int:
-            advance = 2 if len(move.columns) == 2 and move.columns[0] == move.columns[1] else 1
-            return sum(
-                advance * GA_MOVE_WEIGHT[column] - 6 * int(column not in active)
-                for column in move.columns
+            # A duplicate sum advances one existing/new marker twice, but it
+            # still creates only one new marker.  This is the same scoring
+            # convention as ``pair_score`` and the reference game policy.
+            return (
+                sum(GA_MOVE_WEIGHT[column] for column in move.columns)
+                - 6 * len({column for column in move.columns if column not in active})
             )
 
         # np.argmax in the released implementation chooses the first maximum.
