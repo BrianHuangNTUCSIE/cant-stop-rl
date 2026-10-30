@@ -2,6 +2,7 @@ import {Game, chooseGA, legalMoves, COLUMNS, LENGTHS, bustProbability} from './g
 import {BrowserDQN, BrowserRidge, heuristicAction} from './model.js';
 import {gaPairScore, glennAloiPairScore, sortedMoves} from './policy.js';
 import {PendingActions} from './pending.js';
+import {cloneSearchState, randomSearchRollout, searchRootActions} from './vmerckle.js';
 import {setLocale, t} from './i18n.js';
 
 // English is the default UI language; the Traditional Chinese catalog remains available.
@@ -172,31 +173,10 @@ async function choosePair(g,moves,name){
       for(const c of move)post.active[c]=(post.active[c]??g.permanent[g.player][c-2])+1;
       for(const action of [0,1])actions.push({move,action,post});
     }
-    const total=64, wins=Array(actions.length).fill(0), plays=Array(actions.length).fill(0);
-    if(name==='vmerckle_monte'){
-      const quota=Math.floor(total/actions.length);
-      for(let i=0;i<actions.length;i++)for(let j=0;j<quota;j++){
-        if((i*quota+j)%4===0)await new Promise(resolve=>setTimeout(resolve,0));
-        if(generation!==runGeneration)return null;
-        const result=await randomSearchRollout(actions[i].post,actions[i].action,g.player);
-        if(generation!==runGeneration)return null;
-        wins[i]+=result;
-      }
-    }else{
-      for(let n=0;n<total;n++){
-        let i=plays.findIndex(x=>x===0);
-        if(i<0)i=plays.reduce((best,x,k)=>wins[k]/x+Math.sqrt(Math.log(n)/x)>wins[best]/plays[best]+Math.sqrt(Math.log(n)/plays[best])?k:best,0);
-        if(n%4===0)await new Promise(resolve=>setTimeout(resolve,0));
-        if(generation!==runGeneration)return null;
-        const result=await randomSearchRollout(actions[i].post,actions[i].action,g.player);
-        if(generation!==runGeneration)return null;
-        wins[i]+=result;plays[i]++;
-      }
-    }
-    const candidates=actions.map((a,i)=>({a,i})).filter(x=>plays[x.i]||name==='vmerckle_monte');
-    const best=candidates.reduce((x,y)=>wins[y.i]/Math.max(plays[y.i],1)>wins[x.i]/Math.max(plays[x.i],1)?y:x,candidates[0]);
-    pendingVmerckle.set(best.a.post,g.player,best.a.action===0);
-    return best.a.move;
+    const result=await searchRootActions(actions,g.player,name,{isCancelled:()=>generation!==runGeneration});
+    if(!result||generation!==runGeneration)return null;
+    pendingVmerckle.set(result.action.post,g.player,result.action.action===0);
+    return result.action.move;
   }
   if(name==='glenn-aloi')return moves.reduce((best,m)=>{
     const score=glennAloiPairScore(g.active,m);
@@ -249,12 +229,14 @@ function strongBankValue(g,player,active){
   if(g.owner.filter(x=>x===opponent).length>=2 && g.owner.filter(x=>x===player).length+claimed<2)value-=1;
   return value;
 }
-function mcStrongStop(g,player){
+async function mcStrongStop(g,player){
+  const generation=runGeneration;
   const rollouts=64, futureRollLimit=40;
-  const rollout=()=>{
+  const rollout=async()=>{
     const active={...g.active};
     const sim={active,owner:g.owner,permanent:g.permanent,player};
     for(let step=0;step<futureRollLimit;step++){
+      if(step%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return null;}
       const dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));
       sim.active=active;
       const moves=legalMoves(dice,sim);
@@ -268,19 +250,24 @@ function mcStrongStop(g,player){
   };
   const bankNow=strongBankValue(g,player,g.active);
   let continueValue=0;
-  for(let i=0;i<rollouts;i++)continueValue+=rollout();
+  for(let i=0;i<rollouts;i++){
+    if(i%2===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return null;}
+    const value=await rollout();
+    if(value===null)return null;
+    continueValue+=value;
+  }
   return bankNow>=continueValue/rollouts;
 }
 // Python's ``mc`` uses the same one-turn search as mc-strong, but its value
 // function is deliberately local (mc-strong adds race awareness).  Keeping
 // this separate avoids silently making the two selectable agents identical.
 async function mcStop(g,player,name){
+  const generation=runGeneration;
   if(name==='mc-strong')return mcStrongStop(g,player);
   if(name==='mc-full-game'){
     // Python's FullGameMonteCarloAgent uses GA pairing and Smart Rule 28 in
     // the remainder of each rollout.  vmerckle's separate rollout below is
     // intentionally random, so do not reuse it here.
-    const generation=runGeneration;
     let stop=0,cont=0;for(let i=0;i<64;i++){
       if(i%2===0)await new Promise(resolve=>setTimeout(resolve,0));
       if(generation!==runGeneration)return false;
@@ -303,9 +290,10 @@ async function mcStop(g,player,name){
     if(g.owner.filter(x=>x===player).length+claimed>=3)value+=20;
     return value;
   };
-  const rollout=()=>{
+  const rollout=async()=>{
     let active={...g.active};
     for(let step=0;step<limit;step++){
+      if(step%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return null;}
       const dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));
       const sim={...g,active,permanent:g.permanent,owner:g.owner,player};
       const moves=legalMoves(dice,sim); if(!moves.length)return 0;
@@ -317,7 +305,12 @@ async function mcStop(g,player,name){
     }
     return bankValue(active);
   };
-  let future=0;for(let i=0;i<rollouts;i++){if(i%4===0)await new Promise(resolve=>setTimeout(resolve,0));future+=rollout();}
+  let future=0;for(let i=0;i<rollouts;i++){
+    if(i%4===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return false;}
+    const value=await rollout();
+    if(value===null)return false;
+    future+=value;
+  }
   return bankValue(g.active)>=future/rollouts;
 }
 
@@ -327,7 +320,7 @@ async function mcStop(g,player,name){
 // the vmerckle AIrand adaptation.
 async function fullGameRollout(g,action,root){
   const generation=runGeneration;
-  const s=cloneForSearch(g);
+  const s=cloneSearchState(g);
   if(action===1){
     for(const [c,p] of Object.entries(s.active)){
       s.permanent[s.player][c-2]=p;
@@ -372,30 +365,6 @@ async function fullGameRollout(g,action,root){
 // This compact implementation preserves that action-space distinction and
 // the flat-vs-UCB1 selection; rollouts use the same random full-game policy.
 const pendingVmerckle=new PendingActions();
-function cloneForSearch(g){return {permanent:g.permanent.map(x=>x.slice()),owner:g.owner.slice(),active:{...g.active},player:g.player,rolls:g.rolls,phase:g.phase,winner:g.winner};}
-async function randomSearchRollout(g,action,root){
-  const generation=runGeneration;
-  const s=cloneForSearch(g); if(action===0){
-    for(const [c,p] of Object.entries(s.active)){s.permanent[s.player][c-2]=p;if(+p===LENGTHS[c])s.owner[c-2]=s.player;}
-    if(s.owner.filter(x=>x===s.player).length>=3){s.winner=s.player;s.phase='done';s.active={};return s.winner===root?1:0;}
-    s.active={};s.rolls=0;s.player=1-s.player;s.phase='roll';
-  } else s.phase='roll';
-  let turns=0;
-  while(turns<2000&&s.winner===null){
-    if(turns%8===0){await new Promise(resolve=>setTimeout(resolve,0));if(generation!==runGeneration)return null;}
-    if(s.phase==='roll'){
-      const dice=Array.from({length:4},()=>1+Math.floor(Math.random()*6));
-      const moves=legalMoves(dice,s);if(!moves.length){s.active={};s.rolls=0;s.player=1-s.player;turns++;continue;}
-      s.moves=moves;s.phase='pair';
-    }
-    if(s.phase==='pair'){const m=s.moves[Math.floor(Math.random()*s.moves.length)];s.active={...s.active};for(const c of m)s.active[c]=(s.active[c]??s.permanent[s.player][c-2])+1;s.rolls++;s.phase='decision';}
-    if(s.phase==='decision'){
-     if(Math.random()<.5){for(const [c,p] of Object.entries(s.active)){s.permanent[s.player][c-2]=p;if(+p===LENGTHS[c])s.owner[c-2]=s.player;}if(s.owner.filter(x=>x===s.player).length>=3)s.winner=s.player;s.active={};s.rolls=0;s.player=1-s.player;s.phase=s.winner===null?'roll':'done';turns++;}
-      else s.phase='roll';
-    }
-  }
-  return s.winner===root?1:0;
-}
 function vmerckleStop(g,player,name){
   // Search is scheduled at the pair stage; the decision stage consumes the
   // selected root action, matching Python's pending-action protocol.

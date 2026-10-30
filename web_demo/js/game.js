@@ -38,10 +38,21 @@ export function legalMoves(dice, game){
   return choices;
 }
 
+const bustProbabilityCache=new Map();
+function bustCacheKey(game){
+  const active=Object.entries(game.active).sort(([a],[b])=>Number(a)-Number(b));
+  return `${game.player}|${game.owner.join(',')}|${game.permanent[game.player].join(',')}|${active.map(([c,p])=>`${c}:${p}`).join(',')}`;
+}
 export function bustProbability(game){
+  const key=bustCacheKey(game);
+  const cached=bustProbabilityCache.get(key);
+  if(cached!==undefined)return cached;
   let busts=0; for(let a=1;a<=6;a++)for(let b=1;b<=6;b++)for(let c=1;c<=6;c++)for(let d=1;d<=6;d++)
     if(!legalMoves([a,b,c,d],game).length)busts++;
-  return busts/1296;
+  const probability=busts/1296;
+  if(bustProbabilityCache.size>=2048)bustProbabilityCache.delete(bustProbabilityCache.keys().next().value);
+  bustProbabilityCache.set(key,probability);
+  return probability;
 }
 
 export class Game {
