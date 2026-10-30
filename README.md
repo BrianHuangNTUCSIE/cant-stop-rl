@@ -1,8 +1,24 @@
-# Can't Stop — Learning Risk-Aware Game Strategy
+# Can't Stop — Strong Open-Source Agents. Play in Your Browser.
 
 🎮 **[Play the live browser demo](https://brianhuangntucsie.github.io/cant-stop-rl/)** — Play against trained DDQN and PPO agents directly in your browser.
 
-> **Can reinforcement learning learn when to push forward—and when to stop—better than hand-designed rules?**
+> **Strong enough to beat the evaluated published heuristics. Lightweight enough to run directly in a web page.**
+
+**64.8% against Rule-of-28-smart. 69.2% against Glenn 2009 Constant.**
+These are PPO-460 point estimates from 3,000 complete games per matchup in our
+archived Python evaluation. **Our best open-source agents in the evaluated
+comparison suite** combine learned Stop/Continue decisions with fixed
+Glenn–Aloi dice pairing. This is a scoped comparison, not an established claim
+that this is the best agent across every available open-source project.
+
+**No inference server. No Python installation.** The demo runs exported Ridge,
+DDQN, and PPO policies locally in JavaScript. Training happens offline; playing
+requires only a browser. Browser exports have their own checkpoint provenance,
+and the Python results below should not be read as browser benchmarks.
+
+**Research question:** Can learned Stop/Continue policies outperform traditional
+heuristics under fixed dice pairing, and how do model complexity and collected
+state distributions affect performance?
 
 This project studies that question in *Can't Stop*, a board game whose central decision is a compact but difficult form of risk management: every additional roll can create progress, but can also erase the progress made during the current turn. We built and trained our own **Ridge**, **Double DQN (DDQN)**, and **PPO** agents, implemented a stronger **`mc-strong`** Monte Carlo opponent, and created a reproducible evaluation pipeline to compare them under identical dice, seats, and held-out games.
 
@@ -30,6 +46,14 @@ Transformers models.
 
 For a step-by-step choice between downloading this checkpoint and training a
 new model locally, see the [model guide](docs/MODEL_GUIDE.md).
+
+## Who is this for?
+
+Can't Stop players can practice against learned opponents directly in the
+browser, exploring the trade-off between banking progress and risking another
+roll. For ML students, the same project provides a controlled setting for
+comparing linear models, deep RL, and hand-designed strategies using complete
+games rather than prediction accuracy alone.
 
 ## Why this problem matters
 
@@ -142,7 +166,40 @@ flowchart LR
 - **Features:** raw board state plus domain features such as exact next-roll bust probability, at-risk progress, completion threats, and opponent lead.
 - **Evaluation:** alternating seats, deterministic independent RNG streams, fresh seeds, raw per-game records, and paired bootstrap intervals.
 
+## Data we collect and how we evaluate
+
+We generate our own game trajectories with the project simulator and design
+held-out complete-game evaluations for this application. The final evaluation
+uses newly generated games rather than a pre-curated ML benchmark. This is our
+interpretation of the course's self-collected evaluation-data requirement.
+
+| Stage | Observation / target | Separation |
+|---|---|---|
+| Supervised data collection | Decision states; forced Stop/Continue counterfactual rollouts produce a continuation-margin target | Source policy and label-generating rollout policy are recorded separately |
+| Supervised model selection | Ridge and DNN predict the continuation margin; its sign determines the action | 70/15/15 split grouped by source `game_id`; model selection uses validation, then the selected estimator is refit on train + validation |
+| RL training and selection | State transitions and rewards; validation selects checkpoints | Training and checkpoint-selection scores are distinguished from held-out evidence |
+| Final policy evaluation | Complete games against specified opponents | Fresh seeds, alternating seats, raw game records, paired bootstrap |
+
+The multi-policy supervised dataset contains 10,000 states collected from
+Rule28-smart, MC, Ridge, PPO-451, and DDQN. Labels use the same forced-action
+counterfactual procedure followed by Rule28-smart rollouts. Those policies
+provide state coverage; they are not five independent ground-truth annotators.
+Rollout labels approximate value under their continuation policy rather than
+an optimal strategy.
+
+See the [report evidence guide](cant_stop_baselines/docs/REPORT_EVIDENCE_GUIDE.md)
+for controlled comparisons, statistical boundaries, and submission gaps.
+
 ## Negative results are part of the evidence
+
+Model complexity alone did not explain success. On the common evaluation
+seed `20261029`, the multi-policy supervised DNN achieved 32.3% / 28.7%
+against Rule28-smart / MC, versus 59.5% / 53.2% for Ridge-domain. A separate
+controlled Ridge comparison on seed `20261030` found that multi-policy data
+improved Ridge by **3.3 / 4.2 percentage points**, with paired 95% difference
+intervals **[1.0, 5.6] / [2.0, 6.7]**. These batches must remain separate.
+Distribution shift and noisy rollout labels are possible explanations for DNN
+failure, not experimentally established causes.
 
 The project also tests ideas that did **not** work:
 
@@ -176,6 +233,14 @@ python3 -m pip install -e .
 Optional ML/RL dependencies and reproducible training commands are documented in [`cant_stop_baselines/README.md`](cant_stop_baselines/README.md).
 
 ## Browser demo
+
+The learned agents are computationally lightweight enough to run in a web page:
+[`model.js`](web_demo/js/model.js) implements policy inference directly in
+JavaScript, with no ML runtime dependency or remote inference service. See
+[browser model provenance](web_demo/models/README.md) for the exact exports.
+This establishes deployability; device-specific latency, memory, and battery
+usage have not been benchmarked.
+
 
 The dependency-free web demo is in [`web_demo/`](web_demo/). Start it from the
 repository root with:
