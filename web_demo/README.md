@@ -30,6 +30,14 @@ Live demo: <https://brianhuangntucsie.github.io/cant-stop-rl/>. If Pages is not 
 
 The browser demo is for interactive demonstration only. Its JavaScript randomness and smaller search-rollout budgets are not equivalent to the formal Python evaluation and must not replace the results in the report.
 
+### Browser performance benchmark
+
+For development-only browser timing, serve the repository and open
+`/tools/benchmark_vmerckle.html`. Click **Run benchmark** to measure rollout
+throughput and generation cancellation latency in the current browser. This
+page is not part of the application UI and does not change the production
+search budget or policy.
+
 ### Agent fidelity
 
 The game rules, legal-move ordering, Rule of 28, Glenn & Aloi, Glenn 2009 Constant, Glenn 2010 Linear, and Couto pairing/Stop decisions match the current Python engine. Tie handling for paper agents also preserves Python's first-max behavior.
